@@ -1,0 +1,4 @@
+###> default ###
+.idea
+docker/.env
+###< default ###

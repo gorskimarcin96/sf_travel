@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+  php:
+    image: sf_crm
+    build:
+      context: ./php
+    ports:
+      - ${APP_EXPOSED_PORT}:80
+    volumes:
+      - ./../:/var/www/html
+      - ./php/config/vhosts:/etc/apache2/sites-enabled
+      - ./php/config/dir/dir.conf:/etc/apache2/mods-enabled/dir.conf
+      - ./php/config/xdebug/xdebug.ini:/usr/local/etc/php/php.ini
+    networks:
+      - app-network
+    environment:
+      PHP_IDE_CONFIG: serverName=localhost
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  postgres:
+    image: postgres:15.1
+    ports:
+      - ${DATABASE_EXPOSED_PORT}:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    networks:
+      - app-network
+  node:
+    image: node:16.16.0
+    volumes:
+      - ./../:/var/www/html
+    command: sh -c "npm install -g npm && cd /var/www/html && rm -f package-lock.json && npm install && npm audit fix --force && npx encore dev --watch"
+    networks:
+      - app-network
+
+volumes:
+  postgres:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
