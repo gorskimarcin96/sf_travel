@@ -9,11 +9,14 @@ RUN apt-get -y update && apt-get upgrade -y && apt-get install -y \
       libzip-dev \
       libpq-dev \
       git \
+      unzip \
+      libzip-dev \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install \
       pgsql \
       pdo \
-      pdo_pgsql
+      pdo_pgsql \
+      zip
 
 #xdebug
 RUN pecl install xdebug && docker-php-ext-enable xdebug
