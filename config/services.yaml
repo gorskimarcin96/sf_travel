@@ -11,8 +11,9 @@ services:
       - '../src/DependencyInjection/'
       - '../src/Entity/'
       - '../src/Kernel.php'
+      - '../src/**/Model'
 
   Symfony\Component\Panther\Client:
-    factory: [ App\Factory\SeleniumClient,'create' ]
+    factory: [ App\Factory\SeleniumClient, 'create' ]
     arguments:
       $seleniumUrl: '%env(SELENIUM_URL)%'
