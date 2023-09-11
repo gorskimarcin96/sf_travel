@@ -4,6 +4,12 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+    bind:
+      $optionalTrips: !tagged_iterator 'app.crawler.optional_trips'
+  _instanceof:
+    App\Utils\Crawler\OptionalTrip\OptionalTripInterface:
+      tags: [ name: 'app.crawler.optional_trips' ]
+      public: true
 
   App\:
     resource: '../src/'
