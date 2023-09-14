@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method OptionalTrip[]    findAll()
  * @method OptionalTrip[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class OptionalTripRepository extends ServiceEntityRepository
+final class OptionalTripRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

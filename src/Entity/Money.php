@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MoneyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MoneyRepository::class)]
 class Money
@@ -12,17 +13,16 @@ class Money
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('optional-trips')]
     private ?int $id = null;
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups('optional-trips')]
     private float $price;
 
     #[ORM\Column(length: 3)]
+    #[Groups('optional-trips')]
     private string $currency = 'PLN';
-
-    public function __construct(
-    ) {
-    }
 
     public function getId(): ?int
     {

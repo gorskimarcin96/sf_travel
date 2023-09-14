@@ -1,0 +1,11 @@
+monolog:
+  channels: [ "queue" , "messenger", "deprecation" ]
+  handlers:
+    queue:
+      channels: [ "queue" ]
+      path: "%kernel.logs_dir%/queue.log"
+      type: stream
+    messenger:
+      channels: [ "messenger" ]
+      path: "%kernel.logs_dir%/messenger.log"
+      type: stream

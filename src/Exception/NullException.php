@@ -2,7 +2,7 @@
 
 namespace App\Exception;
 
-class NullException extends \RuntimeException
+final class NullException extends \RuntimeException
 {
     public function __construct()
     {

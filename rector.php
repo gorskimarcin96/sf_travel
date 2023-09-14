@@ -22,6 +22,8 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
     $rectorConfig->sets([
+        SetList::DEAD_CODE,
+        SetList::PRIVATIZATION,
         SetList::CODE_QUALITY,
         LevelSetList::UP_TO_PHP_82,
     ]);

@@ -2,7 +2,7 @@
 
 namespace App\Utils\Crawler\PageAttraction\Model;
 
-class Article
+final class Article
 {
     /**
      * @param string[] $descriptions

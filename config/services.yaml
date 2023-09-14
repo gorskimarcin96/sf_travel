@@ -22,6 +22,8 @@ services:
       - '../src/Entity/'
       - '../src/Kernel.php'
       - '../src/**/Model'
+      - '../src/**/Input'
+      - '../src/**/Mocks'
 
   Symfony\Component\Panther\Client:
     factory: [ App\Factory\SeleniumClient, 'create' ]

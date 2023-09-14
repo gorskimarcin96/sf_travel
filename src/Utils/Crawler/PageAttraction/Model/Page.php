@@ -2,7 +2,7 @@
 
 namespace App\Utils\Crawler\PageAttraction\Model;
 
-class Page
+final class Page
 {
     /** @param \App\Utils\Crawler\PageAttraction\Model\Article[] $articles */
     public function __construct(private readonly string $url, private array $articles = [], private ?string $map = null)

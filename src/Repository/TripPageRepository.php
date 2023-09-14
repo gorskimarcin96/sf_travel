@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method TripPage[]    findAll()
  * @method TripPage[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TripPageRepository extends ServiceEntityRepository
+final class TripPageRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

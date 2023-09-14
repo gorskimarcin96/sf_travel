@@ -19,7 +19,6 @@ final class Version20230911121844 extends AbstractMigration
         $this->addSql('CREATE TABLE trip_article (id INT NOT NULL, page_id INT DEFAULT NULL, title VARCHAR(255) NOT NULL, descriptions JSON NOT NULL, images JSON NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_34D64BCBC4663E4 ON trip_article (page_id)');
         $this->addSql('CREATE TABLE trip_page (id INT NOT NULL, url VARCHAR(255) NOT NULL, map VARCHAR(255) DEFAULT NULL, source VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_3F32254BF47645AE ON trip_page (url)');
         $this->addSql('ALTER TABLE trip_article ADD CONSTRAINT FK_34D64BCBC4663E4 FOREIGN KEY (page_id) REFERENCES trip_page (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 

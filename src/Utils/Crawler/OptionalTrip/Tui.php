@@ -12,16 +12,16 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;
 
-class Tui implements OptionalTripInterface
+final readonly class Tui implements OptionalTripInterface
 {
     private const MAIN_DOMAIN = 'https://www.tui.pl';
     private const URL = 'https://www.tui.pl/atrakcje/wyniki-wyszukiwania';
 
     public function __construct(
-        private readonly Client $client,
-        private readonly Parser $parser,
-        private readonly Base64 $base64,
-        private readonly LoggerInterface $logger
+        private Client $client,
+        private Parser $parser,
+        private Base64 $base64,
+        private LoggerInterface $logger
     ) {
     }
 

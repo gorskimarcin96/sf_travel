@@ -2,33 +2,48 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\TripPageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['trip-page']])]
+#[ApiFilter(SearchFilter::class, properties: ['search' => 'exact'])]
 #[ORM\Entity(repositoryClass: TripPageRepository::class)]
 class TripPage
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('trip-page')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
+    #[Groups('trip-page')]
     private string $url;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('trip-page')]
     private ?string $map = null;
 
     /**
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\TripArticle>|\App\Entity\TripArticle[]
      */
-    #[ORM\OneToMany(mappedBy: 'page', targetEntity: TripArticle::class)]
+    #[ORM\OneToMany(mappedBy: 'page', targetEntity: TripArticle::class, cascade: ['persist'])]
+    #[Groups('trip-page')]
     private Collection $tripArticles;
 
     #[ORM\Column(length: 255)]
+    #[Groups('trip-page')]
     private string $source;
+
+    #[ORM\ManyToOne(inversedBy: 'tripPages')]
+    private ?Search $search = null;
 
     public function __construct()
     {
@@ -88,6 +103,18 @@ class TripPage
             $this->tripArticles->add($tripArticle);
             $tripArticle->setPage($this);
         }
+
+        return $this;
+    }
+
+    public function getSearch(): ?Search
+    {
+        return $this->search;
+    }
+
+    public function setSearch(?Search $search): static
+    {
+        $this->search = $search;
 
         return $this;
     }

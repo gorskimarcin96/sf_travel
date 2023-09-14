@@ -10,14 +10,14 @@ use App\Utils\Helper\Parser;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;
 
-class Rainbow implements OptionalTripInterface
+final readonly class Rainbow implements OptionalTripInterface
 {
     private const URL = 'https://r.pl';
 
     public function __construct(
-        private readonly Client $client,
-        private readonly Parser $parser,
-        private readonly Base64 $base64
+        private Client $client,
+        private Parser $parser,
+        private Base64 $base64
     ) {
     }
 

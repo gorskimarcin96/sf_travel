@@ -10,11 +10,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class MamaSaidBeCool implements PageAttractionInterface
+final readonly class MamaSaidBeCool implements PageAttractionInterface
 {
     private const PAGE = 'https://www.mamasaidbecool.pl/kategoria/';
 
-    public function __construct(private readonly HttpClientInterface $httpClient, private readonly Base64 $base64)
+    public function __construct(private HttpClientInterface $httpClient, private Base64 $base64)
     {
     }
 

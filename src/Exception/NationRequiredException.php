@@ -2,7 +2,7 @@
 
 namespace App\Exception;
 
-class NationRequiredException extends \RuntimeException
+final class NationRequiredException extends \RuntimeException
 {
     public function __construct()
     {

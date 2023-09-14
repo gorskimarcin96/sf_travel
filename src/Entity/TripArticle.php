@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TripArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TripArticleRepository::class)]
 class TripArticle
@@ -11,20 +12,24 @@ class TripArticle
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('trip-page')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('trip-page')]
     private string $title;
 
-    #[ORM\ManyToOne(inversedBy: 'tripArticles')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'tripArticles')]
     private TripPage $page;
 
     /** @var string[] */
     #[ORM\Column]
+    #[Groups('trip-page')]
     private array $descriptions = [];
 
     /** @var string[] */
     #[ORM\Column]
+    #[Groups('trip-page')]
     private array $images = [];
 
     public function getId(): ?int

@@ -2,7 +2,7 @@
 
 namespace App\Utils\Helper;
 
-class Parser
+final class Parser
 {
     public function stringToFloat(string $text): float
     {

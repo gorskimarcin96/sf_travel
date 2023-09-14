@@ -4,15 +4,15 @@ namespace App\Utils\Crawler\OptionalTrip\Model;
 
 use App\Entity\Money;
 
-class OptionalTrip
+final readonly class OptionalTrip
 {
     /** @param string|string[] $description */
     public function __construct(
-        private readonly string $title,
-        private readonly string|array $description,
-        private readonly string $url,
-        private readonly string $img,
-        private readonly Money $money,
+        private string $title,
+        private string|array $description,
+        private string $url,
+        private string $img,
+        private Money $money,
     ) {
     }
 

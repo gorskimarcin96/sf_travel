@@ -4,7 +4,7 @@ namespace App\Utils\Helper;
 
 use App\Exception\NullException;
 
-class Base64
+final class Base64
 {
     public function convertFromImage(string $path): string
     {
