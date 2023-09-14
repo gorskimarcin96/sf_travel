@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\HttpOperation;
 use App\Controller\SearchController;
 use App\Repository\SearchRepository;
@@ -14,11 +13,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(operations: [
-    new Get(uriTemplate: '/{id}'),
     new HttpOperation(
         method: 'POST',
         uriTemplate: '',
-        status: Response::HTTP_CREATED,
+        status: Response::HTTP_OK,
         controller: SearchController::class,
         input: \App\ApiResource\Input\Search::class
     ),
@@ -90,6 +88,13 @@ class Search
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getNation(): string

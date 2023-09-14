@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['trip-page']])]
-#[ApiFilter(SearchFilter::class, properties: ['search' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'source' => 'exact'])]
 #[ORM\Entity(repositoryClass: TripPageRepository::class)]
 class TripPage
 {
@@ -53,6 +53,13 @@ class TripPage
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getUrl(): string

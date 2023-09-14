@@ -34,6 +34,19 @@
     "symfony/validator": "6.3.*",
     "symfony/yaml": "6.3.*"
   },
+  "require-dev": {
+    "behat/behat": "^3.13",
+    "coduo/php-matcher": "^6",
+    "friends-of-behat/symfony-extension": "^2.4",
+    "friendsofphp/php-cs-fixer": "^3.23",
+    "phpstan/phpstan": "^1.10",
+    "phpstan/phpstan-symfony": "^1.3",
+    "phpunit/phpunit": "^9.5",
+    "rector/rector": "^0.18.0",
+    "symfony/browser-kit": "6.3.*",
+    "symfony/maker-bundle": "^1.50",
+    "symfony/phpunit-bridge": "^6.3"
+  },
   "config": {
     "allow-plugins": {
       "php-http/discovery": true,
@@ -76,11 +89,13 @@
       "@phpunit",
       "@rector",
       "@phpstan",
-      "@csfix"
+      "@csfix",
+      "@functional-tests"
     ],
     "phpunit": [
       "./bin/console cache:clear --env=test -q",
-      "./bin/console doctrine:database:create --env=test --if-not-exists -q",
+      "./bin/console doctrine:database:drop --env=test -q --force",
+      "./bin/console doctrine:database:create --env=test -q",
       "./bin/console doctrine:migration:migrate --env=test -q -n",
       "./bin/phpunit"
     ],
@@ -93,7 +108,8 @@
     ],
     "csfix": [
       "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix"
-    ]
+    ],
+    "functional-tests": "php -d memory_limit=-1 ./vendor/bin/behat -f progress"
   },
   "conflict": {
     "symfony/symfony": "*"
@@ -103,15 +119,5 @@
       "allow-contrib": false,
       "require": "6.3.*"
     }
-  },
-  "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.23",
-    "phpstan/phpstan": "^1.10",
-    "phpstan/phpstan-symfony": "^1.3",
-    "phpunit/phpunit": "^9.5",
-    "rector/rector": "^0.18.0",
-    "symfony/browser-kit": "6.3.*",
-    "symfony/maker-bundle": "^1.50",
-    "symfony/phpunit-bridge": "^6.3"
   }
 }
