@@ -19,29 +19,29 @@ cd docker && docker-compose up -d
 ### Run all tests
 
 ```sh
-cd docker && docker-compose exec php composer tests
+cd docker && docker-compose exec backend composer tests
 ```
 
 ### Run phpunits
 
 ```sh
-cd docker && docker-compose exec php composer phpunit
+cd docker && docker-compose exec backend composer phpunit
 ```
 
 ### Run rector
 
 ```sh
-cd docker && docker-compose exec php composer rector
+cd docker && docker-compose exec backend composer rector
 ```
 
 ### Run phpstan
 
 ```sh
-cd docker && docker-compose exec php composer phpstan
+cd docker && docker-compose exec backend composer phpstan
 ```
 
 ### Run csfixer
 
 ```sh
-cd docker && docker-compose exec php composer csfix
+cd docker && docker-compose exec backend composer csfix
 ```

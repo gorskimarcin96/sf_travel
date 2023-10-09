@@ -57,7 +57,7 @@ Feature: Searcher
 """
 
   Scenario: Get optional trips with filters
-    When I send a "GET" request to "/optional_trips?id=1&source=abc"
+    When I send a "GET" request to "/optional_trips?search=1&source=abc"
     Then I get response 200 status code
     And I get response 2 elements
     And I get response body:

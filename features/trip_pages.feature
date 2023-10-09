@@ -78,7 +78,7 @@ Feature: Searcher
     """
 
   Scenario: Get trip pages with filters
-    When I send a "GET" request to "/trip_pages?id=1&source=abc"
+    When I send a "GET" request to "/trip_pages?search=1&source=abc"
     Then I get response 200 status code
     And I get response 1 elements
     And I get response body:
