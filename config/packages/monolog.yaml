@@ -1,6 +1,12 @@
 monolog:
   channels: [ "queue" , "messenger", "deprecation" ]
   handlers:
+    main:
+      type: stream
+      path: "%kernel.logs_dir%/%kernel.environment%.log"
+      level: notice
+      channels: [ '!deprecation' ]
+      include_stacktraces: true
     queue:
       channels: [ "queue" ]
       path: "%kernel.logs_dir%/queue.log"

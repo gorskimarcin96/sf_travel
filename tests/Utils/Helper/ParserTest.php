@@ -11,7 +11,7 @@ class ParserTest extends TestCase
     public function getData(): array
     {
         return [
-            ['text 123,456.789 text', 123456789.0],
+            ['text 123,456.789 text', 123456.789],
         ];
     }
 

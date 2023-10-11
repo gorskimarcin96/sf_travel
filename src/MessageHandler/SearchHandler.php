@@ -29,7 +29,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
     ) {
     }
 
-    public function __invoke(Search $message): void
+    public function __invoke(Search $message, bool $recursive = true): void
     {
         $entity = $this->searchRepository->find($message->getSearchId()) ?? throw new EntityNotFoundException();
         $searchServiceClass = $entity->getServiceTodo();
@@ -44,7 +44,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
                 } elseif ($service instanceof PageAttractionInterface) {
                     $entity = $this->pageAttraction->save($service, $entity->getPlace(), $entity->getNation(), $entity);
                 } else {
-                    throw new \LogicException(sprintf('Service %s is not implmeneted.', $service::class));
+                    throw new \LogicException(sprintf('Service %s is not implemented.', $service::class));
                 }
 
                 $entity->addService($searchServiceClass);
@@ -59,7 +59,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
-        if (!$entity->isFinished()) {
+        if (!$entity->isFinished() && $recursive) {
             $this->messageBus->dispatch(new Search($entity->getId() ?? throw new NullException()));
         }
     }

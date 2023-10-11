@@ -10,6 +10,7 @@ use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
 use Facebook\WebDriver\WebDriverKeys;
 use Symfony\Component\Panther\Client;
+use Symfony\Component\Panther\DomCrawler\Crawler;
 
 final readonly class Itaka implements OptionalTripInterface
 {
@@ -36,17 +37,22 @@ final readonly class Itaka implements OptionalTripInterface
         return $this->client
             ->getCrawler()
             ->filter('div.container>div>div.ant-col.region-excursions__item')
-            ->each(fn (\Symfony\Component\Panther\DomCrawler\Crawler $node) => new OptionalTrip(
+            ->each(fn (Crawler $node) => new OptionalTrip(
                 $node->filter('.excursion-tile__title')->text(),
                 [],
                 self::MAIN_DOMAIN.$node->filter('a')->getAttribute('href'),
                 $this->base64->convertFromImage($node->filter('img')->getAttribute('src') ?? throw new NullException()),
-                (new Money())->setPrice($this->parser->stringToFloat($node->filter('.excursion-price-omnibus__value')->text()))
+                (new Money())->setPrice($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()))
             ));
     }
 
     public function getSource(): string
     {
         return self::class;
+    }
+
+    private function parsePrice(string $price): float
+    {
+        return $this->parser->stringToFloat(str_replace(',', '.', rtrim($price, '/os.')));
     }
 }

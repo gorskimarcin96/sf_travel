@@ -104,7 +104,7 @@ class Search
 
     public function setNation(string $nation): static
     {
-        $this->nation = $nation;
+        $this->nation = strtolower($nation);
 
         return $this;
     }
@@ -116,7 +116,7 @@ class Search
 
     public function setPlace(string $place): static
     {
-        $this->place = $place;
+        $this->place = strtolower($place);
 
         return $this;
     }

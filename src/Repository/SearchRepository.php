@@ -24,8 +24,8 @@ final class SearchRepository extends ServiceEntityRepository
     public function findByNationAndPlace(string $nation, string $place): ?Search
     {
         return $this->findOneBy([
-            'nation' => $nation,
-            'place' => $place,
+            'nation' => strtolower($nation),
+            'place' => strtolower($place),
         ], ['createdAt' => 'desc']);
     }
 }
