@@ -12,6 +12,7 @@ use App\Utils\Saver\OptionalTrip;
 use App\Utils\Saver\PageAttraction;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
+use Facebook\WebDriver\Exception\PhpWebDriverExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -20,6 +21,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
 {
     public function __construct(
         private LoggerInterface $logger,
+        private LoggerInterface $downloaderLogger,
         private TripServices $tripServices,
         private SearchRepository $searchRepository,
         private EntityManagerInterface $entityManager,
@@ -40,7 +42,15 @@ final readonly class SearchHandler implements MessageHandlerInterface
                 $service = $this->tripServices->findByClassName($searchServiceClass);
 
                 if ($service instanceof OptionalTripInterface) {
-                    $entity = $this->optionalTrip->save($service, $entity->getPlace(), $entity->getNation(), $entity);
+                    try {
+                        $entity = $this->optionalTrip->save($service, $entity->getPlace(), $entity->getNation(), $entity);
+                    } catch (PhpWebDriverExceptionInterface $exception) {
+                        $this->logger->error(sprintf($exception::class, $exception));
+                        $service->restartPantherClient();
+
+                        $this->logger->notice('Restarted panther client.');
+                        $entity = $this->optionalTrip->save($service, $entity->getPlace(), $entity->getNation(), $entity);
+                    }
                 } elseif ($service instanceof PageAttractionInterface) {
                     $entity = $this->pageAttraction->save($service, $entity->getPlace(), $entity->getNation(), $entity);
                 } else {
@@ -49,8 +59,8 @@ final readonly class SearchHandler implements MessageHandlerInterface
 
                 $entity->addService($searchServiceClass);
             } catch (\Throwable $exception) {
-                $this->logger->error($exception::class);
-                $this->logger->error($exception->getMessage());
+                $this->downloaderLogger->error($exception::class);
+                $this->downloaderLogger->error($exception->getMessage());
 
                 $entity->addError($searchServiceClass, [$exception::class, $exception->getMessage()]);
             }

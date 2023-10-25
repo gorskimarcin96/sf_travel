@@ -7,61 +7,88 @@ use App\Exception\NationRequiredException;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
+use Facebook\WebDriver\Exception\TimeoutException;
 use Facebook\WebDriver\WebDriverKeys;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;
 
-final readonly class Tui implements OptionalTripInterface
+final readonly class Tui extends AbstractOptionalTrip implements OptionalTripInterface
 {
+    private const SLEEP_TIME = 7;
     private const MAIN_DOMAIN = 'https://www.tui.pl';
     private const URL = 'https://www.tui.pl/atrakcje/wyniki-wyszukiwania';
 
     public function __construct(
-        private Client $client,
+        private LoggerInterface $downloaderLogger,
         private Parser $parser,
         private Base64 $base64,
-        private LoggerInterface $logger
+        Client $client,
     ) {
+        parent::__construct($client);
     }
 
     /** @return OptionalTrip[] */
     public function getOptionalTrips(string $place, string $nation = null): array
     {
-        $this->client->request('GET', self::URL.'?'.http_build_query(['term' => $place]));
-        $this->client->waitForElementToContain('button', 'Zaakceptuj');
-        $this->client->executeScript("document.querySelector('button').click()");
+        $url = self::URL.'?'.http_build_query(['term' => $place]);
+
+        $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
+        $this->client->request('GET', $url);
+        try {
+            $this->client->waitForElementToContain('button', 'Zaakceptuj', 5);
+        } catch (TimeoutException) {
+        }
+        $this->client->executeScript("document.querySelectorAll('button')[3].click()");
         $this->client->waitForElementToContain('main div.border-blue-foamDark', 'Zobacz atrakcję');
         $this->client->waitForVisibility('main div.border-blue-foamDark img');
         $this->client->getKeyboard()
             ->pressKey(WebDriverKeys::PAGE_DOWN)->pressKey(WebDriverKeys::PAGE_DOWN)
             ->pressKey(WebDriverKeys::PAGE_DOWN)->pressKey(WebDriverKeys::PAGE_DOWN);
 
-        sleep(2);
+        sleep(self::SLEEP_TIME);
 
         $n = abs(ceil($this->parser->stringToFloat($this->client->getCrawler()->filter('h1')->text()) / 12));
         for ($i = 0; $i <= $n; ++$i) {
-            try {
+            if (str_contains($this->client->getCrawler()->text(), 'Pokaż więcej')) {
                 $this->client->executeScript("Array.prototype.slice.call(document.getElementsByTagName('button')).filter(el => el.textContent.trim() === 'Pokaż więcej')[0].click()");
-            } catch (\Throwable $e) {
-                $this->logger->warning($e::class.' '.$e->getMessage());
+                sleep(self::SLEEP_TIME);
+            } else {
                 break;
             }
 
-            $this->client->getKeyboard()->pressKey(WebDriverKeys::PAGE_DOWN);
-            sleep(3);
+            0 === $i ?
+                $this->client->getKeyboard()
+                    ->pressKey(WebDriverKeys::PAGE_DOWN)->pressKey(WebDriverKeys::PAGE_DOWN)
+                    ->pressKey(WebDriverKeys::PAGE_DOWN)->pressKey(WebDriverKeys::PAGE_DOWN)
+                : $this->client->getKeyboard()->pressKey(WebDriverKeys::PAGE_DOWN)->pressKey(WebDriverKeys::PAGE_DOWN);
         }
 
-        return $this->client
+        $data = $this->client
             ->getCrawler()
             ->filter('main div.border-blue-foamDark')
-            ->each(fn (Crawler $node) => new OptionalTrip(
-                $node->filter('div.text-blue a')->first()->text(),
-                $node->filter('div.text-blue span')->first()->text(),
-                self::MAIN_DOMAIN.$node->filter('a')->first()->attr('href'),
-                $this->base64->convertFromImage($node->filter('img')->first()->attr('src') ?? throw new NationRequiredException()),
-                (new Money())->setPrice($this->parser->stringToFloat($node->filter('span.flex.items-baseline.font-headings')->text()) / 100)
-            ));
+            ->each(function (Crawler $node) {
+                try {
+                    return new OptionalTrip(
+                        $node->filter('div.text-blue a')->first()->text(),
+                        $node->filter('div.text-blue span')->first()->text(),
+                        self::MAIN_DOMAIN.$node->filter('a')->first()->attr('href'),
+                        $this->base64->convertFromImage($node->filter('img')->first()->attr('src') ?? throw new NationRequiredException()),
+                        (new Money())->setPrice($this->parser->stringToFloat($node->filter('span.flex.items-baseline.font-headings')->text()) / 100)
+                    );
+                } catch (\Throwable $exception) {
+                    $this->downloaderLogger->error(sprintf('%s: %s', $exception::class, $exception->getMessage()));
+
+                    return null;
+                }
+            });
+
+        /** @var OptionalTrip[] $data */
+        $data = array_filter($data, static fn (OptionalTrip|null $optionalTrip) => $optionalTrip instanceof OptionalTrip);
+
+        $this->downloaderLogger->info(sprintf('Found trips: %s', count($data)));
+
+        return $data;
     }
 
     public function getSource(): string

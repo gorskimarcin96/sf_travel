@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 final readonly class OptionalTrip
 {
     public function __construct(
-        private LoggerInterface $logger,
+        private LoggerInterface $downloaderLogger,
         private EntityManagerInterface $entityManager
     ) {
     }
@@ -19,7 +19,7 @@ final readonly class OptionalTrip
     {
         $models = $service->getOptionalTrips($place, $nation);
 
-        $this->logger->notice(sprintf('Get %s trips from "%s".', count($models), $service->getSource()));
+        $this->downloaderLogger->info(sprintf('Get %s trips from "%s".', count($models), $service->getSource()));
 
         foreach ($models as $model) {
             $entity = (new \App\Entity\OptionalTrip())

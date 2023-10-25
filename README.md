@@ -8,10 +8,29 @@
 cp docker/.env.dist docker/.env
 ```
 
+### Build docker images
+
+```sh
+cd docker && docker-compose build --compress
+```
+
 ### Run docker containers
 
 ```sh
 cd docker && docker-compose up -d
+```
+
+### Install packages
+
+```sh
+cd docker && docker-compose exec backend composer install
+```
+
+
+### Run migrations
+
+```sh
+cd docker && docker-compose exec backend ./bin/console doctrine:migration:migrate -n
 ```
 
 ## Tests

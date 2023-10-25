@@ -31,7 +31,7 @@ final class IntegrationTestsSearchCommand extends Command
     ) {
         parent::__construct();
 
-        $this->services = array_map(static fn(object $class): string => $class::class, $factory->create());
+        $this->services = array_map(static fn (object $class): string => $class::class, $factory->create());
     }
 
     protected function configure(): void
@@ -45,8 +45,8 @@ final class IntegrationTestsSearchCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /**
-         * @var string $nation
-         * @var string $place
+         * @var string                      $nation
+         * @var string                      $place
          * @var class-string|class-string[] $services
          */
         [$nation, $place, $services] = [

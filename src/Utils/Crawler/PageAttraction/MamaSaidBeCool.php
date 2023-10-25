@@ -7,6 +7,7 @@ use App\Utils\Crawler\PageAttraction\Model\Article;
 use App\Utils\Crawler\PageAttraction\Model\Page;
 use App\Utils\Helper\Base64;
 use Doctrine\Common\Collections\ArrayCollection;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -14,8 +15,11 @@ final readonly class MamaSaidBeCool implements PageAttractionInterface
 {
     private const PAGE = 'https://www.mamasaidbecool.pl/kategoria/';
 
-    public function __construct(private HttpClientInterface $httpClient, private Base64 $base64)
-    {
+    public function __construct(
+        private HttpClientInterface $httpClient,
+        private Base64 $base64,
+        private LoggerInterface $downloaderLogger
+    ) {
     }
 
     /** @return Page[] */
@@ -24,8 +28,8 @@ final readonly class MamaSaidBeCool implements PageAttractionInterface
         $crawler = new Crawler($this->httpClient->request('GET', self::PAGE.'/'.$nation)->getContent());
         $collection = new ArrayCollection($crawler->filter('h2>a')->each(fn (Crawler $node): string => $node->attr('href') ?? throw new NationRequiredException()));
         $urls = $collection->filter(fn (string $url) => str_contains($url, $place))->toArray();
-
-        return array_map(function (string $url) {
+        $pages = array_map(function (string $url) {
+            $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
             $page = new Page($url);
             $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
 
@@ -43,6 +47,10 @@ final readonly class MamaSaidBeCool implements PageAttractionInterface
 
             return $page;
         }, $urls);
+
+        $this->downloaderLogger->info(sprintf('Found pages: %s', count($pages)));
+
+        return $pages;
     }
 
     public function getSource(): string

@@ -9,4 +9,6 @@ interface OptionalTripInterface extends SourceInterface
 {
     /** @return OptionalTrip[] */
     public function getOptionalTrips(string $place, string $nation = null): array;
+
+    public function restartPantherClient(): void;
 }

@@ -1,5 +1,5 @@
 monolog:
-  channels: [ "queue" , "messenger", "deprecation" ]
+  channels: [ "queue" , "messenger", "deprecation", "downloader" ]
   handlers:
     main:
       type: stream
@@ -7,6 +7,11 @@ monolog:
       level: notice
       channels: [ '!deprecation' ]
       include_stacktraces: true
+    downloader:
+      type: stream
+      path: "%kernel.logs_dir%/downloader.log"
+      channels: [ "downloader" ]
+      level: info
     queue:
       channels: [ "queue" ]
       path: "%kernel.logs_dir%/queue.log"

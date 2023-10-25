@@ -7,8 +7,10 @@ use App\Utils\Faker\Invoker;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Panther\Client;
 use Symfony\Component\Panther\ProcessManager\BrowserManagerInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ItakaTest extends TestCase
 {
@@ -20,7 +22,13 @@ class ItakaTest extends TestCase
     {
         parent::setUp();
 
-        $this->itaka = new Itaka(new Client($this->createMock(BrowserManagerInterface::class)), new Parser(), new Base64());
+        $this->itaka = new Itaka(
+            $this->createMock(HttpClientInterface::class),
+            $this->createMock(LoggerInterface::class),
+            new Parser(),
+            new Base64(),
+            new Client($this->createMock(BrowserManagerInterface::class)),
+        );
     }
 
     /** @return string[][]|float[][] */

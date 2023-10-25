@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 final readonly class PageAttraction
 {
     public function __construct(
-        private LoggerInterface $logger,
+        private LoggerInterface $downloaderLogger,
         private EntityManagerInterface $entityManager
     ) {
     }
@@ -22,7 +22,7 @@ final readonly class PageAttraction
     {
         $models = $service->getPages($place, $nation);
 
-        $this->logger->notice(sprintf('Get %s pages from "%s".', count($models), $service->getSource()));
+        $this->downloaderLogger->info(sprintf('Get %s pages from "%s".', count($models), $service->getSource()));
 
         foreach ($models as $model) {
             /** @var Page $model */

@@ -21,4 +21,8 @@ final readonly class OptionalTrip implements OptionalTripInterface
     {
         return self::class;
     }
+
+    public function restartPantherClient(): void
+    {
+    }
 }

@@ -21,6 +21,8 @@ services:
       - "host.docker.internal:host-gateway"
   queue-worker:
     image: sf_travel
+    volumes:
+      - ./../:/var/www/html
     networks:
       - app-network
     command: ./bin/console messenger:consume async -vvv

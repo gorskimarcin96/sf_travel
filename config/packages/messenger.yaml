@@ -2,6 +2,6 @@ framework:
   messenger:
     transports:
       async: '%env(MESSENGER_TRANSPORT_DSN)%'
-      failed: 'doctrine://default?queue_name=failed'
+      failed: '%env(MESSENGER_TRANSPORT_DSN)%'
     routing:
       App\Message\Search: async

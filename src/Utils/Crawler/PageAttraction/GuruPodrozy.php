@@ -7,6 +7,7 @@ use App\Utils\Crawler\PageAttraction\Model\Article;
 use App\Utils\Crawler\PageAttraction\Model\Page;
 use App\Utils\Helper\Base64;
 use Doctrine\Common\Collections\ArrayCollection;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -14,8 +15,11 @@ final readonly class GuruPodrozy implements PageAttractionInterface
 {
     private const PAGE = 'https://www.gurupodrozy.pl/wyprawy/europa/';
 
-    public function __construct(private HttpClientInterface $httpClient, private Base64 $base64)
-    {
+    public function __construct(
+        private HttpClientInterface $httpClient,
+        private Base64 $base64,
+        private LoggerInterface $downloaderLogger
+    ) {
     }
 
     /** @return Page[] */
@@ -30,6 +34,7 @@ final readonly class GuruPodrozy implements PageAttractionInterface
             $urls = $collection->filter(fn (string $url) => str_contains($url, $place))->toArray();
 
             foreach ($urls as $url) {
+                $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
                 $page = new Page($url);
                 $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
                 $crawler->filter('div.entry-content>*')->each(function (Crawler $node) use ($page) {
@@ -52,6 +57,8 @@ final readonly class GuruPodrozy implements PageAttractionInterface
                 break;
             }
         }
+
+        $this->downloaderLogger->info(sprintf('Found pages: %s', count($pages)));
 
         return $pages;
     }
