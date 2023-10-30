@@ -28,7 +28,8 @@ Feature: Searcher
   "errors": [],
   "createdAt": "2000-01-01T00:00:00+00:00",
   "updatedAt": "@string@.isDateTime()",
-  "finished": true
+  "finished": true,
+  "countServices": []
 }
 """
     And Messenger bus is empty
@@ -53,7 +54,8 @@ Feature: Searcher
   "errors": [],
   "createdAt": "@string@.isDateTime()",
   "updatedAt": "@string@.isDateTime()",
-  "finished": false
+  "finished": false,
+  "countServices": []
 }
 """
     And Messenger bus has 1 records
@@ -77,7 +79,18 @@ Feature: Searcher
   "errors": [],
   "createdAt": "@string@.isDateTime()",
   "updatedAt": "@string@.isDateTime()",
-  "finished": false
+  "finished": false,
+  "countServices": []
 }
 """
     And Messenger bus has 1 records
+
+  Scenario: Search data when input is empty
+    When I send a "POST" request to "/search"
+"""json
+{
+  "nation": "",
+  "place": ""
+}
+"""
+    Then I get response 422 status code

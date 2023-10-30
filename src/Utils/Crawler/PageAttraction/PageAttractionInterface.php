@@ -2,8 +2,8 @@
 
 namespace App\Utils\Crawler\PageAttraction;
 
+use App\Entity\SourceInterface;
 use App\Utils\Crawler\PageAttraction\Model\Page;
-use App\Utils\Crawler\SourceInterface;
 
 interface PageAttractionInterface extends SourceInterface
 {

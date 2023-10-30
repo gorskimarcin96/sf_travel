@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['optional-trips']])]
 #[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'source' => 'exact'])]
 #[ORM\Entity(repositoryClass: OptionalTripRepository::class)]
-class OptionalTrip
+class OptionalTrip implements SourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

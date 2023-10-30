@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['trip-page']])]
 #[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'source' => 'exact'])]
 #[ORM\Entity(repositoryClass: TripPageRepository::class)]
-class TripPage
+class TripPage implements SourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\HttpOperation;
 use App\Controller\SearchController;
 use App\Repository\SearchRepository;
@@ -15,12 +17,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(operations: [
     new HttpOperation(
         method: 'POST',
-        uriTemplate: '',
+        uriTemplate: '/search',
         status: Response::HTTP_OK,
         controller: SearchController::class,
         input: \App\ApiResource\Input\Search::class
     ),
-], routePrefix: '/search', normalizationContext: ['groups' => ['search']])]
+    new Get(uriTemplate: '/search/{id}'),
+    new GetCollection(uriTemplate: '/search', normalizationContext: ['groups' => ['search_collection']]),
+], normalizationContext: ['groups' => ['search']])]
 #[ORM\Entity(repositoryClass: SearchRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Search
@@ -28,22 +32,22 @@ class Search
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('search')]
+    #[Groups(['search', 'search_collection'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('search')]
+    #[Groups(['search', 'search_collection'])]
     private string $nation;
 
     #[ORM\Column(length: 255)]
-    #[Groups('search')]
+    #[Groups(['search', 'search_collection'])]
     private string $place;
 
     /**
      * @var string[]
      */
     #[ORM\Column()]
-    #[Groups('search')]
+    #[Groups(['search', 'search_collection'])]
     private array $services = [];
 
     /**
@@ -56,15 +60,15 @@ class Search
      * @var array<array<string>|string>
      */
     #[ORM\Column()]
-    #[Groups('search')]
+    #[Groups(['search', 'search_collection'])]
     private array $errors = [];
 
     #[ORM\Column]
-    #[Groups('search')]
+    #[Groups(['search', 'search_collection'])]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column]
-    #[Groups('search')]
+    #[Groups(['search', 'search_collection'])]
     private \DateTimeImmutable $updatedAt;
 
     /**
@@ -172,7 +176,7 @@ class Search
         return $this;
     }
 
-    #[Groups('search')]
+    #[Groups(['search', 'search_collection'])]
     public function isFinished(): bool
     {
         return [] === $this->todo;
@@ -256,5 +260,17 @@ class Search
     public function getServiceTodo(): ?string
     {
         return array_pop($this->todo);
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    #[Groups(['search', 'search_collection'])]
+    public function getCountServices(): array
+    {
+        return array_count_values([
+            ...$this->optionalTrips->map(fn (SourceInterface $source) => $source->getSource())->toArray(),
+            ...$this->tripPages->map(fn (SourceInterface $source) => $source->getSource())->toArray(),
+        ]);
     }
 }

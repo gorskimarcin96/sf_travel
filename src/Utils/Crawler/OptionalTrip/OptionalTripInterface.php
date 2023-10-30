@@ -2,8 +2,8 @@
 
 namespace App\Utils\Crawler\OptionalTrip;
 
+use App\Entity\SourceInterface;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
-use App\Utils\Crawler\SourceInterface;
 
 interface OptionalTripInterface extends SourceInterface
 {

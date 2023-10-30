@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use ApiPlatform\Validator\ValidatorInterface;
 use App\ApiResource\Input\Search as Input;
 use App\Entity\Search;
 use App\Exception\NullException;
@@ -20,6 +21,7 @@ final class SearchController extends AbstractController
         private readonly SearchRepository $repository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus,
+        private readonly ValidatorInterface $validator,
         TripServices $factory
     ) {
         $this->todo = array_map(static fn (object $class): string => $class::class, $factory->create());
@@ -27,6 +29,7 @@ final class SearchController extends AbstractController
 
     public function __invoke(Input $input): Search
     {
+        $this->validator->validate($input);
         $search = $this->repository->findByNationAndPlace($input->getNation(), $input->getPlace());
 
         if (!$search || $input->isForce()) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils\Crawler;
+namespace App\Entity;
 
 interface SourceInterface
 {
