@@ -11,7 +11,11 @@ final readonly class Search
         private string $nation,
         #[Assert\NotBlank]
         private string $place,
-        private bool $force = false
+        private \DateTimeImmutable $from = new \DateTimeImmutable(),
+        private \DateTimeImmutable $to = new \DateTimeImmutable(),
+        private int $adults = 2,
+        private int $children = 0,
+        private bool $force = false,
     ) {
     }
 
@@ -23,6 +27,26 @@ final readonly class Search
     public function getPlace(): string
     {
         return $this->place;
+    }
+
+    public function getFrom(): \DateTimeImmutable
+    {
+        return $this->from;
+    }
+
+    public function getTo(): \DateTimeImmutable
+    {
+        return $this->to;
+    }
+
+    public function getAdults(): int
+    {
+        return $this->adults;
+    }
+
+    public function getChildren(): int
+    {
+        return $this->children;
     }
 
     public function isForce(): bool

@@ -12,15 +12,15 @@ class Money
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('optional-trips')]
+    #[Groups(['optional-trips', 'hotels'])]
     private ?int $id = null;
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DECIMAL, precision: 10, scale: 2)]
-    #[Groups('optional-trips')]
+    #[Groups(['optional-trips', 'hotels'])]
     private float $price;
 
     #[ORM\Column(length: 3)]
-    #[Groups('optional-trips')]
+    #[Groups(['optional-trips', 'hotels'])]
     private string $currency = 'PLN';
 
     public function getId(): ?int

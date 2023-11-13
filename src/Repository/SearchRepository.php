@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\ApiResource\Input\Search as Input;
 use App\Entity\Search;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,11 +22,15 @@ final class SearchRepository extends ServiceEntityRepository
         parent::__construct($registry, Search::class);
     }
 
-    public function findByNationAndPlace(string $nation, string $place): ?Search
+    public function findByInput(Input $input): ?Search
     {
         return $this->findOneBy([
-            'nation' => strtolower($nation),
-            'place' => strtolower($place),
+            'nation' => strtolower($input->getNation()),
+            'place' => strtolower($input->getPlace()),
+            'from' => $input->getFrom(),
+            'to' => $input->getTo(),
+            'adults' => $input->getAdults(),
+            'children' => $input->getChildren(),
         ], ['createdAt' => 'desc']);
     }
 }

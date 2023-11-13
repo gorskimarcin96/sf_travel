@@ -57,6 +57,10 @@ final class IntegrationTestsSearchCommand extends Command
         $search = (new Search())
             ->setNation($nation)
             ->setPlace($place)
+            ->setFrom(new \DateTimeImmutable())
+            ->setTo((new \DateTimeImmutable())->modify('+7 days'))
+            ->setAdults(2)
+            ->setChildren(0)
             ->setTodo(is_string($services) ? [$services] : $services);
 
         $this->entityManager->persist($search);

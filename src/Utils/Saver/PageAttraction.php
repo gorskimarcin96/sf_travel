@@ -21,7 +21,6 @@ final readonly class PageAttraction
     public function save(PageAttractionInterface $service, string $place, string $nation, Search $search): Search
     {
         $models = $service->getPages($place, $nation);
-
         $this->downloaderLogger->info(sprintf('Get %s pages from "%s".', count($models), $service->getSource()));
 
         foreach ($models as $model) {

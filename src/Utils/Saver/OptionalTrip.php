@@ -18,7 +18,6 @@ final readonly class OptionalTrip
     public function save(OptionalTripInterface $service, string $place, string $nation, Search $search): Search
     {
         $models = $service->getOptionalTrips($place, $nation);
-
         $this->downloaderLogger->info(sprintf('Get %s trips from "%s".', count($models), $service->getSource()));
 
         foreach ($models as $model) {

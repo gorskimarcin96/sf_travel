@@ -6,8 +6,10 @@ use App\Exception\NullException;
 use App\Factory\TripServices;
 use App\Message\Search;
 use App\Repository\SearchRepository;
+use App\Utils\Crawler\Hotel\HotelInterface;
 use App\Utils\Crawler\OptionalTrip\OptionalTripInterface;
 use App\Utils\Crawler\PageAttraction\PageAttractionInterface;
+use App\Utils\Saver\Hotel;
 use App\Utils\Saver\OptionalTrip;
 use App\Utils\Saver\PageAttraction;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,6 +30,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
         private MessageBusInterface $messageBus,
         private OptionalTrip $optionalTrip,
         private PageAttraction $pageAttraction,
+        private Hotel $hotel,
     ) {
     }
 
@@ -38,7 +41,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
 
         if ($searchServiceClass) {
             try {
-                /** @var OptionalTripInterface|PageAttractionInterface $service */
+                /** @var OptionalTripInterface|PageAttractionInterface|HotelInterface $service */
                 $service = $this->tripServices->findByClassName($searchServiceClass);
 
                 if ($service instanceof OptionalTripInterface) {
@@ -53,6 +56,8 @@ final readonly class SearchHandler implements MessageHandlerInterface
                     }
                 } elseif ($service instanceof PageAttractionInterface) {
                     $entity = $this->pageAttraction->save($service, $entity->getPlace(), $entity->getNation(), $entity);
+                } elseif ($service instanceof HotelInterface) {
+                    $entity = $this->hotel->save($service, $entity->getPlace(), $entity->getFrom(), $entity->getTo(), $entity);
                 } else {
                     throw new \LogicException(sprintf('Service %s is not implemented.', $service::class));
                 }

@@ -6,15 +6,17 @@ Feature: Searcher
   Background:
     Given the database is clean
     And there are searches
-      | id | nation | place     | created_at |
-      | 1  | grecja | zakynthos | 2000-01-01 |
+      | id | nation | place     | from       | to         | created_at |
+      | 1  | grecja | zakynthos | 2000-01-01 | 2000-01-07 | 2000-01-01 |
 
   Scenario: Search data when data is exists in database
     When I send a "POST" request to "/search"
 """json
 {
   "nation": "grecja",
-  "place": "zakynthos"
+  "place": "zakynthos",
+  "from": "2000-01-01",
+  "to": "2000-01-07"
 }
 """
     Then I get response 200 status code
@@ -24,6 +26,10 @@ Feature: Searcher
   "id": 1,
   "nation": "grecja",
   "place": "zakynthos",
+  "from": "2000-01-01T00:00:00+00:00",
+  "to": "2000-01-07T00:00:00+00:00",
+  "adults": 2,
+  "children": 0,
   "services": [],
   "errors": [],
   "createdAt": "2000-01-01T00:00:00+00:00",
@@ -50,6 +56,10 @@ Feature: Searcher
   "id": "@integer@",
   "nation": "grecja",
   "place": "zakynthos",
+  "from": "@string@.isDateTime()",
+  "to": "@string@.isDateTime()",
+  "adults": 2,
+  "children": 0,
   "services": [],
   "errors": [],
   "createdAt": "@string@.isDateTime()",
@@ -75,6 +85,10 @@ Feature: Searcher
   "id": "@integer@",
   "nation": "grecja",
   "place": "rodos",
+  "from": "@string@.isDateTime()",
+  "to": "@string@.isDateTime()",
+  "adults": 2,
+  "children": 0,
   "services": [],
   "errors": [],
   "createdAt": "@string@.isDateTime()",

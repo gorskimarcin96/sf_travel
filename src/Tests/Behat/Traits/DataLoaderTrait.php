@@ -44,6 +44,10 @@ trait DataLoaderTrait
                 ->setId($row['id'])
                 ->setNation($row['nation'])
                 ->setPlace($row['place'])
+                ->setFrom(new \DateTimeImmutable($row['from']))
+                ->setTo(new \DateTimeImmutable($row['to']))
+                ->setAdults($row['adults'] ?? 2)
+                ->setChildren($row['children'] ?? 0)
                 ->setCreatedAt(new \DateTimeImmutable($row['created_at']));
 
             $this->entityManager->persist($entity);

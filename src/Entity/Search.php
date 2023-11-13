@@ -43,6 +43,22 @@ class Search
     #[Groups(['search', 'search_collection'])]
     private string $place;
 
+    #[ORM\Column(length: 255, name: 'from_at', type: \Doctrine\DBAL\Types\Types::DATE_IMMUTABLE)]
+    #[Groups(['search', 'search_collection'])]
+    private \DateTimeImmutable $from;
+
+    #[ORM\Column(length: 255, name: 'to_at', type: \Doctrine\DBAL\Types\Types::DATE_IMMUTABLE)]
+    #[Groups(['search', 'search_collection'])]
+    private \DateTimeImmutable $to;
+
+    #[ORM\Column]
+    #[Groups(['search', 'search_collection'])]
+    private int $adults;
+
+    #[ORM\Column]
+    #[Groups(['search', 'search_collection'])]
+    private int $children;
+
     /**
      * @var string[]
      */
@@ -72,21 +88,28 @@ class Search
     private \DateTimeImmutable $updatedAt;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\OptionalTrip>|\App\Entity\OptionalTrip[]
+     * @var Collection<int, OptionalTrip>|OptionalTrip[]
      */
     #[ORM\OneToMany(mappedBy: 'search', targetEntity: OptionalTrip::class)]
     private Collection $optionalTrips;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\TripPage>|\App\Entity\TripPage[]
+     * @var Collection<int, TripPage>|TripPage[]
      */
     #[ORM\OneToMany(mappedBy: 'search', targetEntity: TripPage::class)]
     private Collection $tripPages;
+
+    /**
+     * @var Collection<int, Hotel>|Hotel[]
+     */
+    #[ORM\OneToMany(mappedBy: 'search', targetEntity: Hotel::class)]
+    private Collection $hotels;
 
     public function __construct()
     {
         $this->optionalTrips = new ArrayCollection();
         $this->tripPages = new ArrayCollection();
+        $this->hotels = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -121,6 +144,54 @@ class Search
     public function setPlace(string $place): static
     {
         $this->place = strtolower($place);
+
+        return $this;
+    }
+
+    public function getFrom(): \DateTimeImmutable
+    {
+        return $this->from;
+    }
+
+    public function setFrom(\DateTimeImmutable $from): static
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+
+    public function getTo(): \DateTimeImmutable
+    {
+        return $this->to;
+    }
+
+    public function setTo(\DateTimeImmutable $to): static
+    {
+        $this->to = $to;
+
+        return $this;
+    }
+
+    public function getAdults(): int
+    {
+        return $this->adults;
+    }
+
+    public function setAdults(int $adults): static
+    {
+        $this->adults = $adults;
+
+        return $this;
+    }
+
+    public function getChildren(): int
+    {
+        return $this->children;
+    }
+
+    public function setChildren(int $children): static
+    {
+        $this->children = $children;
 
         return $this;
     }
@@ -257,6 +328,24 @@ class Search
         return $this;
     }
 
+    /**
+     * @return Collection<int, Hotel>
+     */
+    public function getHotels(): Collection
+    {
+        return $this->hotels;
+    }
+
+    public function addHotel(Hotel $hotel): static
+    {
+        if (!$this->hotels->contains($hotel)) {
+            $this->hotels->add($hotel);
+            $hotel->setSearch($this);
+        }
+
+        return $this;
+    }
+
     public function getServiceTodo(): ?string
     {
         return array_pop($this->todo);
@@ -271,6 +360,7 @@ class Search
         return array_count_values([
             ...$this->optionalTrips->map(fn (SourceInterface $source) => $source->getSource())->toArray(),
             ...$this->tripPages->map(fn (SourceInterface $source) => $source->getSource())->toArray(),
+            ...$this->hotels->map(fn (SourceInterface $source) => $source->getSource())->toArray(),
         ]);
     }
 }

@@ -6,9 +6,9 @@ Feature: Searcher
   Background:
     Given the database is clean
     And there are searches
-      | id | nation | place     | created_at |
-      | 1  | grecja | zakynthos | 2000-01-01 |
-      | 2  | grecja | rodos     | 2000-01-01 |
+      | id | nation | place     | from       | to         | created_at |
+      | 1  | grecja | zakynthos | 2000-01-01 | 2000-01-07 | 2000-01-01 |
+      | 2  | grecja | rodos     | 2000-01-01 | 2000-01-07 | 2000-01-01 |
     And there are optional trips
       | id | title   | description             | url                 | img                 | source | search_id |
       | 1  | title 1 | description;description | https://example.org | https://example.jpg | xyz    | 1         |

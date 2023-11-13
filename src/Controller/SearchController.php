@@ -30,12 +30,16 @@ final class SearchController extends AbstractController
     public function __invoke(Input $input): Search
     {
         $this->validator->validate($input);
-        $search = $this->repository->findByNationAndPlace($input->getNation(), $input->getPlace());
+        $search = $this->repository->findByInput($input);
 
         if (!$search || $input->isForce()) {
             $search = (new Search())
                 ->setNation($input->getNation())
                 ->setPlace($input->getPlace())
+                ->setFrom($input->getFrom())
+                ->setTo($input->getTo())
+                ->setAdults($input->getAdults())
+                ->setChildren($input->getChildren())
                 ->setTodo($this->todo);
 
             $this->entityManager->persist($search);
