@@ -4,6 +4,7 @@ namespace App\Utils\Crawler\Hotel;
 
 use App\Entity\Money;
 use App\Exception\NullException;
+use App\Utils\Crawler\Hotel\Model\Hotel;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
 use Psr\Log\LoggerInterface;
@@ -52,30 +53,30 @@ final readonly class Booking implements HotelInterface
 
         $this->downloaderLogger->notice(sprintf('Got first %s hotels.', $crawler->filter('div[data-testid="property-card"]')->count()));
 
-        return $crawler->filter('div[data-testid="property-card"]')->each(function (Crawler $node) use ($betweenDays) {
+        return $crawler->filter('div[data-testid="property-card"]')->each(function (Crawler $crawler) use ($betweenDays): Hotel {
             try {
-                $text = $node->filter('div[data-testid="review-score"]>div')->first()->text();
+                $text = $crawler->filter('div[data-testid="review-score"]>div')->first()->text();
                 $rate = $this->parser->stringToFloat(str_replace(',', '.', $text));
             } catch (\Throwable) {
                 $rate = null;
             }
 
             $amount = $this->parser
-                ->stringToFloat($node->filter('span[data-testid="price-and-discounted-price"]')->text());
+                ->stringToFloat($crawler->filter('span[data-testid="price-and-discounted-price"]')->text());
 
             try {
-                $descriptionHeader = $node->filter('div[data-testid="recommended-units"] h4')->text();
+                $descriptionHeader = $crawler->filter('div[data-testid="recommended-units"] h4')->text();
             } catch (\Throwable) {
             }
 
-            $descriptions = $node->filter('div[data-testid="recommended-units"] ul>li')
-                ->each(fn (Crawler $node): string => $node->text());
+            $descriptions = $crawler->filter('div[data-testid="recommended-units"] ul>li')
+                ->each(fn (Crawler $node): string => $crawler->text());
 
             return new Model\Hotel(
-                $node->filter('h3>a>div')->first()->text(),
-                $node->filter('h3>a')->attr('href') ?? throw new NullException(),
-                $this->base64->convertFromImage($node->filter('img')->attr('src') ?? throw new NullException()),
-                $node->filter('span[data-testid="address"]')->text(),
+                $crawler->filter('h3>a>div')->first()->text(),
+                $crawler->filter('h3>a')->attr('href') ?? throw new NullException(),
+                $this->base64->convertFromImage($crawler->filter('img')->attr('src') ?? throw new NullException()),
+                $crawler->filter('span[data-testid="address"]')->text(),
                 isset($descriptionHeader) ? [$descriptionHeader] + $descriptions : $descriptions,
                 (new Money())->setPrice($amount / $betweenDays),
                 $rate

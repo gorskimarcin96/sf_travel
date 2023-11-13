@@ -6,7 +6,7 @@ use App\Utils\Crawler\Model\URLInterface;
 
 final class Page implements URLInterface
 {
-    /** @param \App\Utils\Crawler\PageAttraction\Model\Article[] $articles */
+    /** @param Article[] $articles */
     public function __construct(private readonly string $url, private array $articles = [], private ?string $map = null)
     {
     }
@@ -39,6 +39,6 @@ final class Page implements URLInterface
 
     public function lastArticle(): ?Article
     {
-        return $this->articles ? $this->articles[count($this->articles) - 1] : null;
+        return [] !== $this->articles ? $this->articles[count($this->articles) - 1] : null;
     }
 }

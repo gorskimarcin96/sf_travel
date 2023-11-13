@@ -34,7 +34,7 @@ class TripPage implements SourceInterface
     /**
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\TripArticle>|\App\Entity\TripArticle[]
      */
-    #[ORM\OneToMany(mappedBy: 'page', targetEntity: TripArticle::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'tripPage', targetEntity: TripArticle::class, cascade: ['persist'])]
     #[Groups('trip-page')]
     private Collection $tripArticles;
 

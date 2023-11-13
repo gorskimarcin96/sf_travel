@@ -25,9 +25,9 @@ final class ApiContext implements Context
      *
      * @throws \Exception
      */
-    public function iSendARequestTo(string $method, string $url, PyStringNode $body = null): void
+    public function iSendARequestTo(string $method, string $url, PyStringNode $pyStringNode = null): void
     {
-        $request = Request::create($url, $method, [], [], [], [], $body);
+        $request = Request::create($url, $method, [], [], [], [], $pyStringNode);
         'POST' === $method ?
             $request->headers->add(['Accept' => 'application/json', 'Content-Type' => 'application/json']) :
             $request->headers->add(['Accept' => 'application/json']);
@@ -62,13 +62,13 @@ final class ApiContext implements Context
      *
      * @throws BehatException
      */
-    public function iGetResponseBody(PyStringNode $expectResponse): void
+    public function iGetResponseBody(PyStringNode $pyStringNode): void
     {
-        $matcher = new PHPMatcher();
+        $phpMatcher = new PHPMatcher();
         $content = $this->lastResponse->getContent();
 
-        if (!$matcher->match($content, $expectResponse->getRaw())) {
-            throw new BehatException($matcher->error().", $content does not match ".$expectResponse->getRaw());
+        if (!$phpMatcher->match($content, $pyStringNode->getRaw())) {
+            throw new BehatException($phpMatcher->error().", $content does not match ".$pyStringNode->getRaw());
         }
     }
 }

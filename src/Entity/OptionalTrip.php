@@ -38,7 +38,7 @@ class OptionalTrip implements SourceInterface
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT)]
     #[Groups('optional-trips')]
-    private string $img;
+    private string $image;
 
     #[ORM\Column(length: 255)]
     #[Groups('optional-trips')]
@@ -108,14 +108,14 @@ class OptionalTrip implements SourceInterface
         return $this;
     }
 
-    public function getImg(): string
+    public function getImage(): string
     {
-        return $this->img;
+        return $this->image;
     }
 
-    public function setImg(string $img): static
+    public function setImage(string $image): static
     {
-        $this->img = $img;
+        $this->image = $image;
 
         return $this;
     }

@@ -18,21 +18,21 @@ final class SearchController extends AbstractController
     private readonly array $todo;
 
     public function __construct(
-        private readonly SearchRepository $repository,
+        private readonly SearchRepository $searchRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus,
         private readonly ValidatorInterface $validator,
-        TripServices $factory
+        TripServices $tripServices
     ) {
-        $this->todo = array_map(static fn (object $class): string => $class::class, $factory->create());
+        $this->todo = array_map(static fn (object $class): string => $class::class, $tripServices->create());
     }
 
     public function __invoke(Input $input): Search
     {
         $this->validator->validate($input);
-        $search = $this->repository->findByInput($input);
+        $search = $this->searchRepository->findByInput($input);
 
-        if (!$search || $input->isForce()) {
+        if (!$search instanceof \App\Entity\Search || $input->isForce()) {
             $search = (new Search())
                 ->setNation($input->getNation())
                 ->setPlace($input->getPlace())

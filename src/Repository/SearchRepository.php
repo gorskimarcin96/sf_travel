@@ -17,9 +17,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 final class SearchRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Search::class);
+        parent::__construct($managerRegistry, Search::class);
     }
 
     public function findByInput(Input $input): ?Search

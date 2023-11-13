@@ -12,7 +12,7 @@ final readonly class OptionalTrip implements URLInterface
         private string $title,
         private string|array $description,
         private string $url,
-        private string $img,
+        private string $image,
         private Money $money,
     ) {
     }
@@ -33,9 +33,9 @@ final readonly class OptionalTrip implements URLInterface
         return $this->url;
     }
 
-    public function getImg(): string
+    public function getImage(): string
     {
-        return $this->img;
+        return $this->image;
     }
 
     public function getMoney(): Money

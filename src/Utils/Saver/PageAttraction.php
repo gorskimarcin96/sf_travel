@@ -22,10 +22,10 @@ final readonly class PageAttraction
     ) {
     }
 
-    public function save(PageAttractionInterface $service, string $place, string $nation, Search $search): Search
+    public function save(PageAttractionInterface $pageAttraction, string $place, string $nation, Search $search): Search
     {
-        $models = $service->getPages($place, $nation);
-        $this->downloaderLogger->info(sprintf('Get %s pages from "%s".', count($models), $service->getSource()));
+        $models = $pageAttraction->getPages($place, $nation);
+        $this->downloaderLogger->info(sprintf('Get %s pages from "%s".', count($models), $pageAttraction->getSource()));
 
         /** @var Model[] $models */
         $models = $this->uniqueByUrl($models);
@@ -36,7 +36,7 @@ final readonly class PageAttraction
             $pageTrip = (new TripPage())
                 ->setSearch($search)
                 ->setUrl($model->getUrl())
-                ->setSource($service->getSource())
+                ->setSource($pageAttraction->getSource())
                 ->setMap($model->getMap());
 
             foreach ($model->getArticles() as $article) {

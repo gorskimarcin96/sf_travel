@@ -55,7 +55,7 @@ class Hotel implements SourceInterface
     #[Groups('hotels')]
     private string $source;
 
-    #[ORM\ManyToOne(inversedBy: 'hotel')]
+    #[ORM\ManyToOne(inversedBy: 'hotels')]
     private ?Search $search = null;
 
     public function getId(): ?int

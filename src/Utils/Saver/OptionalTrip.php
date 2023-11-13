@@ -2,6 +2,7 @@
 
 namespace App\Utils\Saver;
 
+use App\Entity\OptionalTrip as Entity;
 use App\Entity\Search;
 use App\Utils\Crawler\Model\URLTrait;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip as Model;
@@ -19,22 +20,22 @@ final readonly class OptionalTrip
     ) {
     }
 
-    public function save(OptionalTripInterface $service, string $place, string $nation, Search $search): Search
+    public function save(OptionalTripInterface $optionalTrip, string $place, string $nation, Search $search): Search
     {
-        $models = $service->getOptionalTrips($place, $nation);
-        $this->downloaderLogger->info(sprintf('Get %s trips from "%s".', count($models), $service->getSource()));
+        $models = $optionalTrip->getOptionalTrips($place, $nation);
+        $this->downloaderLogger->info(sprintf('Get %s trips from "%s".', count($models), $optionalTrip->getSource()));
 
         /** @var Model[] $models */
         $models = $this->uniqueByUrl($models);
         $this->downloaderLogger->info(sprintf('Unique models %s.', count($models)));
 
         foreach ($models as $model) {
-            $entity = (new \App\Entity\OptionalTrip())
+            $entity = (new Entity())
                 ->setTitle($model->getTitle())
                 ->setDescription($model->getDescription())
                 ->setUrl($model->getUrl())
-                ->setImg($model->getImg())
-                ->setSource($service->getSource())
+                ->setImage($model->getImage())
+                ->setSource($optionalTrip->getSource())
                 ->setMoney($model->getMoney());
 
             $this->entityManager->persist($entity);

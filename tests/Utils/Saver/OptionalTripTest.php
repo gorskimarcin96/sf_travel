@@ -37,7 +37,7 @@ class OptionalTripTest extends KernelTestCase
         $this->assertSame('title', $optionalTrip->getTitle());
         $this->assertSame(['description'], $optionalTrip->getDescription());
         $this->assertSame('https://example.org', $optionalTrip->getUrl());
-        $this->assertSame('https://example.jpg', $optionalTrip->getImg());
+        $this->assertSame('https://example.jpg', $optionalTrip->getImage());
         $this->assertInstanceOf(Money::class, $optionalTrip->getMoney());
     }
 }

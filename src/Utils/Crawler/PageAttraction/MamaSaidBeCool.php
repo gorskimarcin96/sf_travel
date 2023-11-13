@@ -26,22 +26,22 @@ final readonly class MamaSaidBeCool implements PageAttractionInterface
     public function getPages(string $place, string $nation): array
     {
         $crawler = new Crawler($this->httpClient->request('GET', self::PAGE.'/'.$nation)->getContent());
-        $collection = new ArrayCollection($crawler->filter('h2>a')->each(fn (Crawler $node): string => $node->attr('href') ?? throw new NationRequiredException()));
-        $urls = $collection->filter(fn (string $url) => str_contains($url, $place))->toArray();
-        $pages = array_map(function (string $url) {
+        $collection = new ArrayCollection($crawler->filter('h2>a')->each(fn (Crawler $crawler): string => $crawler->attr('href') ?? throw new NationRequiredException()));
+        $urls = $collection->filter(fn (string $url): bool => str_contains($url, $place))->toArray();
+        $pages = array_map(function (string $url): Page {
             $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
             $page = new Page($url);
             $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
 
-            $crawler->filter('div.entry-content>*')->each(function (Crawler $node) use ($page) {
-                if ('h3' === $node->nodeName()) {
-                    $page->addArticle(new Article($node->text()));
-                } elseif ('p' === $node->nodeName() && str_contains($node->text(), 'mapie')) {
-                    $page->setMap($node->filter('a')->first()->attr('href'));
-                } elseif ($page->getArticles() && 'p' === $node->nodeName() && $node->text()) {
-                    $page->lastArticle()?->addDescription($node->text());
-                } elseif ($page->getArticles() && 'div' === $node->nodeName()) {
-                    $page->lastArticle()?->addImage($this->base64->convertFromImage($node->filter('img')->eq(1)->attr('src') ?? throw new NationRequiredException()));
+            $crawler->filter('div.entry-content>*')->each(function (Crawler $crawler) use ($page): void {
+                if ('h3' === $crawler->nodeName()) {
+                    $page->addArticle(new Article($crawler->text()));
+                } elseif ('p' === $crawler->nodeName() && str_contains($crawler->text(), 'mapie')) {
+                    $page->setMap($crawler->filter('a')->first()->attr('href'));
+                } elseif ($page->getArticles() && 'p' === $crawler->nodeName() && $crawler->text()) {
+                    $page->lastArticle()?->addDescription($crawler->text());
+                } elseif ($page->getArticles() && 'div' === $crawler->nodeName()) {
+                    $page->lastArticle()?->addImage($this->base64->convertFromImage($crawler->filter('img')->eq(1)->attr('src') ?? throw new NationRequiredException()));
                 }
             });
 

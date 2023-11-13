@@ -9,9 +9,10 @@ use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Crawler as PantherCrawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Panther\Client;
+use Symfony\Component\Panther\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class Rainbow extends AbstractOptionalTrip implements OptionalTripInterface
@@ -31,7 +32,7 @@ final readonly class Rainbow extends AbstractOptionalTrip implements OptionalTri
     /** @return OptionalTrip[] */
     public function getOptionalTrips(string $place, string $nation = null): array
     {
-        if (!$nation) {
+        if (null === $nation || '' === $nation) {
             throw new NationRequiredException();
         }
 
@@ -56,10 +57,10 @@ final readonly class Rainbow extends AbstractOptionalTrip implements OptionalTri
         $nodes = $this->client
             ->getCrawler()
             ->filter('a.szukaj-kierunek-card')
-            ->each(fn (\Symfony\Component\Panther\DomCrawler\Crawler $node): Crawler => $node);
+            ->each(fn (Crawler $crawler): PantherCrawler => $crawler);
 
-        $nodes = array_filter($nodes, static fn (Crawler $node) => str_contains($node->attr('href') ?? throw new NullException(), $place));
-        $urls = array_map(static fn (Crawler $node) => self::URL.$node->attr('href'), $nodes);
+        $nodes = array_filter($nodes, static fn (PantherCrawler $pantherCrawler): bool => str_contains($pantherCrawler->attr('href') ?? throw new NullException(), $place));
+        $urls = array_map(static fn (PantherCrawler $pantherCrawler): string => self::URL.$pantherCrawler->attr('href'), $nodes);
 
         $this->downloaderLogger->info(sprintf('Found pages: %s', implode(',', $urls)));
 
@@ -80,18 +81,18 @@ final readonly class Rainbow extends AbstractOptionalTrip implements OptionalTri
         $urls = $this->client
             ->getCrawler()
             ->filter('#bloczkiHTMLID>.szukaj-bloczki__bloczek-wrapper>a')
-            ->each(fn (Crawler $node): string => self::URL.$node->attr('href'));
+            ->each(fn (PantherCrawler $pantherCrawler): string => self::URL.$pantherCrawler->attr('href'));
 
-        $data = array_map(function (string $url) {
+        $data = array_map(function (string $url): ?OptionalTrip {
             try {
                 $this->client->request('GET', $url);
                 $this->client->refreshCrawler();
                 $this->client->waitFor('.kf-opis-wycieczki-atrybut-podrzedny__opis>p');
-                $crawler = new Crawler($this->client->getCrawler()->html());
+                $crawler = new PantherCrawler($this->client->getCrawler()->html());
 
                 return new OptionalTrip(
                     $crawler->filter('h1')->text(),
-                    $crawler->filter('.kf-opis-wycieczki-atrybut-podrzedny__opis>p')->each(fn (Crawler $node): string => $node->text()),
+                    $crawler->filter('.kf-opis-wycieczki-atrybut-podrzedny__opis>p')->each(fn (PantherCrawler $crawler): string => $crawler->text()),
                     $url,
                     $this->base64->convertFromImage('https:'.$crawler->filter('img.kf-gallery--desktop__element')->attr('src')),
                     (new Money())->setPrice($this->parser->stringToFloat($crawler->filter('span.konfigurator__text--cena')->text()))
@@ -104,7 +105,7 @@ final readonly class Rainbow extends AbstractOptionalTrip implements OptionalTri
         }, $urls);
 
         /** @var OptionalTrip[] $data */
-        $data = array_filter($data, static fn (OptionalTrip|null $optionalTrip) => $optionalTrip instanceof OptionalTrip);
+        $data = array_filter($data, static fn (OptionalTrip|null $optionalTrip): bool => $optionalTrip instanceof OptionalTrip);
 
         $this->downloaderLogger->info(sprintf('Found trips: %s', count($data)));
 

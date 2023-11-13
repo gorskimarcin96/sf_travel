@@ -93,11 +93,15 @@
       "@csfix",
       "@functional-tests"
     ],
-    "phpunit": [
+    "test-database": [
       "./bin/console cache:clear --env=test -q",
+      "./bin/console doctrine:schema:validate -n",
       "./bin/console doctrine:database:drop --env=test -q --force --if-exists",
       "./bin/console doctrine:database:create --env=test -q",
-      "./bin/console doctrine:migration:migrate --env=test -q -n",
+      "./bin/console doctrine:migration:migrate --env=test -q -n"
+    ],
+    "phpunit": [
+      "@test-database",
       "./bin/phpunit"
     ],
     "phpstan": [

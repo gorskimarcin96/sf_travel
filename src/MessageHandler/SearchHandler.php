@@ -34,9 +34,9 @@ final readonly class SearchHandler implements MessageHandlerInterface
     ) {
     }
 
-    public function __invoke(Search $message, bool $recursive = true): void
+    public function __invoke(Search $search, bool $recursive = true): void
     {
-        $entity = $this->searchRepository->find($message->getSearchId()) ?? throw new EntityNotFoundException();
+        $entity = $this->searchRepository->find($search->getSearchId()) ?? throw new EntityNotFoundException();
         $searchServiceClass = $entity->getServiceTodo();
 
         if ($searchServiceClass) {
@@ -74,8 +74,14 @@ final readonly class SearchHandler implements MessageHandlerInterface
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
-        if (!$entity->isFinished() && $recursive) {
-            $this->messageBus->dispatch(new Search($entity->getId() ?? throw new NullException()));
+        if ($entity->isFinished()) {
+            return;
         }
+
+        if (!$recursive) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new Search($entity->getId() ?? throw new NullException()));
     }
 }

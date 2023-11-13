@@ -67,14 +67,14 @@ final readonly class Tui extends AbstractOptionalTrip implements OptionalTripInt
         $data = $this->client
             ->getCrawler()
             ->filter('main div.border-blue-foamDark')
-            ->each(function (Crawler $node) {
+            ->each(function (Crawler $crawler): ?OptionalTrip {
                 try {
                     return new OptionalTrip(
-                        $node->filter('div.text-blue a')->first()->text(),
-                        $node->filter('div.text-blue span')->first()->text(),
-                        self::MAIN_DOMAIN.$node->filter('a')->first()->attr('href'),
-                        $this->base64->convertFromImage($node->filter('img')->first()->attr('src') ?? throw new NationRequiredException()),
-                        (new Money())->setPrice($this->parser->stringToFloat($node->filter('span.flex.items-baseline.font-headings')->text()) / 100)
+                        $crawler->filter('div.text-blue a')->first()->text(),
+                        $crawler->filter('div.text-blue span')->first()->text(),
+                        self::MAIN_DOMAIN.$crawler->filter('a')->first()->attr('href'),
+                        $this->base64->convertFromImage($crawler->filter('img')->first()->attr('src') ?? throw new NationRequiredException()),
+                        (new Money())->setPrice($this->parser->stringToFloat($crawler->filter('span.flex.items-baseline.font-headings')->text()) / 100)
                     );
                 } catch (\Throwable $exception) {
                     $this->downloaderLogger->error(sprintf('%s: %s', $exception::class, $exception->getMessage()));
@@ -84,7 +84,7 @@ final readonly class Tui extends AbstractOptionalTrip implements OptionalTripInt
             });
 
         /** @var OptionalTrip[] $data */
-        $data = array_filter($data, static fn (OptionalTrip|null $optionalTrip) => $optionalTrip instanceof OptionalTrip);
+        $data = array_filter($data, static fn (OptionalTrip|null $optionalTrip): bool => $optionalTrip instanceof OptionalTrip);
 
         $this->downloaderLogger->info(sprintf('Found trips: %s', count($data)));
 

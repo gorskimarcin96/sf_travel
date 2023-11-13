@@ -43,11 +43,11 @@ class Search
     #[Groups(['search', 'search_collection'])]
     private string $place;
 
-    #[ORM\Column(length: 255, name: 'from_at', type: \Doctrine\DBAL\Types\Types::DATE_IMMUTABLE)]
+    #[ORM\Column(name: 'from_at', type: \Doctrine\DBAL\Types\Types::DATE_IMMUTABLE, length: 255)]
     #[Groups(['search', 'search_collection'])]
     private \DateTimeImmutable $from;
 
-    #[ORM\Column(length: 255, name: 'to_at', type: \Doctrine\DBAL\Types\Types::DATE_IMMUTABLE)]
+    #[ORM\Column(name: 'to_at', type: \Doctrine\DBAL\Types\Types::DATE_IMMUTABLE, length: 255)]
     #[Groups(['search', 'search_collection'])]
     private \DateTimeImmutable $to;
 
@@ -153,9 +153,9 @@ class Search
         return $this->from;
     }
 
-    public function setFrom(\DateTimeImmutable $from): static
+    public function setFrom(\DateTimeImmutable $dateTimeImmutable): static
     {
-        $this->from = $from;
+        $this->from = $dateTimeImmutable;
 
         return $this;
     }
@@ -165,9 +165,9 @@ class Search
         return $this->to;
     }
 
-    public function setTo(\DateTimeImmutable $to): static
+    public function setTo(\DateTimeImmutable $dateTimeImmutable): static
     {
-        $this->to = $to;
+        $this->to = $dateTimeImmutable;
 
         return $this;
     }
@@ -358,9 +358,9 @@ class Search
     public function getCountServices(): array
     {
         return array_count_values([
-            ...$this->optionalTrips->map(fn (SourceInterface $source) => $source->getSource())->toArray(),
-            ...$this->tripPages->map(fn (SourceInterface $source) => $source->getSource())->toArray(),
-            ...$this->hotels->map(fn (SourceInterface $source) => $source->getSource())->toArray(),
+            ...$this->optionalTrips->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
+            ...$this->tripPages->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
+            ...$this->hotels->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
         ]);
     }
 }

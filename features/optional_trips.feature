@@ -10,7 +10,7 @@ Feature: Searcher
       | 1  | grecja | zakynthos | 2000-01-01 | 2000-01-07 | 2000-01-01 |
       | 2  | grecja | rodos     | 2000-01-01 | 2000-01-07 | 2000-01-01 |
     And there are optional trips
-      | id | title   | description             | url                 | img                 | source | search_id |
+      | id | title   | description             | url                 | image               | source | search_id |
       | 1  | title 1 | description;description | https://example.org | https://example.jpg | xyz    | 1         |
       | 2  | title 2 |                         | https://example.org | https://example.jpg | abc    | 1         |
       | 3  | title 3 | description             | https://example.org | https://example.jpg | abc    | 1         |
@@ -30,7 +30,7 @@ Feature: Searcher
       "description"
     ],
     "url": "https:\/\/example.org",
-    "img": "https:\/\/example.jpg",
+    "image": "https:\/\/example.jpg",
     "source": "xyz"
   },
   {
@@ -40,7 +40,7 @@ Feature: Searcher
       ""
     ],
     "url": "https:\/\/example.org",
-    "img": "https:\/\/example.jpg",
+    "image": "https:\/\/example.jpg",
     "source": "abc"
   },
   {
@@ -50,7 +50,7 @@ Feature: Searcher
       "description"
     ],
     "url": "https:\/\/example.org",
-    "img": "https:\/\/example.jpg",
+    "image": "https:\/\/example.jpg",
     "source": "abc"
   }
 ]
@@ -70,7 +70,7 @@ Feature: Searcher
       ""
     ],
     "url": "https:\/\/example.org",
-    "img": "https:\/\/example.jpg",
+    "image": "https:\/\/example.jpg",
     "source": "abc"
   },
   {
@@ -80,7 +80,7 @@ Feature: Searcher
       "description"
     ],
     "url": "https:\/\/example.org",
-    "img": "https:\/\/example.jpg",
+    "image": "https:\/\/example.jpg",
     "source": "abc"
   }
 ]

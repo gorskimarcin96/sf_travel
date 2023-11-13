@@ -20,7 +20,7 @@ class TripArticle
     private string $title;
 
     #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'tripArticles')]
-    private TripPage $page;
+    private TripPage $tripPage;
 
     /** @var string[] */
     #[ORM\Column]
@@ -58,12 +58,12 @@ class TripArticle
 
     public function getPage(): TripPage
     {
-        return $this->page;
+        return $this->tripPage;
     }
 
-    public function setPage(TripPage $page): static
+    public function setPage(TripPage $tripPage): static
     {
-        $this->page = $page;
+        $this->tripPage = $tripPage;
 
         return $this;
     }

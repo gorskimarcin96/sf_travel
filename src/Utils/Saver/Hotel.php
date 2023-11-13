@@ -2,6 +2,7 @@
 
 namespace App\Utils\Saver;
 
+use App\Entity\Hotel as Entity;
 use App\Entity\Search;
 use App\Utils\Crawler\Hotel\HotelInterface;
 use App\Utils\Crawler\Hotel\Model\Hotel as Model;
@@ -34,7 +35,7 @@ final readonly class Hotel
         $this->downloaderLogger->info(sprintf('Unique models %s.', count($models)));
 
         foreach ($models as $model) {
-            $hotel = (new \App\Entity\Hotel())
+            $hotel = (new Entity())
                 ->setTitle($model->getTitle())
                 ->setUrl($model->getUrl())
                 ->setAddress($model->getAddress())

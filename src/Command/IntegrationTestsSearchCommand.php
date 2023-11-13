@@ -25,13 +25,13 @@ final class IntegrationTestsSearchCommand extends Command
     private readonly array $services;
 
     public function __construct(
-        TripServices $factory,
+        TripServices $tripServices,
         private readonly EntityManagerInterface $entityManager,
         private readonly SearchHandler $searchHandler,
     ) {
         parent::__construct();
 
-        $this->services = array_map(static fn (object $class): string => $class::class, $factory->create());
+        $this->services = array_map(static fn (object $class): string => $class::class, $tripServices->create());
     }
 
     protected function configure(): void
@@ -66,7 +66,7 @@ final class IntegrationTestsSearchCommand extends Command
         $this->entityManager->persist($search);
         $this->entityManager->flush();
 
-        $io = new SymfonyStyle($input, $output);
+        $symfonyStyle = new SymfonyStyle($input, $output);
         $progressBar = new ProgressBar($output, count($search->getTodo()));
         $progressBar->start();
 
@@ -78,7 +78,7 @@ final class IntegrationTestsSearchCommand extends Command
         } while (!$search->isFinished());
 
         $progressBar->finish();
-        $io->newLine();
+        $symfonyStyle->newLine();
 
         return Command::SUCCESS;
     }

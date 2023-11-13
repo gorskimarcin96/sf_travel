@@ -16,8 +16,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 final class HotelRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Hotel::class);
+        parent::__construct($managerRegistry, Hotel::class);
     }
 }

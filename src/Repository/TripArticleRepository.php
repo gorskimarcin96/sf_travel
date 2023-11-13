@@ -16,8 +16,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 final class TripArticleRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, TripArticle::class);
+        parent::__construct($managerRegistry, TripArticle::class);
     }
 }
