@@ -3,8 +3,9 @@
 namespace App\Utils\Crawler\Hotel\Model;
 
 use App\Entity\Money;
+use App\Utils\Crawler\Model\URLInterface;
 
-final readonly class Hotel
+final readonly class Hotel implements URLInterface
 {
     /**
      * @param string[] $descriptions

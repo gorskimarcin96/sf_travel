@@ -2,7 +2,9 @@
 
 namespace App\Utils\Crawler\PageAttraction\Model;
 
-final class Page
+use App\Utils\Crawler\Model\URLInterface;
+
+final class Page implements URLInterface
 {
     /** @param \App\Utils\Crawler\PageAttraction\Model\Article[] $articles */
     public function __construct(private readonly string $url, private array $articles = [], private ?string $map = null)

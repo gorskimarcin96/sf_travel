@@ -3,8 +3,9 @@
 namespace App\Utils\Crawler\OptionalTrip\Model;
 
 use App\Entity\Money;
+use App\Utils\Crawler\Model\URLInterface;
 
-final readonly class OptionalTrip
+final readonly class OptionalTrip implements URLInterface
 {
     /** @param string|string[] $description */
     public function __construct(

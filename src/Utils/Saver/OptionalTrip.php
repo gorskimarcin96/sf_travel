@@ -3,12 +3,16 @@
 namespace App\Utils\Saver;
 
 use App\Entity\Search;
+use App\Utils\Crawler\Model\URLTrait;
+use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip as Model;
 use App\Utils\Crawler\OptionalTrip\OptionalTripInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 final readonly class OptionalTrip
 {
+    use URLTrait;
+
     public function __construct(
         private LoggerInterface $downloaderLogger,
         private EntityManagerInterface $entityManager
@@ -19,6 +23,10 @@ final readonly class OptionalTrip
     {
         $models = $service->getOptionalTrips($place, $nation);
         $this->downloaderLogger->info(sprintf('Get %s trips from "%s".', count($models), $service->getSource()));
+
+        /** @var Model[] $models */
+        $models = $this->uniqueByUrl($models);
+        $this->downloaderLogger->info(sprintf('Unique models %s.', count($models)));
 
         foreach ($models as $model) {
             $entity = (new \App\Entity\OptionalTrip())
