@@ -5,6 +5,7 @@ services:
     autowire: true
     autoconfigure: true
     bind:
+      $projectDir: '%kernel.project_dir%'
       $optionalTrips: !tagged_iterator 'app.crawler.optional_trips'
       $pageAttractions: !tagged_iterator 'app.crawler.page_attractions'
       $hotels: !tagged_iterator 'app.crawler.hotels'
