@@ -26,7 +26,6 @@ return static function (RectorConfig $rectorConfig): void {
         SetList::CODE_QUALITY,
         SetList::DEAD_CODE,
         SetList::STRICT_BOOLEANS,
-        SetList::NAMING,
         SetList::PHP_82,
         SetList::PRIVATIZATION,
         SetList::TYPE_DECLARATION,

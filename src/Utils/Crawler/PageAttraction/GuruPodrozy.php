@@ -41,11 +41,17 @@ final readonly class GuruPodrozy implements PageAttractionInterface
                     if ('h2' === $crawler->nodeName()) {
                         $page->addArticle(new Article($crawler->text()));
                     } elseif ($page->getArticles() && $crawler->filter('img')->count()) {
-                        array_map(function (string $src) use ($page): void {
-                            if (!str_starts_with($src, 'data:image/svg')) {
-                                $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
+                        array_map(function (?string $src) use ($page): void {
+                            if (null === $src || '' === $src) {
+                                return;
                             }
-                        }, $crawler->filter('img')->each(fn (Crawler $node): string => $crawler->attr('src') ?? throw new NullException()));
+
+                            if (str_starts_with($src, 'data:image/svg')) {
+                                return;
+                            }
+
+                            $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
+                        }, $crawler->filter('img')->each(fn (Crawler $node): ?string => $crawler->attr('src')));
                     } elseif ($page->getArticles() && $crawler->text()) {
                         $page->lastArticle()?->addDescription($crawler->text());
                     }
