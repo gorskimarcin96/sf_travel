@@ -2,6 +2,7 @@
 
 namespace App\MessageHandler;
 
+use App\Entity\Search as Entity;
 use App\Exception\NullException;
 use App\Factory\TripServices;
 use App\Message\Search;
@@ -37,9 +38,9 @@ final readonly class SearchHandler implements MessageHandlerInterface
     ) {
     }
 
-    public function __invoke(Search $search, bool $recursive = true): void
+    public function __invoke(Search $Search, bool $recursive = true): void
     {
-        $entity = $this->searchRepository->find($search->getSearchId()) ?? throw new EntityNotFoundException();
+        $entity = $this->searchRepository->find($Search->getSearchId()) ?? throw new EntityNotFoundException();
         $searchServiceClass = $entity->getServiceTodo();
 
         if ($searchServiceClass) {
@@ -48,38 +49,13 @@ final readonly class SearchHandler implements MessageHandlerInterface
                 $service = $this->tripServices->findByClassName($searchServiceClass);
 
                 if ($service instanceof OptionalTripInterface) {
-                    try {
-                        $entity = $this->optionalTrip->save($service, $entity->getPlace(), $entity->getNation(), $entity);
-                    } catch (PhpWebDriverExceptionInterface $exception) {
-                        $this->logger->error(sprintf($exception::class, $exception));
-                        $service->restartPantherClient();
-
-                        $this->logger->notice('Restarted panther client.');
-                        $entity = $this->optionalTrip->save($service, $entity->getPlace(), $entity->getNation(), $entity);
-                    }
+                    $entity = $this->saveOptionalTrips($entity, $service);
                 } elseif ($service instanceof PageAttractionInterface) {
-                    $entity = $this->pageAttraction->save($service, $entity->getPlace(), $entity->getNation(), $entity);
+                    $entity = $this->savePageAttractions($entity, $service);
                 } elseif ($service instanceof HotelInterface) {
-                    $entity = $this->hotel->save(
-                        $service,
-                        $entity->getPlace(),
-                        $entity->getFrom(),
-                        $entity->getTo(),
-                        $entity->getAdults(),
-                        $entity->getChildren(),
-                        $entity
-                    );
+                    $entity = $this->saveHotels($entity, $service);
                 } elseif ($service instanceof FlightInterface) {
-                    $entity->getFromAirport() && $entity->getToAirport() ? $entity = $this->flight->save(
-                        $service,
-                        $entity->getFromAirport(),
-                        $entity->getToAirport(),
-                        $entity->getFrom(),
-                        $entity->getTo(),
-                        $entity->getAdults(),
-                        $entity->getChildren(),
-                        $entity
-                    ) : $this->logger->warning('Airports it\'s not defines.');
+                    $entity = $this->saveFlights($entity, $service);
                 } else {
                     throw new \LogicException(sprintf('Service %s is not implemented.', $service::class));
                 }
@@ -105,5 +81,83 @@ final readonly class SearchHandler implements MessageHandlerInterface
         }
 
         $this->messageBus->dispatch(new Search($entity->getId() ?? throw new NullException()));
+    }
+
+    private function saveOptionalTrips(Entity $entity, OptionalTripInterface $optionalTrip): Entity
+    {
+        try {
+            return $this->optionalTrip->save(
+                $optionalTrip,
+                $entity->getPlace(),
+                $entity->getNation(),
+                $entity
+            );
+        } catch (PhpWebDriverExceptionInterface $exception) {
+            $this->logger->error(sprintf($exception::class, $exception));
+            $optionalTrip->restartPantherClient();
+            $this->logger->notice('Restarted panther client.');
+
+            return $this->optionalTrip->save(
+                $optionalTrip,
+                $entity->getPlace(),
+                $entity->getNation(),
+                $entity
+            );
+        }
+    }
+
+    private function savePageAttractions(Entity $entity, PageAttractionInterface $pageAttraction): Entity
+    {
+        return $this->pageAttraction->save($pageAttraction, $entity->getPlace(), $entity->getNation(), $entity);
+    }
+
+    private function saveHotels(Entity $entity, HotelInterface $hotel): Entity
+    {
+        return $this->hotel->save(
+            $hotel,
+            $entity->getPlace(),
+            $entity->getFrom(),
+            $entity->getTo(),
+            $entity->getAdults(),
+            $entity->getChildren(),
+            $entity
+        );
+    }
+
+    private function saveFlights(Entity $entity, FlightInterface $flight): Entity
+    {
+        if ($entity->getFromAirport() && $entity->getToAirport()) {
+            try {
+                return $this->flight->save(
+                    $flight,
+                    $entity->getFromAirport(),
+                    $entity->getToAirport(),
+                    $entity->getFrom(),
+                    $entity->getTo(),
+                    $entity->getAdults(),
+                    $entity->getChildren(),
+                    $entity
+                );
+            } catch (PhpWebDriverExceptionInterface $exception) {
+                $this->logger->error(sprintf($exception::class, $exception));
+                $flight->restartPantherClient();
+                $this->logger->notice('Restarted panther client.');
+
+                return $this->flight->save(
+                    $flight,
+                    $entity->getFromAirport(),
+                    $entity->getToAirport(),
+                    $entity->getFrom(),
+                    $entity->getTo(),
+                    $entity->getAdults(),
+                    $entity->getChildren(),
+                    $entity
+                );
+            }
+        }
+
+        $this->logger->warning('Airports it\'s not defines.');
+
+        return $entity;
     }
 }
