@@ -51,11 +51,15 @@ final readonly class Booking implements HotelInterface
             'nflt' => 'ht_id%3D204',
         ];
         $params = array_map(static fn ($key, $value): string => $key.'='.$value, array_keys($params), $params);
-        $crawler = new Crawler($this->httpClient->request('GET', self::URL.'?'.implode('&', $params))->getContent());
+        $url = self::URL.'?'.implode('&', $params);
+
+        $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
+
+        $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
 
         $this->downloaderLogger->notice(sprintf('Got first %s hotels.', $crawler->filter($this->createAttr('property-card'))->count()));
 
-        return $crawler->filter($this->createAttr('property-card'))->each(function (Crawler $crawler) use ($betweenDays): Hotel {
+        return $crawler->filter($this->createAttr('property-card'))->each(closure: function (Crawler $crawler) use ($betweenDays): Hotel {
             try {
                 $text = $crawler->filter($this->createAttr('review-score', 'div', '>div'))->first()->text();
                 $rate = $this->parser->stringToFloat(str_replace(',', '.', $text));
@@ -72,7 +76,7 @@ final readonly class Booking implements HotelInterface
             }
 
             $descriptions = $crawler->filter($this->createAttr('recommended-units', 'div', ' ul>li'))
-                ->each(fn (Crawler $node): string => $crawler->text());
+                ->each(fn (Crawler $node): string => $node->text());
 
             return new Model\Hotel(
                 $crawler->filter('h3>a>div')->first()->text(),
