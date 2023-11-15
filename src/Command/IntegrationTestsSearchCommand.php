@@ -39,6 +39,8 @@ final class IntegrationTestsSearchCommand extends Command
         $this
             ->addArgument('nation', InputArgument::REQUIRED, 'Nation')
             ->addArgument('place', InputArgument::REQUIRED, 'Place')
+            ->addArgument('fromAirport', InputArgument::OPTIONAL, 'From airport')
+            ->addArgument('toAirport', InputArgument::OPTIONAL, 'To airport')
             ->addArgument('service', InputArgument::OPTIONAL, 'Service');
     }
 
@@ -47,18 +49,24 @@ final class IntegrationTestsSearchCommand extends Command
         /**
          * @var string                      $nation
          * @var string                      $place
+         * @var string                      $fromAirport
+         * @var string                      $toAirport
          * @var class-string|class-string[] $services
          */
-        [$nation, $place, $services] = [
+        [$nation, $place, $fromAirport, $toAirport, $services] = [
             $input->getArgument('nation'),
             $input->getArgument('place'),
+            $input->hasArgument('fromAirport') ? $input->getArgument('fromAirport') : null,
+            $input->hasArgument('toAirport') ? $input->getArgument('toAirport') : null,
             $input->getArgument('service') ?: $this->services,
         ];
         $search = (new Search())
             ->setNation($nation)
             ->setPlace($place)
-            ->setFrom(new \DateTimeImmutable())
-            ->setTo((new \DateTimeImmutable())->modify('+7 days'))
+            ->setFrom((new \DateTimeImmutable())->modify('+14 days'))
+            ->setTo((new \DateTimeImmutable())->modify('+21 days'))
+            ->setFromAirport($fromAirport)
+            ->setToAirport($toAirport)
             ->setAdults(2)
             ->setChildren(0)
             ->setTodo(is_string($services) ? [$services] : $services);

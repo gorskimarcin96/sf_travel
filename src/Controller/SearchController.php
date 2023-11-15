@@ -32,12 +32,14 @@ final class SearchController extends AbstractController
         $this->validator->validate($input);
         $search = $this->searchRepository->findByInput($input);
 
-        if (!$search instanceof \App\Entity\Search || $input->isForce()) {
+        if (!$search instanceof Search || $input->isForce()) {
             $search = (new Search())
                 ->setNation($input->getNation())
                 ->setPlace($input->getPlace())
                 ->setFrom($input->getFrom())
                 ->setTo($input->getTo())
+                ->setFromAirport($input->getFromAirport())
+                ->setToAirport($input->getToAirport())
                 ->setAdults($input->getAdults())
                 ->setChildren($input->getChildren())
                 ->setTodo($this->todo);

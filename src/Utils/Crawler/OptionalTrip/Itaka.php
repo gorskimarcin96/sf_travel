@@ -6,6 +6,7 @@ use App\Entity\Money;
 use App\Exception\NationRequiredException;
 use App\Exception\NullException;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
+use App\Utils\Crawler\PantherClient;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
 use Facebook\WebDriver\WebDriverKeys;
@@ -16,7 +17,7 @@ use Symfony\Component\Panther\Client;
 use Symfony\Component\Panther\DomCrawler\Crawler as PantherCrawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final readonly class Itaka extends AbstractOptionalTrip implements OptionalTripInterface
+final readonly class Itaka extends PantherClient implements OptionalTripInterface
 {
     private const MAIN_DOMAIN = 'https://itaka.seeplaces.com';
     private const URL = 'https://itaka.seeplaces.com';

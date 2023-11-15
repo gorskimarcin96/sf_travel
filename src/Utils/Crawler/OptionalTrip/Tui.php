@@ -5,6 +5,7 @@ namespace App\Utils\Crawler\OptionalTrip;
 use App\Entity\Money;
 use App\Exception\NationRequiredException;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
+use App\Utils\Crawler\PantherClient;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
 use Facebook\WebDriver\Exception\TimeoutException;
@@ -13,7 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\Client;
 
-final readonly class Tui extends AbstractOptionalTrip implements OptionalTripInterface
+final readonly class Tui extends PantherClient implements OptionalTripInterface
 {
     private const SLEEP_TIME = 7;
     private const MAIN_DOMAIN = 'https://www.tui.pl';

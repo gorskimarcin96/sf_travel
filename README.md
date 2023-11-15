@@ -8,7 +8,7 @@
 > Sf_travel returns information such as:
 > 1. Trips
 > 2. Hotels
-> 3. Flights (in the future)
+> 3. Flights
 > 4. Last minute offers (in the future)
 > 5. Curiosities
 > 

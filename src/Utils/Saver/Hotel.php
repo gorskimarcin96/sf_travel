@@ -25,9 +25,11 @@ final readonly class Hotel
         string $place,
         \DateTimeImmutable $from,
         \DateTimeImmutable $to,
+        int $adults,
+        int $children,
         Search $search
     ): Search {
-        $models = $service->getHotels($place, $from, $to);
+        $models = $service->getHotels($place, $from, $to, $adults, $children);
         $this->downloaderLogger->info(sprintf('Get %s hotels from "%s".', count($models), $service->getSource()));
 
         /** @var Model[] $models */

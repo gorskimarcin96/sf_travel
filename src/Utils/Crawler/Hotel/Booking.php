@@ -4,6 +4,7 @@ namespace App\Utils\Crawler\Hotel;
 
 use App\Entity\Money;
 use App\Exception\NullException;
+use App\Utils\Crawler\BookingHelper;
 use App\Utils\Crawler\Hotel\Model\Hotel;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
@@ -13,6 +14,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class Booking implements HotelInterface
 {
+    use BookingHelper;
     public const URL = 'https://www.booking.com/searchresults.pl.html';
 
     public function __construct(
@@ -51,32 +53,32 @@ final readonly class Booking implements HotelInterface
         $params = array_map(static fn ($key, $value): string => $key.'='.$value, array_keys($params), $params);
         $crawler = new Crawler($this->httpClient->request('GET', self::URL.'?'.implode('&', $params))->getContent());
 
-        $this->downloaderLogger->notice(sprintf('Got first %s hotels.', $crawler->filter('div[data-testid="property-card"]')->count()));
+        $this->downloaderLogger->notice(sprintf('Got first %s hotels.', $crawler->filter($this->createAttr('property-card'))->count()));
 
-        return $crawler->filter('div[data-testid="property-card"]')->each(function (Crawler $crawler) use ($betweenDays): Hotel {
+        return $crawler->filter($this->createAttr('property-card'))->each(function (Crawler $crawler) use ($betweenDays): Hotel {
             try {
-                $text = $crawler->filter('div[data-testid="review-score"]>div')->first()->text();
+                $text = $crawler->filter($this->createAttr('review-score', 'div', '>div'))->first()->text();
                 $rate = $this->parser->stringToFloat(str_replace(',', '.', $text));
             } catch (\Throwable) {
                 $rate = null;
             }
 
             $amount = $this->parser
-                ->stringToFloat($crawler->filter('span[data-testid="price-and-discounted-price"]')->text());
+                ->stringToFloat($crawler->filter($this->createAttr('price-and-discounted-price', 'span'))->text());
 
             try {
-                $descriptionHeader = $crawler->filter('div[data-testid="recommended-units"] h4')->text();
+                $descriptionHeader = $crawler->filter($this->createAttr('recommended-units', 'div', ' h4'))->text();
             } catch (\Throwable) {
             }
 
-            $descriptions = $crawler->filter('div[data-testid="recommended-units"] ul>li')
+            $descriptions = $crawler->filter($this->createAttr('recommended-units', 'div', ' ul>li'))
                 ->each(fn (Crawler $node): string => $crawler->text());
 
             return new Model\Hotel(
                 $crawler->filter('h3>a>div')->first()->text(),
                 $crawler->filter('h3>a')->attr('href') ?? throw new NullException(),
                 $this->base64->convertFromImage($crawler->filter('img')->attr('src') ?? throw new NullException()),
-                $crawler->filter('span[data-testid="address"]')->text(),
+                $crawler->filter($this->createAttr('address', 'span'))->text(),
                 isset($descriptionHeader) ? [$descriptionHeader] + $descriptions : $descriptions,
                 (new Money())->setPrice($amount / $betweenDays),
                 $rate

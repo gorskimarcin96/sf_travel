@@ -9,6 +9,7 @@ services:
       $optionalTrips: !tagged_iterator 'app.crawler.optional_trips'
       $pageAttractions: !tagged_iterator 'app.crawler.page_attractions'
       $hotels: !tagged_iterator 'app.crawler.hotels'
+      $flights: !tagged_iterator 'app.crawler.flights'
   _instanceof:
     App\Utils\Crawler\OptionalTrip\OptionalTripInterface:
       tags: [ name: 'app.crawler.optional_trips' ]
@@ -18,6 +19,9 @@ services:
       public: true
     App\Utils\Crawler\Hotel\HotelInterface:
       tags: [ name: 'app.crawler.hotels' ]
+      public: true
+    App\Utils\Crawler\Flight\FlightInterface:
+      tags: [ name: 'app.crawler.flights' ]
       public: true
 
   App\:

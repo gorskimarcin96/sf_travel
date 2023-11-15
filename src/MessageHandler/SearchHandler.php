@@ -6,9 +6,11 @@ use App\Exception\NullException;
 use App\Factory\TripServices;
 use App\Message\Search;
 use App\Repository\SearchRepository;
+use App\Utils\Crawler\Flight\FlightInterface;
 use App\Utils\Crawler\Hotel\HotelInterface;
 use App\Utils\Crawler\OptionalTrip\OptionalTripInterface;
 use App\Utils\Crawler\PageAttraction\PageAttractionInterface;
+use App\Utils\Saver\Flight;
 use App\Utils\Saver\Hotel;
 use App\Utils\Saver\OptionalTrip;
 use App\Utils\Saver\PageAttraction;
@@ -31,6 +33,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
         private OptionalTrip $optionalTrip,
         private PageAttraction $pageAttraction,
         private Hotel $hotel,
+        private Flight $flight,
     ) {
     }
 
@@ -41,7 +44,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
 
         if ($searchServiceClass) {
             try {
-                /** @var OptionalTripInterface|PageAttractionInterface|HotelInterface $service */
+                /** @var OptionalTripInterface|PageAttractionInterface|HotelInterface|FlightInterface $service */
                 $service = $this->tripServices->findByClassName($searchServiceClass);
 
                 if ($service instanceof OptionalTripInterface) {
@@ -57,7 +60,26 @@ final readonly class SearchHandler implements MessageHandlerInterface
                 } elseif ($service instanceof PageAttractionInterface) {
                     $entity = $this->pageAttraction->save($service, $entity->getPlace(), $entity->getNation(), $entity);
                 } elseif ($service instanceof HotelInterface) {
-                    $entity = $this->hotel->save($service, $entity->getPlace(), $entity->getFrom(), $entity->getTo(), $entity);
+                    $entity = $this->hotel->save(
+                        $service,
+                        $entity->getPlace(),
+                        $entity->getFrom(),
+                        $entity->getTo(),
+                        $entity->getAdults(),
+                        $entity->getChildren(),
+                        $entity
+                    );
+                } elseif ($service instanceof FlightInterface) {
+                    $entity->getFromAirport() && $entity->getToAirport() ? $entity = $this->flight->save(
+                        $service,
+                        $entity->getFromAirport(),
+                        $entity->getToAirport(),
+                        $entity->getFrom(),
+                        $entity->getTo(),
+                        $entity->getAdults(),
+                        $entity->getChildren(),
+                        $entity
+                    ) : $this->logger->warning('Airports it\'s not defines.');
                 } else {
                     throw new \LogicException(sprintf('Service %s is not implemented.', $service::class));
                 }

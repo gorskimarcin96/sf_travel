@@ -2,7 +2,7 @@
 
 namespace App\Utils\Crawler\PageAttraction;
 
-use App\Exception\NationRequiredException;
+use App\Exception\NullException;
 use App\Utils\Crawler\PageAttraction\Model\Article;
 use App\Utils\Crawler\PageAttraction\Model\Page;
 use App\Utils\Helper\Base64;
@@ -30,7 +30,7 @@ final readonly class GuruPodrozy implements PageAttractionInterface
 
         while (true) {
             $crawler = new Crawler($this->httpClient->request('GET', self::PAGE.'/'.$nation.'/strona/'.$i++.'/')->getContent());
-            $collection = new ArrayCollection($crawler->filter('h3>a')->each(fn (Crawler $crawler): string => $crawler->attr('href') ?? throw new NationRequiredException()));
+            $collection = new ArrayCollection($crawler->filter('h3>a')->each(fn (Crawler $crawler): string => $crawler->attr('href') ?? throw new NullException()));
             $urls = $collection->filter(fn (string $url): bool => str_contains($url, $place))->toArray();
 
             foreach ($urls as $url) {
@@ -45,7 +45,7 @@ final readonly class GuruPodrozy implements PageAttractionInterface
                             if (!str_starts_with($src, 'data:image/svg')) {
                                 $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
                             }
-                        }, $crawler->filter('img')->each(fn (Crawler $node): string => $crawler->attr('src') ?? throw new NationRequiredException()));
+                        }, $crawler->filter('img')->each(fn (Crawler $node): string => $crawler->attr('src') ?? throw new NullException()));
                     } elseif ($page->getArticles() && $crawler->text()) {
                         $page->lastArticle()?->addDescription($crawler->text());
                     }

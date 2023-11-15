@@ -51,6 +51,14 @@ class Search
     #[Groups(['search', 'search_collection'])]
     private \DateTimeImmutable $to;
 
+    #[ORM\Column(length: 3, nullable: true)]
+    #[Groups(['search', 'search_collection'])]
+    private ?string $fromAirport = null;
+
+    #[ORM\Column(length: 3, nullable: true)]
+    #[Groups(['search', 'search_collection'])]
+    private ?string $toAirport = null;
+
     #[ORM\Column]
     #[Groups(['search', 'search_collection'])]
     private int $adults;
@@ -105,11 +113,18 @@ class Search
     #[ORM\OneToMany(mappedBy: 'search', targetEntity: Hotel::class)]
     private Collection $hotels;
 
+    /**
+     * @var Collection<int, Flight>|Flight[]
+     */
+    #[ORM\OneToMany(mappedBy: 'search', targetEntity: Flight::class)]
+    private Collection $flights;
+
     public function __construct()
     {
         $this->optionalTrips = new ArrayCollection();
         $this->tripPages = new ArrayCollection();
         $this->hotels = new ArrayCollection();
+        $this->flights = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,6 +183,48 @@ class Search
     public function setTo(\DateTimeImmutable $dateTimeImmutable): static
     {
         $this->to = $dateTimeImmutable;
+
+        return $this;
+    }
+
+    public function getFromAirport(): ?string
+    {
+        return $this->fromAirport;
+    }
+
+    public function setFromAirport(?string $fromAirport): static
+    {
+        $this->fromAirport = $fromAirport;
+
+        return $this;
+    }
+
+    public function getToAirport(): ?string
+    {
+        return $this->toAirport;
+    }
+
+    public function setToAirport(?string $toAirport): static
+    {
+        $this->toAirport = $toAirport;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Flight>
+     */
+    public function getFlight(): Collection
+    {
+        return $this->flights;
+    }
+
+    /**
+     * @param Collection<int, Flight> $flights
+     */
+    public function setFlight(Collection $flights): static
+    {
+        $this->flights = $flights;
 
         return $this;
     }
@@ -346,6 +403,24 @@ class Search
         return $this;
     }
 
+    /**
+     * @return Collection<int, Flight>
+     */
+    public function getFlights(): Collection
+    {
+        return $this->flights;
+    }
+
+    public function addFlight(Flight $flight): static
+    {
+        if (!$this->flights->contains($flight)) {
+            $this->flights->add($flight);
+            $flight->setSearch($this);
+        }
+
+        return $this;
+    }
+
     public function getServiceTodo(): ?string
     {
         return array_pop($this->todo);
@@ -361,6 +436,7 @@ class Search
             ...$this->optionalTrips->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
             ...$this->tripPages->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
             ...$this->hotels->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
+            ...$this->flights->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
         ]);
     }
 }

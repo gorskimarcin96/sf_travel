@@ -2,6 +2,9 @@
 
 namespace App\Tests\Behat\Traits;
 
+use App\Entity\Flight;
+use App\Entity\Hotel;
+use App\Entity\Money;
 use App\Entity\OptionalTrip;
 use App\Entity\Search;
 use App\Entity\TripArticle;
@@ -36,7 +39,9 @@ trait DataLoaderTrait
         }
     }
 
-    /** @Given there are searches */
+    /**
+     * @Given there are searches
+     */
     public function thereAreSearcher(TableNode $tableNode): void
     {
         array_map(function (array $row): void {
@@ -56,7 +61,9 @@ trait DataLoaderTrait
         $this->entityManager->flush();
     }
 
-    /** @Given there are optional trips */
+    /**
+     * @Given there are optional trips
+     */
     public function thereAreOptionalTrips(TableNode $tableNode): void
     {
         array_map(function (array $row): void {
@@ -75,7 +82,9 @@ trait DataLoaderTrait
         $this->entityManager->flush();
     }
 
-    /** @Given there are trip pages */
+    /**
+     * @Given there are trip pages
+     */
     public function thereAreTripPages(TableNode $tableNode): void
     {
         array_map(function (array $row): void {
@@ -92,7 +101,9 @@ trait DataLoaderTrait
         $this->entityManager->flush();
     }
 
-    /** @Given there are trip page articles */
+    /**
+     * @Given there are trip page articles
+     */
     public function thereAreTripPageArticles(TableNode $tableNode): void
     {
         array_map(function (array $row): void {
@@ -106,5 +117,56 @@ trait DataLoaderTrait
             $this->entityManager->persist($pageTrip);
             $this->entityManager->flush();
         }, $tableNode->getHash());
+    }
+
+    /**
+     * @Given there are hotels
+     */
+    public function thereAreHotels(TableNode $tableNode): void
+    {
+        array_map(function (array $row): void {
+            $hotel = (new Hotel())
+                ->setId($row['id'])
+                ->setTitle($row['title'])
+                ->setUrl($row['url'])
+                ->setImage($row['image'])
+                ->setAddress($row['address'])
+                ->setDescriptions(explode(';', $row['description']))
+                ->setRate($row['rate'])
+                ->setMoney((new Money())->setPrice($row['price']))
+                ->setSource($row['source'])
+                ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
+
+            $this->entityManager->persist($hotel);
+        }, $tableNode->getHash());
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @Given there are flights
+     */
+    public function thereAreFlights(TableNode $tableNode): void
+    {
+        array_map(function (array $row): void {
+            $flight = (new Flight())
+                ->setId($row['id'])
+                ->setFromAirport($row['from_airport'])
+                ->setFromStart(new \DateTimeImmutable($row['from_start']))
+                ->setFromEnd(new \DateTimeImmutable($row['from_end']))
+                ->setFromStops($row['from_stops'])
+                ->setToAirport($row['to_airport'])
+                ->setToStart(new \DateTimeImmutable($row['to_start']))
+                ->setToEnd(new \DateTimeImmutable($row['to_end']))
+                ->setToStops($row['to_stops'])
+                ->setUrl($row['url'])
+                ->setMoney((new Money())->setPrice($row['price']))
+                ->setSource($row['source'])
+                ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
+
+            $this->entityManager->persist($flight);
+        }, $tableNode->getHash());
+
+        $this->entityManager->flush();
     }
 }

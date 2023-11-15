@@ -29,6 +29,8 @@ final class SearchRepository extends ServiceEntityRepository
             'place' => strtolower($input->getPlace()),
             'from' => $input->getFrom(),
             'to' => $input->getTo(),
+            'fromAirport' => $input->getFromAirport(),
+            'toAirport' => $input->getToAirport(),
             'adults' => $input->getAdults(),
             'children' => $input->getChildren(),
         ], ['createdAt' => 'desc']);

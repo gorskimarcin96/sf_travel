@@ -6,6 +6,7 @@ use App\Entity\Money;
 use App\Exception\NationRequiredException;
 use App\Exception\NullException;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
+use App\Utils\Crawler\PantherClient;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
 use Psr\Log\LoggerInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\Panther\Client;
 use Symfony\Component\Panther\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final readonly class Rainbow extends AbstractOptionalTrip implements OptionalTripInterface
+final readonly class Rainbow extends PantherClient implements OptionalTripInterface
 {
     private const URL = 'https://r.pl';
 

@@ -15,6 +15,10 @@ final readonly class Search
         private \DateTimeImmutable $to = new \DateTimeImmutable(),
         private int $adults = 2,
         private int $children = 0,
+        #[Assert\Length(min: 3, max: 3)]
+        private ?string $fromAirport = null,
+        #[Assert\Length(min: 3, max: 3)]
+        private ?string $toAirport = null,
         private bool $force = false,
     ) {
     }
@@ -47,6 +51,16 @@ final readonly class Search
     public function getChildren(): int
     {
         return $this->children;
+    }
+
+    public function getFromAirport(): ?string
+    {
+        return $this->fromAirport;
+    }
+
+    public function getToAirport(): ?string
+    {
+        return $this->toAirport;
     }
 
     public function isForce(): bool
