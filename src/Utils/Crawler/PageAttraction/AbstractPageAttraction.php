@@ -7,29 +7,21 @@ use App\Utils\Crawler\PageAttraction\Model\Article;
 use App\Utils\Crawler\PageAttraction\Model\Page;
 use App\Utils\Crawler\PageAttraction\Model\PageAttractionOptions;
 use App\Utils\Helper\Base64;
+use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 use function Symfony\Component\String\u;
 
-final readonly class MamaSaidBeCool extends AbstractPageAttraction implements PageAttractionInterface
+abstract readonly class AbstractPageAttraction
 {
     public function __construct(
-        HttpClientInterface $httpClient,
-        Base64 $base64,
-        LoggerInterface $downloaderLogger,
+        protected HttpClientInterface $httpClient,
+        protected Base64 $base64,
+        protected LoggerInterface $downloaderLogger,
+        protected PageAttractionOptions $pageAttractionOptions,
     ) {
-        parent::__construct(
-            $httpClient,
-            $base64,
-            $downloaderLogger,
-            new PageAttractionOptions(
-                'https://www.mamasaidbecool.pl/kategoria/',
-                'h2>a',
-                'div.entry-content>*',
-            )
-        );
     }
 
     /** @return Page[] */
@@ -38,14 +30,21 @@ final readonly class MamaSaidBeCool extends AbstractPageAttraction implements Pa
         return $this->getPagesFromUrls($this->getUrls($place, $nation));
     }
 
-    /** @return Page[] */
+    /**
+     * @param string[] $urls
+     *
+     * @return Page[]
+     */
     protected function getPagesFromUrls(array $urls): array
     {
         $pages = array_map(function (string $url): Page {
             $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
             $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
             $page = new Page($url);
-            $page->addArticle(new Article($crawler->filter('h1')->text()));
+
+            if (0 !== $crawler->filter('h1')->count()) {
+                $page->addArticle(new Article($crawler->filter('h1')->text()));
+            }
 
             $crawler->filter($this->pageAttractionOptions->getMainContentSelector())->each(function (Crawler $crawler) use ($page): void {
                 if (
@@ -53,14 +52,31 @@ final readonly class MamaSaidBeCool extends AbstractPageAttraction implements Pa
                     && $crawler->text()
                 ) {
                     $page->addArticle(new Article($crawler->text()));
-                } elseif ('p' === $crawler->nodeName() && str_contains($crawler->text(), 'mapie')) {
-                    $page->setMap($crawler->filter('a')->first()->attr('href'));
                 } elseif (
                     in_array($crawler->nodeName(), $this->pageAttractionOptions->getImageSelectors())
                     && $crawler->filter('img')->count()
                 ) {
-                    $src = $crawler->filter('img')->eq(1)->attr('src') ?? throw new NullException();
-                    $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
+                    $crawler->filter('img')->each(function (Crawler $node) use ($page): void {
+                        $src = $node->attr('data-src-fg') ?? $node->attr('src');
+
+                        if (null === $src) {
+                            return;
+                        }
+
+                        if ('' === $src) {
+                            return;
+                        }
+
+                        if (str_ends_with($src, '.svg')) {
+                            return;
+                        }
+
+                        if (str_starts_with($src, 'data:image/svg')) {
+                            return;
+                        }
+
+                        $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
+                    });
                 } elseif (
                     in_array($crawler->nodeName(), $this->pageAttractionOptions->getTextSelectors())
                     && u($crawler->text())->trim()->toString()
@@ -77,8 +93,14 @@ final readonly class MamaSaidBeCool extends AbstractPageAttraction implements Pa
         return $pages;
     }
 
-    public function getSource(): string
+    /**
+     * @return string[]
+     */
+    protected function getUrls(string $place, string $nation): array
     {
-        return self::class;
+        $crawler = new Crawler($this->httpClient->request('GET', sprintf('%s/%s', $this->pageAttractionOptions->getUrl(), $nation))->getContent());
+        $collection = new ArrayCollection($crawler->filter($this->pageAttractionOptions->getMainPageSelector())->each(fn (Crawler $crawler): string => $crawler->filter('a')->first()->attr('href') ?? throw new NullException()));
+
+        return $collection->filter(fn (string $url): bool => str_contains($url, $place))->toArray();
     }
 }

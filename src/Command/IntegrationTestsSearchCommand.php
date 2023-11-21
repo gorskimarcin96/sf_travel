@@ -81,7 +81,7 @@ final class IntegrationTestsSearchCommand extends Command
         do {
             $message = new \App\Message\Search($search->getId() ?? throw new NullException());
 
-            $this->searchHandler->__invoke($message, false);
+            $this->searchHandler->__invoke($message, false, true);
             $progressBar->advance();
         } while (!$search->isFinished());
 

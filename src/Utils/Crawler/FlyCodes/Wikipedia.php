@@ -3,6 +3,7 @@
 namespace App\Utils\Crawler\FlyCodes;
 
 use App\Exception\EmptyStringException;
+use App\Utils\Crawler\FlyCodes\Model\FlyCode;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

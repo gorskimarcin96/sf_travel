@@ -2,71 +2,55 @@
 
 namespace App\Utils\Crawler\PageAttraction;
 
-use App\Exception\NullException;
-use App\Utils\Crawler\PageAttraction\Model\Article;
 use App\Utils\Crawler\PageAttraction\Model\Page;
+use App\Utils\Crawler\PageAttraction\Model\PageAttractionOptions;
 use App\Utils\Helper\Base64;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final readonly class GuruPodrozy implements PageAttractionInterface
+final readonly class GuruPodrozy extends AbstractPageAttraction implements PageAttractionInterface
 {
-    private const PAGE = 'https://www.gurupodrozy.pl/wyprawy/europa/';
-
     public function __construct(
-        private HttpClientInterface $httpClient,
-        private Base64 $base64,
-        private LoggerInterface $downloaderLogger
+        HttpClientInterface $httpClient,
+        Base64 $base64,
+        LoggerInterface $downloaderLogger,
     ) {
+        parent::__construct(
+            $httpClient,
+            $base64,
+            $downloaderLogger,
+            new PageAttractionOptions(
+                'https://www.gurupodrozy.pl/wyprawy/europa',
+                'section.recent-posts>article.post>section.entry-body',
+                'div.entry-content>*',
+                ['h1', 'h2', 'h3', 'h4', 'h5'],
+                ['p', 'div', 'noscript'],
+            )
+        );
     }
 
     /** @return Page[] */
     public function getPages(string $place, string $nation): array
     {
-        $pages = [];
-        $i = 1;
+        return $this->getPagesFromUrls($this->getUrls($place, $nation));
+    }
 
-        while (true) {
-            $crawler = new Crawler($this->httpClient->request('GET', self::PAGE.'/'.$nation.'/strona/'.$i++.'/')->getContent());
-            $collection = new ArrayCollection($crawler->filter('h3>a')->each(fn (Crawler $crawler): string => $crawler->attr('href') ?? throw new NullException()));
-            $urls = $collection->filter(fn (string $url): bool => str_contains($url, $place))->toArray();
+    protected function getUrls(string $place, string $nation): array
+    {
+        $urls = [];
+        $i = 0;
 
-            foreach ($urls as $url) {
-                $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
-                $page = new Page($url);
-                $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
-                $crawler->filter('div.entry-content>*')->each(function (Crawler $crawler) use ($page): void {
-                    if ('h2' === $crawler->nodeName()) {
-                        $page->addArticle(new Article($crawler->text()));
-                    } elseif ($page->getArticles() && $crawler->filter('img')->count()) {
-                        array_map(function (?string $src) use ($page): void {
-                            if (null === $src || '' === $src) {
-                                return;
-                            }
+        do {
+            $crawler = new Crawler($this->httpClient->request('GET', sprintf('%s/%s/strona/%d/', $this->pageAttractionOptions->getUrl(), $nation, ++$i))->getContent());
+            $newUrls = $crawler->filter($this->pageAttractionOptions->getMainPageSelector())->each(function (Crawler $crawler) use ($place): ?string {
+                return str_contains(strtolower($crawler->text()), strtolower($place)) ? $crawler->filter('h3>a')->first()->attr('href') : null;
+            });
+            $urls = [...$urls, ...(new ArrayCollection($newUrls))->filter(fn (?string $url): bool => null !== $url)->toArray()];
+        } while ($crawler->filter('section.recent-posts>article')->count() >= 9);
 
-                            if (str_starts_with($src, 'data:image/svg')) {
-                                return;
-                            }
-
-                            $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
-                        }, $crawler->filter('img')->each(fn (Crawler $node): ?string => $crawler->attr('src')));
-                    } elseif ($page->getArticles() && $crawler->text()) {
-                        $page->lastArticle()?->addDescription($crawler->text());
-                    }
-                });
-                $pages[] = $page;
-            }
-
-            if ($crawler->filter('section.recent-posts>article')->count() < 9) {
-                break;
-            }
-        }
-
-        $this->downloaderLogger->info(sprintf('Found pages: %s', count($pages)));
-
-        return $pages;
+        return $urls;
     }
 
     public function getSource(): string

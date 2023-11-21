@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils\Crawler\FlyCodes;
+namespace App\Utils\Crawler\FlyCodes\Model;
 
 final readonly class FlyCode
 {

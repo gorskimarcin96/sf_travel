@@ -38,7 +38,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
     ) {
     }
 
-    public function __invoke(Search $Search, bool $recursive = true): void
+    public function __invoke(Search $Search, bool $recursive = true, bool $throwable = false): void
     {
         $entity = $this->searchRepository->find($Search->getSearchId()) ?? throw new EntityNotFoundException();
         $searchServiceClass = $entity->getServiceTodo();
@@ -66,6 +66,10 @@ final readonly class SearchHandler implements MessageHandlerInterface
                 $this->downloaderLogger->error($exception->getMessage());
 
                 $entity->addError($searchServiceClass, [$exception::class, $exception->getMessage()]);
+
+                if ($throwable) {
+                    throw $exception;
+                }
             }
         }
 
