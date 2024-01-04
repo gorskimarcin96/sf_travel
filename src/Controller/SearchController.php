@@ -6,7 +6,7 @@ use ApiPlatform\Validator\ValidatorInterface;
 use App\ApiResource\Input\Search as Input;
 use App\Entity\Search;
 use App\Exception\NullException;
-use App\Factory\TripServices;
+use App\Factory\SearchServices;
 use App\Repository\SearchRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +22,7 @@ final class SearchController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus,
         private readonly ValidatorInterface $validator,
-        TripServices $tripServices
+        SearchServices $tripServices
     ) {
         $this->todo = array_map(static fn (object $class): string => $class::class, $tripServices->create());
     }

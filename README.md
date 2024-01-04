@@ -11,6 +11,7 @@
 > 3. Flights
 > 4. Last minute offers (in the future)
 > 5. Curiosities
+> 6. Weathers
 > 
 > The application doesn't require authorization.
 > 

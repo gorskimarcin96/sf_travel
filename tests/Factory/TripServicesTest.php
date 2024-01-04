@@ -2,20 +2,20 @@
 
 namespace App\Tests\Factory;
 
-use App\Factory\TripServices;
+use App\Factory\SearchServices;
 use App\Utils\Crawler\OptionalTrip\Tui;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TripServicesTest extends KernelTestCase
 {
-    private TripServices $tripServices;
+    private SearchServices $tripServices;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        /** @var TripServices $tripServices */
-        $tripServices = self::getContainer()->get(TripServices::class);
+        /** @var SearchServices $tripServices */
+        $tripServices = self::getContainer()->get(SearchServices::class);
         $this->tripServices = $tripServices;
     }
 

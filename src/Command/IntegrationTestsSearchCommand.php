@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Search;
 use App\Exception\NullException;
-use App\Factory\TripServices;
+use App\Factory\SearchServices;
 use App\MessageHandler\SearchHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -25,7 +25,7 @@ final class IntegrationTestsSearchCommand extends Command
     private readonly array $services;
 
     public function __construct(
-        TripServices $tripServices,
+        SearchServices $tripServices,
         private readonly EntityManagerInterface $entityManager,
         private readonly SearchHandler $searchHandler,
     ) {

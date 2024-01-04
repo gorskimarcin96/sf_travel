@@ -3,4 +3,4 @@ includes:
     - vendor/phpstan/phpstan-symfony/extension.neon
 
 parameters:
-    level: 9
+    level: 8

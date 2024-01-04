@@ -9,6 +9,7 @@ use App\Entity\OptionalTrip;
 use App\Entity\Search;
 use App\Entity\TripArticle;
 use App\Entity\TripPage;
+use App\Entity\Weather;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Exception as DoctrineException;
 use Doctrine\ORM\EntityNotFoundException;
@@ -165,6 +166,27 @@ trait DataLoaderTrait
                 ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
 
             $this->entityManager->persist($flight);
+        }, $tableNode->getHash());
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @Given there are weathers
+     */
+    public function thereAreWeathers(TableNode $tableNode): void
+    {
+        array_map(function (array $row): void {
+            $weather = (new Weather())
+                ->setId($row['id'])
+                ->setDate(new \DateTime($row['date']))
+                ->setTemperature2mMean($row['temperature_2m_mean'])
+                ->setPrecipitationHours($row['precipitation_hours'])
+                ->setPrecipitationSum($row['precipitation_sum'])
+                ->setSource($row['source'])
+                ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
+
+            $this->entityManager->persist($weather);
         }, $tableNode->getHash());
 
         $this->entityManager->flush();

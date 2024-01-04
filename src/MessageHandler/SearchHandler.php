@@ -4,9 +4,10 @@ namespace App\MessageHandler;
 
 use App\Entity\Search as Entity;
 use App\Exception\NullException;
-use App\Factory\TripServices;
+use App\Factory\SearchServices;
 use App\Message\Search;
 use App\Repository\SearchRepository;
+use App\Utils\Api\Weather\WeatherInterface;
 use App\Utils\Crawler\Flight\FlightInterface;
 use App\Utils\Crawler\Hotel\HotelInterface;
 use App\Utils\Crawler\OptionalTrip\OptionalTripInterface;
@@ -15,6 +16,7 @@ use App\Utils\Saver\Flight;
 use App\Utils\Saver\Hotel;
 use App\Utils\Saver\OptionalTrip;
 use App\Utils\Saver\PageAttraction;
+use App\Utils\Saver\Weather;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Facebook\WebDriver\Exception\PhpWebDriverExceptionInterface;
@@ -27,7 +29,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
     public function __construct(
         private LoggerInterface $logger,
         private LoggerInterface $downloaderLogger,
-        private TripServices $tripServices,
+        private SearchServices $tripServices,
         private SearchRepository $searchRepository,
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $messageBus,
@@ -35,6 +37,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
         private PageAttraction $pageAttraction,
         private Hotel $hotel,
         private Flight $flight,
+        private Weather $weather,
     ) {
     }
 
@@ -45,7 +48,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
 
         if ($searchServiceClass) {
             try {
-                /** @var OptionalTripInterface|PageAttractionInterface|HotelInterface|FlightInterface $service */
+                /** @var OptionalTripInterface|PageAttractionInterface|HotelInterface|FlightInterface|WeatherInterface $service */
                 $service = $this->tripServices->findByClassName($searchServiceClass);
 
                 if ($service instanceof OptionalTripInterface) {
@@ -56,6 +59,8 @@ final readonly class SearchHandler implements MessageHandlerInterface
                     $entity = $this->saveHotels($entity, $service);
                 } elseif ($service instanceof FlightInterface) {
                     $entity = $this->saveFlights($entity, $service);
+                } elseif ($service instanceof WeatherInterface) {
+                    $entity = $this->saveWeathers($entity, $service);
                 } else {
                     throw new \LogicException(sprintf('Service %s is not implemented.', $service::class));
                 }
@@ -163,5 +168,10 @@ final readonly class SearchHandler implements MessageHandlerInterface
         $this->logger->warning('Airports it\'s not defines.');
 
         return $entity;
+    }
+
+    private function saveWeathers(Entity $entity, WeatherInterface $weather): Entity
+    {
+        return $this->weather->save($weather, $entity);
     }
 }

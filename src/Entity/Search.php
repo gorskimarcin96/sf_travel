@@ -119,12 +119,19 @@ class Search
     #[ORM\OneToMany(mappedBy: 'search', targetEntity: Flight::class)]
     private Collection $flights;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Weather>|\App\Entity\Weather[]
+     */
+    #[ORM\OneToMany(mappedBy: 'search', targetEntity: Weather::class)]
+    private Collection $weathers;
+
     public function __construct()
     {
         $this->optionalTrips = new ArrayCollection();
         $this->tripPages = new ArrayCollection();
         $this->hotels = new ArrayCollection();
         $this->flights = new ArrayCollection();
+        $this->weathers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -416,6 +423,24 @@ class Search
         if (!$this->flights->contains($flight)) {
             $this->flights->add($flight);
             $flight->setSearch($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Weather>
+     */
+    public function getWeathers(): Collection
+    {
+        return $this->weathers;
+    }
+
+    public function addWeather(Weather $weather): static
+    {
+        if (!$this->weathers->contains($weather)) {
+            $this->weathers->add($weather);
+            $weather->setSearch($this);
         }
 
         return $this;
