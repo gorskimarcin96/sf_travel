@@ -12,12 +12,12 @@ final readonly class PageAttraction implements PageAttractionInterface
     }
 
     /** @return \App\Utils\Crawler\PageAttraction\Model\Page[] */
-    public function getPages(string $place, string $nation): array
+    #[\Override] public function getPages(string $place, string $nation): array
     {
         return $this->data;
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return self::class;
     }

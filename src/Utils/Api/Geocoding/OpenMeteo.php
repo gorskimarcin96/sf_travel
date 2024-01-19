@@ -7,7 +7,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class OpenMeteo
 {
-    public const API_DOMAIN = 'https://geocoding-api.open-meteo.com/v1/search';
+    public const string API_DOMAIN = 'https://geocoding-api.open-meteo.com/v1/search';
 
     public function __construct(private HttpClientInterface $client)
     {

@@ -86,7 +86,7 @@ class TripPage implements SourceInterface
         return $this;
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return $this->source;
     }

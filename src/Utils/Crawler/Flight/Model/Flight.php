@@ -66,7 +66,7 @@ final readonly class Flight implements URLInterface
         return $this->money;
     }
 
-    public function getUrl(): string
+    #[\Override] public function getUrl(): string
     {
         return $this->url;
     }

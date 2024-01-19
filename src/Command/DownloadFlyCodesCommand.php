@@ -16,7 +16,7 @@ final class DownloadFlyCodesCommand extends Command
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    #[\Override] protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->wikipedia->getFlyCodes() as $flyCode) {
             $data[] = [

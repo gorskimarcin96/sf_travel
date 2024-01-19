@@ -14,7 +14,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class Wakacje implements TripInterface
 {
-    private const URL = 'https://www.wakacje.pl/wczasy';
+    private const string URL = 'https://www.wakacje.pl/wczasy';
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -24,7 +24,7 @@ final readonly class Wakacje implements TripInterface
     ) {
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return self::class;
     }
@@ -34,7 +34,7 @@ final readonly class Wakacje implements TripInterface
      *
      * @return Trip[]
      */
-    public function getTrips(
+    #[\Override] public function getTrips(
         string $place,
         \DateTimeInterface $from,
         \DateTimeInterface $to,

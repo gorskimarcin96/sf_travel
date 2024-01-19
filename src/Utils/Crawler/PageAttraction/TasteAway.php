@@ -31,18 +31,18 @@ final readonly class TasteAway extends AbstractPageAttraction implements PageAtt
         );
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return self::class;
     }
 
     /** @return Page[] */
-    public function getPages(string $place, string $nation): array
+    #[\Override] public function getPages(string $place, string $nation): array
     {
         return $this->getPagesFromUrls($this->getUrls($place, $nation));
     }
 
-    protected function getUrls(string $place, string $nation): array
+    #[\Override] protected function getUrls(string $place, string $nation): array
     {
         $response = $this->httpClient->request('GET', sprintf('%s/%s', $this->pageAttractionOptions->getUrl(), $nation));
         $crawler = new Crawler($response->getContent());

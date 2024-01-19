@@ -19,8 +19,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class Itaka extends PantherClient implements OptionalTripInterface
 {
-    private const MAIN_DOMAIN = 'https://itaka.seeplaces.com';
-    private const URL = 'https://itaka.seeplaces.com';
+    private const string MAIN_DOMAIN = 'https://itaka.seeplaces.com';
+    private const string URL = 'https://itaka.seeplaces.com';
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -32,13 +32,13 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
         parent::__construct($client);
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return self::class;
     }
 
     /** @return OptionalTrip[] */
-    public function getOptionalTrips(string $place, string $nation = null): array
+    #[\Override] public function getOptionalTrips(string $place, string $nation = null): array
     {
         if (null === $nation || '' === $nation) {
             throw new NationRequiredException();

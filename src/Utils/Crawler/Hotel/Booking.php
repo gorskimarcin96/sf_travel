@@ -17,7 +17,7 @@ final readonly class Booking implements HotelInterface
 {
     use BookingHelper;
 
-    public const URL = 'https://www.booking.com/searchresults.pl.html';
+    public const string URL = 'https://www.booking.com/searchresults.pl.html';
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -27,7 +27,7 @@ final readonly class Booking implements HotelInterface
     ) {
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return self::class;
     }
@@ -37,7 +37,7 @@ final readonly class Booking implements HotelInterface
      *
      * @return Hotel[]
      */
-    public function getHotels(
+    #[\Override] public function getHotels(
         string $place,
         \DateTimeInterface $from,
         \DateTimeInterface $to,
@@ -152,7 +152,7 @@ final readonly class Booking implements HotelInterface
         } catch (\Throwable) {
         }
 
-        return new Model\Hotel(
+        return new Hotel(
             $node->filter('h3>a>div')->first()->text(),
             $node->filter('h3>a')->attr('href') ?? throw new NullException(),
             $food,

@@ -64,7 +64,7 @@ class Hotel implements SourceInterface
     private array $descriptions = [];
 
     #[ORM\OneToOne(cascade: ['all'])]
-    #[Orm\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Groups('hotels')]
     private Money $money;
 
@@ -225,7 +225,7 @@ class Hotel implements SourceInterface
         return $this;
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return $this->source;
     }

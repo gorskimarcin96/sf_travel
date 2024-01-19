@@ -18,7 +18,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class Rainbow extends PantherClient implements OptionalTripInterface
 {
-    private const URL = 'https://r.pl';
+    private const string URL = 'https://r.pl';
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -30,13 +30,13 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
         parent::__construct($client);
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return self::class;
     }
 
     /** @return OptionalTrip[] */
-    public function getOptionalTrips(string $place, string $nation = null): array
+    #[\Override] public function getOptionalTrips(string $place, string $nation = null): array
     {
         if (null === $nation || '' === $nation) {
             throw new NationRequiredException();

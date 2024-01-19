@@ -32,19 +32,19 @@ final readonly class MamaSaidBeCool extends AbstractPageAttraction implements Pa
         );
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return self::class;
     }
 
     /** @return Page[] */
-    public function getPages(string $place, string $nation): array
+    #[\Override] public function getPages(string $place, string $nation): array
     {
         return $this->getPagesFromUrls($this->getUrls($place, $nation));
     }
 
     /** @return Page[] */
-    protected function getPagesFromUrls(array $urls): array
+    #[\Override] protected function getPagesFromUrls(array $urls): array
     {
         $pages = array_map(function (string $url): Page {
             $this->downloaderLogger->info(sprintf('Download data from %s...', $url));

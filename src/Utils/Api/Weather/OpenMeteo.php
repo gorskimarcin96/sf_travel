@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class OpenMeteo implements WeatherInterface
 {
-    public const API_DOMAIN = 'https://archive-api.open-meteo.com/v1/archive';
+    public const string API_DOMAIN = 'https://archive-api.open-meteo.com/v1/archive';
 
     public function __construct(private HttpClientInterface $client, private GeocodingOpenMeteo $geocodingOpenMeteo)
     {
@@ -17,7 +17,7 @@ final readonly class OpenMeteo implements WeatherInterface
     /**
      * @return Weather[]
      */
-    public function getByCityAndBetweenDate(string $city, \DateTimeInterface $from, \DateTimeInterface $to): array
+    #[\Override] public function getByCityAndBetweenDate(string $city, \DateTimeInterface $from, \DateTimeInterface $to): array
     {
         $geocoding = $this->geocodingOpenMeteo->getByCity($city);
 

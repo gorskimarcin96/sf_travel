@@ -12,7 +12,7 @@ use function Symfony\Component\String\u;
 
 final readonly class Wikipedia
 {
-    public const URL = 'https://pl.wikipedia.org/wiki/Wikipedia:Skarbnica_Wikipedii/Porty_lotnicze_%C5%9Bwiata:_';
+    public const string URL = 'https://pl.wikipedia.org/wiki/Wikipedia:Skarbnica_Wikipedii/Porty_lotnicze_%C5%9Bwiata:_';
 
     public function __construct(
         private HttpClientInterface $httpClient,

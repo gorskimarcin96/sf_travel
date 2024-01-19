@@ -15,7 +15,7 @@ class Money
     #[Groups(['optional-trips', 'hotels', 'flights', 'trips'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DECIMAL, precision: 10, scale: 2)]
+    #[ORM\Column]
     #[Groups(['optional-trips', 'hotels', 'flights', 'trips'])]
     private float $price;
 

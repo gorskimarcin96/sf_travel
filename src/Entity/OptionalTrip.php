@@ -45,7 +45,7 @@ class OptionalTrip implements SourceInterface
     private string $source;
 
     #[ORM\OneToOne(cascade: ['all'])]
-    #[Orm\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Groups('optional-trips')]
     private Money $money;
 
@@ -120,7 +120,7 @@ class OptionalTrip implements SourceInterface
         return $this;
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return $this->source;
     }

@@ -58,7 +58,7 @@ class Flight implements SourceInterface
     private string $url;
 
     #[ORM\OneToOne(cascade: ['all'])]
-    #[Orm\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Groups('flights')]
     private Money $money;
 
@@ -201,7 +201,7 @@ class Flight implements SourceInterface
         return $this;
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return $this->source;
     }

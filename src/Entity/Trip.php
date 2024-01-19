@@ -55,7 +55,7 @@ class Trip implements SourceInterface
     private string $image;
 
     #[ORM\OneToOne(cascade: ['all'])]
-    #[Orm\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     #[Groups('trips')]
     private Money $money;
 
@@ -186,7 +186,7 @@ class Trip implements SourceInterface
         return $this;
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return $this->source;
     }

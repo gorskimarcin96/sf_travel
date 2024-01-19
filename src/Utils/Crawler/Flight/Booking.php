@@ -15,19 +15,19 @@ final readonly class Booking extends PantherClient implements FlightInterface
 {
     use BookingHelper;
 
-    public const URL = 'https://flights.booking.com/flights/%s-%s/';
+    public const string URL = 'https://flights.booking.com/flights/%s-%s/';
 
     public function __construct(Client $client, private Parser $parser, private LoggerInterface $downloaderLogger)
     {
         parent::__construct($client);
     }
 
-    public function getSource(): string
+    #[\Override] public function getSource(): string
     {
         return self::class;
     }
 
-    public function getFlights(
+    #[\Override] public function getFlights(
         string $fromAirport,
         string $toAirport,
         \DateTimeImmutable $from,

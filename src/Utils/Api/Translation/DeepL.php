@@ -7,7 +7,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class DeepL
 {
-    private const API_DOMAIN = 'https://api-free.deepl.com/v2/translate';
+    private const string API_DOMAIN = 'https://api-free.deepl.com/v2/translate';
 
     public function __construct(private string $apiKey, private HttpClientInterface $client)
     {
