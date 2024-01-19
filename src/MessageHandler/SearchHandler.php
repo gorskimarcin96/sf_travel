@@ -12,10 +12,13 @@ use App\Utils\Crawler\Flight\FlightInterface;
 use App\Utils\Crawler\Hotel\HotelInterface;
 use App\Utils\Crawler\OptionalTrip\OptionalTripInterface;
 use App\Utils\Crawler\PageAttraction\PageAttractionInterface;
+use App\Utils\Crawler\Trip\TripInterface;
+use App\Utils\Helper\DateTime;
 use App\Utils\Saver\Flight;
 use App\Utils\Saver\Hotel;
 use App\Utils\Saver\OptionalTrip;
 use App\Utils\Saver\PageAttraction;
+use App\Utils\Saver\Trip;
 use App\Utils\Saver\Weather;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
@@ -26,6 +29,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final readonly class SearchHandler implements MessageHandlerInterface
 {
+    use DateTime;
+
     public function __construct(
         private LoggerInterface $logger,
         private LoggerInterface $downloaderLogger,
@@ -38,6 +43,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
         private Hotel $hotel,
         private Flight $flight,
         private Weather $weather,
+        private Trip $trip,
     ) {
     }
 
@@ -48,7 +54,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
 
         if ($searchServiceClass) {
             try {
-                /** @var OptionalTripInterface|PageAttractionInterface|HotelInterface|FlightInterface|WeatherInterface $service */
+                /** @var OptionalTripInterface|PageAttractionInterface|HotelInterface|FlightInterface|WeatherInterface|TripInterface $service */
                 $service = $this->tripServices->findByClassName($searchServiceClass);
 
                 if ($service instanceof OptionalTripInterface) {
@@ -61,6 +67,8 @@ final readonly class SearchHandler implements MessageHandlerInterface
                     $entity = $this->saveFlights($entity, $service);
                 } elseif ($service instanceof WeatherInterface) {
                     $entity = $this->saveWeathers($entity, $service);
+                } elseif ($service instanceof TripInterface) {
+                    $entity = $this->saveTrips($entity, $service);
                 } else {
                     throw new \LogicException(sprintf('Service %s is not implemented.', $service::class));
                 }
@@ -127,6 +135,11 @@ final readonly class SearchHandler implements MessageHandlerInterface
             $entity->getPlace(),
             $entity->getFrom(),
             $entity->getTo(),
+            $entity->getRangeFrom() ?? 1,
+            $entity->getRangeTo() ?? $this->countDaysBetween($entity->getFrom(), $entity->getTo()),
+            $entity->getHotelFoods(),
+            $entity->getHotelStars(),
+            $entity->getHotelRate(),
             $entity->getAdults(),
             $entity->getChildren(),
             $entity
@@ -173,5 +186,23 @@ final readonly class SearchHandler implements MessageHandlerInterface
     private function saveWeathers(Entity $entity, WeatherInterface $weather): Entity
     {
         return $this->weather->save($weather, $entity);
+    }
+
+    private function saveTrips(Entity $entity, TripInterface $trip): Entity
+    {
+        return $this->trip->save(
+            $trip,
+            $entity->getPlace(),
+            $entity->getFrom(),
+            $entity->getTo(),
+            $entity->getRangeFrom() ?? 1,
+            $entity->getRangeTo() ?? $this->countDaysBetween($entity->getFrom(), $entity->getTo()),
+            $entity->getHotelFoods(),
+            $entity->getHotelStars(),
+            $entity->getHotelRate(),
+            $entity->getAdults(),
+            $entity->getChildren(),
+            $entity,
+        );
     }
 }

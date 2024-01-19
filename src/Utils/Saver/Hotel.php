@@ -7,6 +7,7 @@ use App\Entity\Search;
 use App\Utils\Crawler\Hotel\HotelInterface;
 use App\Utils\Crawler\Hotel\Model\Hotel as Model;
 use App\Utils\Crawler\Model\URLTrait;
+use App\Utils\Enum\Food;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -20,16 +21,36 @@ final readonly class Hotel
     ) {
     }
 
+    /**
+     * @param Food[] $foods
+     */
     public function save(
         HotelInterface $service,
         string $place,
-        \DateTimeImmutable $from,
-        \DateTimeImmutable $to,
+        \DateTimeInterface $from,
+        \DateTimeInterface $to,
+        int $rangeFrom,
+        int $rangeTo,
+        array $foods,
+        ?int $stars,
+        ?float $rate,
         int $adults,
         int $children,
         Search $search
     ): Search {
-        $models = $service->getHotels($place, $from, $to, $adults, $children);
+        $models = $service->getHotels(
+            $place,
+            $from,
+            $to,
+            $rangeFrom,
+            $rangeTo,
+            $foods,
+            $stars,
+            $rate,
+            $adults,
+            $children
+        );
+
         $this->downloaderLogger->info(sprintf('Get %s hotels from "%s".', count($models), $service->getSource()));
 
         /** @var Model[] $models */
@@ -42,7 +63,11 @@ final readonly class Hotel
                 ->setUrl($model->getUrl())
                 ->setAddress($model->getAddress())
                 ->setImage($model->getImage())
-                ->setRate($model->getRate())
+                ->setStars($model->getStars())
+                ->setFood($model->getFood())
+                ->setFrom(\DateTimeImmutable::createFromInterface($model->getFrom()))
+                ->setTo(\DateTimeImmutable::createFromInterface($model->getTo()))
+                ->setRate($model->getRate() ?? 0)
                 ->setMoney($model->getMoney())
                 ->setDescriptions($model->getDescriptions())
                 ->setSource($service->getSource());

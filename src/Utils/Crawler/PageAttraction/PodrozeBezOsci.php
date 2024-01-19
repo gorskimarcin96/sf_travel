@@ -30,6 +30,11 @@ final readonly class PodrozeBezOsci extends AbstractPageAttraction implements Pa
         );
     }
 
+    public function getSource(): string
+    {
+        return self::class;
+    }
+
     /** @return Page[] */
     public function getPages(string $place, string $nation): array
     {
@@ -71,10 +76,5 @@ final readonly class PodrozeBezOsci extends AbstractPageAttraction implements Pa
         $this->downloaderLogger->info(sprintf('Found pages: %s', count($pages)));
 
         return $pages;
-    }
-
-    public function getSource(): string
-    {
-        return self::class;
     }
 }

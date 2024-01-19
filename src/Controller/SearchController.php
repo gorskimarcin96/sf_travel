@@ -42,6 +42,11 @@ final class SearchController extends AbstractController
                 ->setToAirport($input->getToAirport())
                 ->setAdults($input->getAdults())
                 ->setChildren($input->getChildren())
+                ->setHotelFoods($input->getHotelFoods())
+                ->setHotelStars($input->getHotelStars())
+                ->setHotelRate($input->getHotelRate())
+                ->setRangeFrom($input->getRangeFrom())
+                ->setRangeTo($input->getRangeTo())
                 ->setTodo($this->todo);
 
             $this->entityManager->persist($search);

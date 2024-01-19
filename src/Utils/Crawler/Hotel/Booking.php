@@ -6,6 +6,7 @@ use App\Entity\Money;
 use App\Exception\NullException;
 use App\Utils\Crawler\BookingHelper;
 use App\Utils\Crawler\Hotel\Model\Hotel;
+use App\Utils\Enum\Food;
 use App\Utils\Helper\Base64;
 use App\Utils\Helper\Parser;
 use Psr\Log\LoggerInterface;
@@ -15,6 +16,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final readonly class Booking implements HotelInterface
 {
     use BookingHelper;
+
     public const URL = 'https://www.booking.com/searchresults.pl.html';
 
     public function __construct(
@@ -25,9 +27,56 @@ final readonly class Booking implements HotelInterface
     ) {
     }
 
-    public function getHotels(string $place, \DateTimeImmutable $from, \DateTimeImmutable $to, int $adults = 2, int $children = 0): array
+    public function getSource(): string
     {
-        $betweenDays = abs($from->diff($to)->format('%a'));
+        return self::class;
+    }
+
+    /**
+     * @param Food[] $foods
+     *
+     * @return Hotel[]
+     */
+    public function getHotels(
+        string $place,
+        \DateTimeInterface $from,
+        \DateTimeInterface $to,
+        int $rangeFrom,
+        int $rangeTo,
+        array $foods,
+        ?int $stars,
+        ?float $rate,
+        int $adults = 2,
+        int $children = 0
+    ): array {
+        $nflt = [sprintf('ltfd=1:%s:%s_%s:1:', $rangeFrom, $from->format('d-m-Y'), $to->format('d-m-Y'))];
+
+        if (null !== $rate && $rate <= 10) {
+            $nflt[] = 'nflt=review_score='.($rate * 10);
+        }
+
+        if (null !== $stars && $stars >= 0 && $stars <= 5) {
+            foreach (range($stars, 5) as $star) {
+                $nflt[] = 'nflt=class='.$star;
+            }
+        }
+
+        if (in_array(Food::ALL_INCLUSIVE, $foods, true)) {
+            $nflt[] = 'mealplan:mealplan=4';
+        }
+
+        if (in_array(Food::BREAKFAST_LAUNCH_AND_DINNER, $foods, true)) {
+            $nflt[] = 'mealplan:mealplan=3';
+        }
+
+        if (in_array(Food::BREAKFAST_AND_DINNER, $foods, true)) {
+            $nflt[] = 'mealplan:mealplan=9';
+        }
+
+        if (in_array(Food::WITHOUT_FOOD, $foods, true)) {
+            $nflt[] = 'mealplan:mealplan=999';
+        }
+
         $params = [
             'ss' => $place,
             'ssne' => $place,
@@ -48,7 +97,8 @@ final readonly class Booking implements HotelInterface
             'ac_click_type' => 'b',
             'ac_position' => '0',
             'src' => 'searchresults',
-            'nflt' => 'ht_id%3D204',
+            'flex_window' => 0,
+            'nflt' => implode(';', $nflt),
         ];
         $params = array_map(static fn ($key, $value): string => $key.'='.$value, array_keys($params), $params);
         $url = self::URL.'?'.implode('&', $params);
@@ -59,39 +109,61 @@ final readonly class Booking implements HotelInterface
 
         $this->downloaderLogger->notice(sprintf('Got first %s hotels.', $crawler->filter($this->createAttr('property-card'))->count()));
 
-        return $crawler->filter($this->createAttr('property-card'))->each(closure: function (Crawler $crawler) use ($betweenDays): Hotel {
-            try {
-                $text = $crawler->filter($this->createAttr('review-score', 'div', '>div'))->first()->text();
-                $rate = $this->parser->stringToFloat(str_replace(',', '.', $text));
-            } catch (\Throwable) {
-                $rate = null;
-            }
-
-            $amount = $this->parser
-                ->stringToFloat($crawler->filter($this->createAttr('price-and-discounted-price', 'span'))->text());
-
-            try {
-                $descriptionHeader = $crawler->filter($this->createAttr('recommended-units', 'div', ' h4'))->text();
-            } catch (\Throwable) {
-            }
-
-            $descriptions = $crawler->filter($this->createAttr('recommended-units', 'div', ' ul>li'))
-                ->each(fn (Crawler $node): string => $node->text());
-
-            return new Model\Hotel(
-                $crawler->filter('h3>a>div')->first()->text(),
-                $crawler->filter('h3>a')->attr('href') ?? throw new NullException(),
-                $this->base64->convertFromImage($crawler->filter('img')->attr('src') ?? throw new NullException()),
-                $crawler->filter($this->createAttr('address', 'span'))->text(),
-                isset($descriptionHeader) ? [$descriptionHeader] + $descriptions : $descriptions,
-                (new Money())->setPrice($amount / $betweenDays),
-                $rate
-            );
-        });
+        return $crawler
+            ->filter($this->createAttr('property-card'))
+            ->each(closure: fn (Crawler $node): Hotel => $this->createModelFromNode($node, $from, $to));
     }
 
-    public function getSource(): string
+    public function createModelFromNode(Crawler $node, \DateTimeInterface $from, \DateTimeInterface $to): Hotel
     {
-        return self::class;
+        try {
+            $text = $node->filter($this->createAttr('review-score', 'div', '>div'))->first()->text();
+            $rate = $this->parser->stringToFloat(str_replace(',', '.', $text));
+        } catch (\Throwable) {
+            $rate = null;
+        }
+
+        $betweenDays = $this->parser->stringToFloat(explode(', ', $node->filter($this->createAttr('price-for-x-nights'))->first()->text())[0]);
+
+        $amount = $this->parser
+            ->stringToFloat($node->filter($this->createAttr('price-and-discounted-price', 'span'))->text());
+
+        try {
+            $descriptionHeader = $node->filter($this->createAttr('recommended-units', 'div', ' h4'))->text();
+        } catch (\Throwable) {
+        }
+
+        $descriptions = $node->filter($this->createAttr('recommended-units', 'div', ' ul>li'))
+            ->each(fn (Crawler $node): string => $node->text());
+
+        $food = match (true) {
+            in_array('All inclusive', $descriptions, true) => Food::ALL_INCLUSIVE,
+            in_array('Wszystkie posiłki wliczone w cenę', $descriptions, true) => Food::BREAKFAST_LAUNCH_AND_DINNER,
+            in_array('Śniadanie i kolacja wliczone w cenę', $descriptions, true) => Food::BREAKFAST_AND_DINNER,
+            in_array('Śniadanie wliczone w cenę', $descriptions, true) => Food::BREAKFAST,
+            default => Food::WITHOUT_FOOD,
+        };
+
+        try {
+            $now = new \DateTime();
+            $dates = explode(' - ', $node->filter($this->createAttr('flexible-dates'))->first()->text());
+            $from = new \DateTimeImmutable(substr($dates[0], 5).' '.$now->format('Y'));
+            $to = new \DateTimeImmutable(substr($dates[1], 5).' '.$now->format('Y'));
+        } catch (\Throwable) {
+        }
+
+        return new Model\Hotel(
+            $node->filter('h3>a>div')->first()->text(),
+            $node->filter('h3>a')->attr('href') ?? throw new NullException(),
+            $food,
+            $node->filter($this->createAttr('rating-stars', 'div', '>span'))->count(),
+            $rate,
+            $this->base64->convertFromImage($node->filter('img')->attr('src') ?? throw new NullException()),
+            $node->filter($this->createAttr('address', 'span'))->text(),
+            isset($descriptionHeader) ? [$descriptionHeader] + $descriptions : $descriptions,
+            $from,
+            $to,
+            (new Money())->setPrice($amount / $betweenDays),
+        );
     }
 }

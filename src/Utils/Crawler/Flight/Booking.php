@@ -22,6 +22,11 @@ final readonly class Booking extends PantherClient implements FlightInterface
         parent::__construct($client);
     }
 
+    public function getSource(): string
+    {
+        return self::class;
+    }
+
     public function getFlights(
         string $fromAirport,
         string $toAirport,
@@ -52,43 +57,43 @@ final readonly class Booking extends PantherClient implements FlightInterface
 
         return $this->client->getCrawler()
             ->filter($this->createAttr('searchresults_card'))
-            ->each(fn (Crawler $crawler): Flight => new Flight(
-                $fromAirport,
-                $this->createDepartureDateTimeImmutable($crawler, '0'),
-                $this->createDestinationDateTimeImmutable($crawler, '0'),
-                (int) $this->parser->stringToFloat($crawler->filter($this->createAttr('flight_card_segment_stops_0'))->text()),
-                $toAirport,
-                $this->createDepartureDateTimeImmutable($crawler, '1'),
-                $this->createDestinationDateTimeImmutable($crawler, '1'),
-                (int) $this->parser->stringToFloat($crawler->filter($this->createAttr('flight_card_segment_stops_1'))->text()),
-                (new Money())->setPrice($this->parser->stringToFloat(str_replace(',', '.', $crawler->filter($this->createAttr('flight_card_price_total_price'))->text()))),
-                $this->client->getCurrentURL()
-            ));
+            ->each(fn (Crawler $node): Flight => $this->createModelFromNode($node, $fromAirport, $toAirport));
     }
 
-    public function getSource(): string
+    private function createModelFromNode(Crawler $node, string $fromAirport, string $toAirport): Flight
     {
-        return self::class;
+        return new Flight(
+            $fromAirport,
+            $this->createDepartureDateTimeImmutable($node, '0'),
+            $this->createDestinationDateTimeImmutable($node, '0'),
+            (int) $this->parser->stringToFloat($node->filter($this->createAttr('flight_card_segment_stops_0'))->text()),
+            $toAirport,
+            $this->createDepartureDateTimeImmutable($node, '1'),
+            $this->createDestinationDateTimeImmutable($node, '1'),
+            (int) $this->parser->stringToFloat($node->filter($this->createAttr('flight_card_segment_stops_1'))->text()),
+            (new Money())->setPrice($this->parser->stringToFloat(str_replace(',', '.', $node->filter($this->createAttr('flight_card_price_total_price'))->text()))),
+            $this->client->getCurrentURL()
+        );
     }
 
-    private function createDepartureDateTimeImmutable(Crawler $crawler, string $number): \DateTimeImmutable
+    private function createDepartureDateTimeImmutable(Crawler $node, string $number): \DateTimeImmutable
     {
         return new \DateTimeImmutable(
             sprintf(
                 '%s %s',
-                $crawler->filter($this->createAttr('flight_card_segment_departure_time_'.$number))->text(),
-                $crawler->filter($this->createAttr('flight_card_segment_departure_date_'.$number))->text()
+                $node->filter($this->createAttr('flight_card_segment_departure_time_'.$number))->text(),
+                $node->filter($this->createAttr('flight_card_segment_departure_date_'.$number))->text()
             )
         );
     }
 
-    private function createDestinationDateTimeImmutable(Crawler $crawler, string $number): \DateTimeImmutable
+    private function createDestinationDateTimeImmutable(Crawler $node, string $number): \DateTimeImmutable
     {
         return new \DateTimeImmutable(
             sprintf(
                 '%s %s',
-                $crawler->filter($this->createAttr('flight_card_segment_destination_time_'.$number))->text(),
-                $crawler->filter($this->createAttr('flight_card_segment_destination_date_'.$number))->text()
+                $node->filter($this->createAttr('flight_card_segment_destination_time_'.$number))->text(),
+                $node->filter($this->createAttr('flight_card_segment_destination_date_'.$number))->text()
             )
         );
     }

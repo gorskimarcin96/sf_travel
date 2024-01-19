@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Utils\Crawler\Hotel;
+namespace App\Utils\Crawler\Trip;
 
 use App\Entity\SourceInterface;
+use App\Utils\Crawler\Trip\Model\Trip;
 use App\Utils\Enum\Food;
 
-interface HotelInterface extends SourceInterface
+interface TripInterface extends SourceInterface
 {
     /**
      * @param Food[] $foods
      *
-     * @return Model\Hotel[]
+     * @return Trip[]
      */
-    public function getHotels(
+    public function getTrips(
         string $place,
         \DateTimeInterface $from,
         \DateTimeInterface $to,
@@ -21,7 +22,6 @@ interface HotelInterface extends SourceInterface
         array $foods,
         ?int $stars,
         ?float $rate,
-        int $adults = 2,
-        int $children = 0,
+        int $persons = 2
     ): array;
 }

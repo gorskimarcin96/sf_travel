@@ -12,6 +12,7 @@ services:
       $hotels: !tagged_iterator 'app.crawler.hotels'
       $flights: !tagged_iterator 'app.crawler.flights'
       $weathers: !tagged_iterator 'app.api.weather'
+      $trips: !tagged_iterator 'app.crawler.trips'
   _instanceof:
     App\Utils\Crawler\OptionalTrip\OptionalTripInterface:
       tags: [ name: 'app.crawler.optional_trips' ]
@@ -27,6 +28,9 @@ services:
       public: true
     App\Utils\Api\Weather\WeatherInterface:
       tags: [ name: 'app.api.weather' ]
+      public: true
+    App\Utils\Crawler\Trip\TripInterface:
+      tags: [ name: 'app.crawler.trips' ]
       public: true
 
   App\:

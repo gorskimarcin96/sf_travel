@@ -1,5 +1,5 @@
 Feature: Searcher
-  In order to get tripe pages
+  In order to get flights
   As a user
   I need to use data in display got data
 
@@ -15,7 +15,7 @@ Feature: Searcher
       | 2  | 2999.99 | WAW          | 2000-01-01 14:00 | 2000-01-01 16:00 | 1          | ZTH        | 2000-01-07 14:00 | 2000-01-07 16:00 | 0        | https://example.org | abc    | 1         |
       | 3  | 2.30    | WAW          | 2000-01-01 18:00 | 2000-01-01 20:00 | 0          | ZTH        | 2000-01-07 18:00 | 2000-01-07 20:00 | 1        | https://example.org | abc    | 1         |
 
-  Scenario: Get hotels
+  Scenario: Get flights
     When I send a "GET" request to "/flights"
     Then I get response 200 status code
     And I get response 3 elements
@@ -79,7 +79,7 @@ Feature: Searcher
 ]
 """
 
-  Scenario: Get hotels with filters
+  Scenario: Get flights with filters
     When I send a "GET" request to "/flights?search=1&source=abc"
     Then I get response 200 status code
     And I get response 2 elements

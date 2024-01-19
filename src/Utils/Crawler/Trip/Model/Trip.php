@@ -1,25 +1,20 @@
 <?php
 
-namespace App\Utils\Crawler\Hotel\Model;
+namespace App\Utils\Crawler\Trip\Model;
 
 use App\Entity\Money;
 use App\Utils\Crawler\Model\URLInterface;
 use App\Utils\Enum\Food;
 
-final readonly class Hotel implements URLInterface
+final readonly class Trip implements URLInterface
 {
-    /**
-     * @param string[] $descriptions
-     */
     public function __construct(
         private string $title,
         private string $url,
         private Food $food,
         private int $stars,
-        private ?float $rate,
+        private float $rate,
         private string $image,
-        private string $address,
-        private array $descriptions,
         private \DateTimeInterface $from,
         private \DateTimeInterface $to,
         private Money $money,
@@ -46,7 +41,7 @@ final readonly class Hotel implements URLInterface
         return $this->stars;
     }
 
-    public function getRate(): ?float
+    public function getRate(): float
     {
         return $this->rate;
     }
@@ -54,19 +49,6 @@ final readonly class Hotel implements URLInterface
     public function getImage(): string
     {
         return $this->image;
-    }
-
-    public function getAddress(): string
-    {
-        return $this->address;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getDescriptions(): array
-    {
-        return $this->descriptions;
     }
 
     public function getFrom(): \DateTimeInterface

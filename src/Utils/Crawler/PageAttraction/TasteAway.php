@@ -31,6 +31,11 @@ final readonly class TasteAway extends AbstractPageAttraction implements PageAtt
         );
     }
 
+    public function getSource(): string
+    {
+        return self::class;
+    }
+
     /** @return Page[] */
     public function getPages(string $place, string $nation): array
     {
@@ -57,10 +62,5 @@ final readonly class TasteAway extends AbstractPageAttraction implements PageAtt
         } while ($i++);
 
         return (new ArrayCollection($urls))->filter(fn (string $url): bool => str_contains($url, $place))->toArray();
-    }
-
-    public function getSource(): string
-    {
-        return self::class;
     }
 }

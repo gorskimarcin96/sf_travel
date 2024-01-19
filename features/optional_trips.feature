@@ -1,5 +1,5 @@
 Feature: Searcher
-  In order to get tripe pages
+  In order to get optional trips
   As a user
   I need to use data in display got data
 

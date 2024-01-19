@@ -32,6 +32,11 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
         parent::__construct($client);
     }
 
+    public function getSource(): string
+    {
+        return self::class;
+    }
+
     /** @return OptionalTrip[] */
     public function getOptionalTrips(string $place, string $nation = null): array
     {
@@ -87,15 +92,9 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
         $data = $this->client
             ->getCrawler()
             ->filter('div.container>div>div.ant-col.region-excursions__item')
-            ->each(function (PantherCrawler $pantherCrawler): ?OptionalTrip {
+            ->each(function (PantherCrawler $node): ?OptionalTrip {
                 try {
-                    return new OptionalTrip(
-                        $pantherCrawler->filter('.excursion-tile__title')->text(),
-                        [],
-                        self::MAIN_DOMAIN.$pantherCrawler->filter('a')->getAttribute('href'),
-                        $this->base64->convertFromImage($pantherCrawler->filter('img')->getAttribute('src') ?? throw new NullException()),
-                        (new Money())->setPrice($this->parsePrice($pantherCrawler->filter('.excursion-price-omnibus__value')->text()))
-                    );
+                    return $this->createModelFromNode($node);
                 } catch (\Throwable $exception) {
                     $this->downloaderLogger->error(sprintf('%s: %s', $exception::class, $exception->getMessage()));
 
@@ -121,9 +120,15 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
         return $data;
     }
 
-    public function getSource(): string
+    private function createModelFromNode(PantherCrawler $node): OptionalTrip
     {
-        return self::class;
+        return new OptionalTrip(
+            $node->filter('.excursion-tile__title')->text(),
+            [],
+            self::MAIN_DOMAIN.$node->filter('a')->getAttribute('href'),
+            $this->base64->convertFromImage($node->filter('img')->getAttribute('src') ?? throw new NullException()),
+            (new Money())->setPrice($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()))
+        );
     }
 
     private function parsePrice(string $price): float

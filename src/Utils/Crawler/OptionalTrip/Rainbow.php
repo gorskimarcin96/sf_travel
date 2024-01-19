@@ -30,6 +30,11 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
         parent::__construct($client);
     }
 
+    public function getSource(): string
+    {
+        return self::class;
+    }
+
     /** @return OptionalTrip[] */
     public function getOptionalTrips(string $place, string $nation = null): array
     {
@@ -89,15 +94,8 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
                 $this->client->request('GET', $url);
                 $this->client->refreshCrawler();
                 $this->client->waitFor('.kf-opis-wycieczki-atrybut-podrzedny__opis>p');
-                $crawler = new PantherCrawler($this->client->getCrawler()->html());
 
-                return new OptionalTrip(
-                    $crawler->filter('h1')->text(),
-                    $crawler->filter('.kf-opis-wycieczki-atrybut-podrzedny__opis>p')->each(fn (PantherCrawler $crawler): string => $crawler->text()),
-                    $url,
-                    $this->base64->convertFromImage('https:'.$crawler->filter('img.kf-gallery--desktop__element')->attr('src')),
-                    (new Money())->setPrice($this->parser->stringToFloat($crawler->filter('span.konfigurator__text--cena')->text()))
-                );
+                return $this->createModelFromNode(new PantherCrawler($this->client->getCrawler()->html()), $url);
             } catch (\Throwable $exception) {
                 $this->downloaderLogger->error(sprintf('%s: %s', $exception::class, $exception->getMessage()));
 
@@ -113,8 +111,14 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
         return $data;
     }
 
-    public function getSource(): string
+    private function createModelFromNode(PantherCrawler $node, string $url): OptionalTrip
     {
-        return self::class;
+        return new OptionalTrip(
+            $node->filter('h1')->text(),
+            $node->filter('.kf-opis-wycieczki-atrybut-podrzedny__opis>p')->each(fn (PantherCrawler $node): string => $node->text()),
+            $url,
+            $this->base64->convertFromImage('https:'.$node->filter('img.kf-gallery--desktop__element')->attr('src')),
+            (new Money())->setPrice($this->parser->stringToFloat($node->filter('span.konfigurator__text--cena')->text()))
+        );
     }
 }

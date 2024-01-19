@@ -6,73 +6,64 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use App\Repository\HotelRepository;
+use App\Repository\TripRepository;
 use App\Utils\Enum\Food;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['hotels']])]
+#[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['trips']])]
 #[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'source' => 'exact'])]
-#[ORM\Entity(repositoryClass: HotelRepository::class)]
-class Hotel implements SourceInterface
+#[ORM\Entity(repositoryClass: TripRepository::class)]
+class Trip implements SourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private string $title;
 
     #[ORM\Column(length: 1000)]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private string $url;
 
     #[ORM\Column()]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private int $stars;
 
     #[ORM\Column()]
-    #[Groups('hotels')]
-    private ?float $rate = null;
+    #[Groups('trips')]
+    private float $rate;
 
     #[ORM\Column()]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private Food $food;
 
     #[ORM\Column(name: 'from_at', type: \Doctrine\DBAL\Types\Types::DATE_IMMUTABLE, length: 255)]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private \DateTimeImmutable $from;
 
     #[ORM\Column(name: 'to_at', type: \Doctrine\DBAL\Types\Types::DATE_IMMUTABLE, length: 255)]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private \DateTimeImmutable $to;
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT)]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private string $image;
-
-    #[ORM\Column(length: 255)]
-    #[Groups('hotels')]
-    private string $address;
-
-    /** @var string[] */
-    #[ORM\Column()]
-    #[Groups('hotels')]
-    private array $descriptions = [];
 
     #[ORM\OneToOne(cascade: ['all'])]
     #[Orm\JoinColumn(onDelete: 'CASCADE')]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private Money $money;
 
     #[ORM\Column(length: 255)]
-    #[Groups('hotels')]
+    #[Groups('trips')]
     private string $source;
 
-    #[ORM\ManyToOne(inversedBy: 'hotels')]
+    #[ORM\ManyToOne(inversedBy: 'trips')]
     private ?Search $search = null;
 
     public function getId(): ?int
@@ -107,30 +98,6 @@ class Hotel implements SourceInterface
     public function setUrl(string $url): static
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function getStars(): int
-    {
-        return $this->stars;
-    }
-
-    public function setStars(int $stars): static
-    {
-        $this->stars = $stars;
-
-        return $this;
-    }
-
-    public function getRate(): ?float
-    {
-        return $this->rate;
-    }
-
-    public function setRate(?float $rate): static
-    {
-        $this->rate = $rate;
 
         return $this;
     }
@@ -171,6 +138,30 @@ class Hotel implements SourceInterface
         return $this;
     }
 
+    public function getStars(): int
+    {
+        return $this->stars;
+    }
+
+    public function setStars(int $stars): static
+    {
+        $this->stars = $stars;
+
+        return $this;
+    }
+
+    public function getRate(): float
+    {
+        return $this->rate;
+    }
+
+    public function setRate(float $rate): static
+    {
+        $this->rate = $rate;
+
+        return $this;
+    }
+
     public function getImage(): string
     {
         return $this->image;
@@ -179,36 +170,6 @@ class Hotel implements SourceInterface
     public function setImage(string $image): static
     {
         $this->image = $image;
-
-        return $this;
-    }
-
-    public function getAddress(): string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(string $address): static
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getDescriptions(): array
-    {
-        return $this->descriptions;
-    }
-
-    /**
-     * @param string[] $descriptions
-     */
-    public function setDescriptions(array $descriptions): static
-    {
-        $this->descriptions = $descriptions;
 
         return $this;
     }

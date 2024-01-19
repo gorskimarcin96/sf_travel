@@ -10,7 +10,7 @@ use App\Repository\WeatherRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['weathers']])]
+#[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['weathers']], paginationItemsPerPage: 1000)]
 #[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'source' => 'exact'])]
 #[ORM\Entity(repositoryClass: WeatherRepository::class)]
 class Weather implements SourceInterface

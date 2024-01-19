@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\HttpOperation;
 use App\Controller\SearchController;
 use App\Repository\SearchRepository;
+use App\Utils\Enum\Food;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -67,6 +68,29 @@ class Search
     #[Groups(['search', 'search_collection'])]
     private int $children;
 
+    #[ORM\Column(nullable: true)]
+    #[Groups(['search', 'search_collection'])]
+    private ?int $rangeFrom = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['search', 'search_collection'])]
+    private ?int $rangeTo = null;
+
+    /**
+     * @var Food[]
+     */
+    #[ORM\Column(enumType: Food::class, options: ['jsonb' => true])]
+    #[Groups(['search', 'search_collection'])]
+    private array $hotelFoods = [];
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['search', 'search_collection'])]
+    private ?int $hotelStars = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['search', 'search_collection'])]
+    private ?float $hotelRate = null;
+
     /**
      * @var string[]
      */
@@ -120,10 +144,16 @@ class Search
     private Collection $flights;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Weather>|\App\Entity\Weather[]
+     * @var \Doctrine\Common\Collections\Collection<int, Weather>|Weather[]
      */
     #[ORM\OneToMany(mappedBy: 'search', targetEntity: Weather::class)]
     private Collection $weathers;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection<int, Trip>|Trip[]
+     */
+    #[ORM\OneToMany(mappedBy: 'search', targetEntity: Trip::class)]
+    private Collection $trips;
 
     public function __construct()
     {
@@ -132,6 +162,7 @@ class Search
         $this->hotels = new ArrayCollection();
         $this->flights = new ArrayCollection();
         $this->weathers = new ArrayCollection();
+        $this->trips = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -256,6 +287,72 @@ class Search
     public function setChildren(int $children): static
     {
         $this->children = $children;
+
+        return $this;
+    }
+
+    public function getRangeFrom(): ?int
+    {
+        return $this->rangeFrom;
+    }
+
+    public function setRangeFrom(?int $rangeFrom): static
+    {
+        $this->rangeFrom = $rangeFrom;
+
+        return $this;
+    }
+
+    public function getRangeTo(): ?int
+    {
+        return $this->rangeTo;
+    }
+
+    public function setRangeTo(?int $rangeTo): static
+    {
+        $this->rangeTo = $rangeTo;
+
+        return $this;
+    }
+
+    /**
+     * @return Food[]
+     */
+    public function getHotelFoods(): array
+    {
+        return $this->hotelFoods;
+    }
+
+    /**
+     * @param Food[] $hotelFoods
+     */
+    public function setHotelFoods(array $hotelFoods): static
+    {
+        $this->hotelFoods = $hotelFoods;
+
+        return $this;
+    }
+
+    public function getHotelStars(): ?int
+    {
+        return $this->hotelStars;
+    }
+
+    public function setHotelStars(?int $hotelStars): static
+    {
+        $this->hotelStars = $hotelStars;
+
+        return $this;
+    }
+
+    public function getHotelRate(): ?float
+    {
+        return $this->hotelRate;
+    }
+
+    public function setHotelRate(?float $hotelRate): static
+    {
+        $this->hotelRate = $hotelRate;
 
         return $this;
     }
@@ -446,6 +543,24 @@ class Search
         return $this;
     }
 
+    /**
+     * @return Collection<int, Trip>
+     */
+    public function getTrips(): Collection
+    {
+        return $this->trips;
+    }
+
+    public function addTrip(Trip $trip): static
+    {
+        if (!$this->trips->contains($trip)) {
+            $this->trips->add($trip);
+            $trip->setSearch($this);
+        }
+
+        return $this;
+    }
+
     public function getServiceTodo(): ?string
     {
         return array_pop($this->todo);
@@ -462,6 +577,8 @@ class Search
             ...$this->tripPages->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
             ...$this->hotels->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
             ...$this->flights->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
+            ...$this->weathers->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
+            ...$this->trips->map(fn (SourceInterface $source): string => $source->getSource())->toArray(),
         ]);
     }
 }

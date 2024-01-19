@@ -31,6 +31,11 @@ final readonly class GuruPodrozy extends AbstractPageAttraction implements PageA
         );
     }
 
+    public function getSource(): string
+    {
+        return self::class;
+    }
+
     /** @return Page[] */
     public function getPages(string $place, string $nation): array
     {
@@ -51,10 +56,5 @@ final readonly class GuruPodrozy extends AbstractPageAttraction implements PageA
         } while ($crawler->filter('section.recent-posts>article')->count() >= 9);
 
         return $urls;
-    }
-
-    public function getSource(): string
-    {
-        return self::class;
     }
 }
