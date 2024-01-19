@@ -22,7 +22,7 @@
 > 2. You should wait for getting data by queuer.
 >    * You can follow field **finished**.
 > 3. And you can get data from other endpoints.
->    * Please, check available endpoints at this [link](http://localhost/).
+>    * Please, check available endpoints at this [link](http://localhost/) (You should first run the project).
 
 > [!WARNING]
 > This project has been creating for practise programming skills, fun and private goals. 
@@ -40,60 +40,66 @@ cp docker/.env.dist docker/.env
 ### Build docker images
 
 ```sh
-cd docker && docker-compose build --compress
+docker-compose -f docker/docker-compose.yml build --compress
 ```
 
 ### Run docker containers
 
 ```sh
-cd docker && docker-compose up -d
+docker-compose -f docker/docker-compose.yml up -d
 ```
 
 ### Install packages
 
 ```sh
-cd docker && docker-compose exec backend composer install
+docker-compose -f docker/docker-compose.yml exec backend composer install
+```
+
+## Run migrations
+
+```sh
+docker-compose -f docker/docker-compose.yml exec backend ./bin/console doctrine:migration:migrate -n
 ```
 
 ## Frontend
 
 > [!NOTE]
-> If you want to see, how the frontend works, click [this link](https://github.com/gorskimarcin96/vue_travel).
-
-### Run migrations
-
-```sh
-cd docker && docker-compose exec backend ./bin/console doctrine:migration:migrate -n
-```
+> If you want to see, how the frontend works. Please check [the frontend repository](https://github.com/gorskimarcin96/vue_travel).
 
 ## Tests
 
 ### Run all tests
 
 ```sh
-cd docker && docker-compose exec backend composer tests
+docker-compose -f docker/docker-compose.yml exec backend composer tests
 ```
 
 ### Run phpunits
 
 ```sh
-cd docker && docker-compose exec backend composer phpunit
+docker-compose -f docker/docker-compose.yml exec backend composer phpunit
 ```
 
 ### Run rector
 
 ```sh
-cd docker && docker-compose exec backend composer rector
+docker-compose -f docker/docker-compose.yml exec backend composer rector
 ```
 
 ### Run phpstan
 
 ```sh
-cd docker && docker-compose exec backend composer phpstan
+docker-compose -f docker/docker-compose.yml exec backend composer phpstan
 ```
 
 ### Run csfixer
 
 ```sh
-cd docker && docker-compose exec backend composer csfix
+docker-compose -f docker/docker-compose.yml exec backend composer csfix
+```
+
+### Run behat 
+
+```sh
+docker-compose -f docker/docker-compose.yml exec backend composer behat
 ```
