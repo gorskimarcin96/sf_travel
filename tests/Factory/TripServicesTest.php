@@ -3,7 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Factory\SearchServices;
-use App\Utils\Crawler\OptionalTrip\Tui;
+use App\Utils\Crawler\OptionalTrip\Itaka;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TripServicesTest extends KernelTestCase
@@ -26,7 +26,7 @@ class TripServicesTest extends KernelTestCase
 
     public function testFindByClassName(): void
     {
-        $this->assertInstanceOf(Tui::class, $this->tripServices->findByClassName(Tui::class));
+        $this->assertInstanceOf(Itaka::class, $this->tripServices->findByClassName(Itaka::class));
     }
 
     public function testFindByClassNameFailed(): void
