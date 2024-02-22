@@ -30,6 +30,9 @@ RUN pecl install xdebug && docker-php-ext-enable xdebug
 #amqp
 RUN pecl install amqp && docker-php-ext-enable amqp
 
+#gd
+RUN apt-get install -y libpng-dev && docker-php-ext-install gd
+
 #intl
 RUN apt-get -y update \
     && apt-get install -y libicu-dev\

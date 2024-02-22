@@ -14,11 +14,21 @@ final readonly class OpenMeteo implements WeatherInterface
     {
     }
 
+    #[\Override]
+    public function getSource(): string
+    {
+        return self::class;
+    }
+
     /**
      * @return Weather[]
      */
-    #[\Override] public function getByCityAndBetweenDate(string $city, \DateTimeInterface $from, \DateTimeInterface $to): array
-    {
+    #[\Override]
+    public function getByCityAndBetweenDate(
+        string $city,
+        \DateTimeInterface $from,
+        \DateTimeInterface $to
+    ): array {
         $geocoding = $this->geocodingOpenMeteo->getByCity($city);
 
         return $this->getByLatAndLongAndBetweenDate($geocoding->getLatitude(), $geocoding->getLongitude(), $from, $to);

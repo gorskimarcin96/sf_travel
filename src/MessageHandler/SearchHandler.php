@@ -6,7 +6,7 @@ use App\Entity\Search as Entity;
 use App\Exception\NullException;
 use App\Factory\SearchServices;
 use App\Message\Search;
-use App\Repository\SearchRepository;
+use App\Repository\SearchRepositoryInterface;
 use App\Utils\Api\Weather\WeatherInterface;
 use App\Utils\Crawler\Flight\FlightInterface;
 use App\Utils\Crawler\Hotel\HotelInterface;
@@ -24,10 +24,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Facebook\WebDriver\Exception\PhpWebDriverExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final readonly class SearchHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+final readonly class SearchHandler
 {
     use DateTime;
 
@@ -35,7 +36,7 @@ final readonly class SearchHandler implements MessageHandlerInterface
         private LoggerInterface $logger,
         private LoggerInterface $downloaderLogger,
         private SearchServices $tripServices,
-        private SearchRepository $searchRepository,
+        private SearchRepositoryInterface $searchRepository,
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $messageBus,
         private OptionalTrip $optionalTrip,
@@ -47,9 +48,9 @@ final readonly class SearchHandler implements MessageHandlerInterface
     ) {
     }
 
-    public function __invoke(Search $Search, bool $recursive = true, bool $throwable = false): void
+    public function __invoke(Search $search, bool $recursive = true, bool $throwable = false): void
     {
-        $entity = $this->searchRepository->find($Search->getSearchId()) ?? throw new EntityNotFoundException();
+        $entity = $this->searchRepository->find($search->getSearchId()) ?? throw new EntityNotFoundException();
         $searchServiceClass = $entity->getServiceTodo();
 
         if ($searchServiceClass) {

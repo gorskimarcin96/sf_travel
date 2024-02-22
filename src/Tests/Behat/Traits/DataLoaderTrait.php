@@ -4,7 +4,6 @@ namespace App\Tests\Behat\Traits;
 
 use App\Entity\Flight;
 use App\Entity\Hotel;
-use App\Entity\Money;
 use App\Entity\OptionalTrip;
 use App\Entity\Search;
 use App\Entity\Trip;
@@ -149,7 +148,7 @@ trait DataLoaderTrait
                 ->setStars($row['stars'])
                 ->setRate($row['rate'])
                 ->setFood(Food::from($row['food']))
-                ->setMoney((new Money())->setPrice($row['price']))
+                ->setMoney(\App\Factory\Money::create($row['price']))
                 ->setSource($row['source'])
                 ->setFrom(new \DateTimeImmutable($row['from']))
                 ->setTo(new \DateTimeImmutable($row['to']))
@@ -178,7 +177,7 @@ trait DataLoaderTrait
                 ->setToEnd(new \DateTimeImmutable($row['to_end']))
                 ->setToStops($row['to_stops'])
                 ->setUrl($row['url'])
-                ->setMoney((new Money())->setPrice($row['price']))
+                ->setMoney(\App\Factory\Money::create($row['price']))
                 ->setSource($row['source'])
                 ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
 
@@ -223,7 +222,7 @@ trait DataLoaderTrait
                 ->setUrl($row['url'])
                 ->setImage($row['image'])
                 ->setFood(Food::from($row['food']))
-                ->setMoney((new Money())->setPrice($row['price']))
+                ->setMoney(\App\Factory\Money::create($row['price']))
                 ->setSource($row['source'])
                 ->setFrom(new \DateTimeImmutable($row['from']))
                 ->setTo(new \DateTimeImmutable($row['to']))

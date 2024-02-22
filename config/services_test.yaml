@@ -6,3 +6,27 @@ services:
 
   App\Tests\Behat\FeatureContext:
     autowire: true
+
+  App\Tests\Mocks\EntityManager:
+    autowire: true
+
+  App\Tests\Mocks\OptionalTrip:
+    tags: [ name: 'app.crawler.optional_trips' ]
+
+  App\Tests\Mocks\PageAttraction:
+    tags: [ name: 'app.crawler.page_attractions' ]
+
+  App\Tests\Mocks\Hotel:
+    tags: [ name: 'app.crawler.hotels' ]
+
+  App\Tests\Mocks\Flight:
+    tags: [ name: 'app.crawler.flights' ]
+
+  App\Tests\Mocks\Weather:
+    tags: [ name: 'app.api.weather' ]
+
+  App\Tests\Mocks\Trip:
+    tags: [ name: 'app.crawler.trips' ]
+
+  App\Utils\Api\Translation\TranslationInterface:
+    class: App\Tests\Mocks\Translation

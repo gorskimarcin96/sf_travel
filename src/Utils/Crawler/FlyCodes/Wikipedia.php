@@ -6,6 +6,7 @@ use App\Exception\EmptyStringException;
 use App\Utils\Crawler\FlyCodes\Model\FlyCode;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 use function Symfony\Component\String\u;
@@ -28,7 +29,13 @@ final readonly class Wikipedia
         foreach (range('A', 'Z') as $letter) {
             $this->downloaderLogger->info(sprintf('Get codes from: %s', self::URL.$letter));
 
-            $crawler = new Crawler($this->httpClient->request('GET', self::URL.$letter)->getContent());
+            $response = $this->httpClient->request('GET', self::URL.$letter);
+
+            if (Response::HTTP_NOT_FOUND === $response->getStatusCode()) {
+                continue;
+            }
+
+            $crawler = new Crawler($response->getContent());
 
             $this->downloaderLogger->info(sprintf('Found %s codes.', $crawler->filter('div#mw-content-text>div>ul>li')->count()));
 

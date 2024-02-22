@@ -14,13 +14,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method City[]    findAll()
  * @method City[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-final class CityRepository extends ServiceEntityRepository
+final class CityRepository extends ServiceEntityRepository implements CityRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, City::class);
     }
 
+    #[\Override]
     public function findByNamePl(string $name): ?City
     {
         return $this->findOneBy(['namePl' => $name]);

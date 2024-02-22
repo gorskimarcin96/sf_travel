@@ -4,10 +4,10 @@ namespace App\Utils\Proxy;
 
 use App\Entity\City;
 use App\Entity\Weather as EntityWeather;
-use App\Repository\CityRepository;
-use App\Repository\WeatherRepository;
+use App\Repository\CityRepositoryInterface;
+use App\Repository\WeatherRepositoryInterface;
 use App\Utils\Api\Geocoding\OpenMeteo as GeocodingOpenMeteo;
-use App\Utils\Api\Translation\DeepL;
+use App\Utils\Api\Translation\TranslationInterface;
 use App\Utils\Api\Weather\WeatherInterface;
 use App\Utils\Helper\DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,9 +18,9 @@ final readonly class DatabaseWeather
     use DateTime;
 
     public function __construct(
-        private CityRepository $cityRepository,
-        private WeatherRepository $weatherRepository,
-        private DeepL $deepL,
+        private CityRepositoryInterface $cityRepository,
+        private WeatherRepositoryInterface $weatherRepository,
+        private TranslationInterface $translation,
         private GeocodingOpenMeteo $geocodingOpenMeteo,
         private EntityManagerInterface $entityManager,
     ) {
@@ -36,7 +36,7 @@ final readonly class DatabaseWeather
         \DateTimeInterface $to
     ): array {
         if (!($entityCity = $this->cityRepository->findByNamePl($city)) instanceof City) {
-            $cityEn = $this->deepL->translate($city, 'en', 'pl')[0]->getText();
+            $cityEn = $this->translation->translate($city, 'en', 'pl')[0]->getText();
             $geocoding = $this->geocodingOpenMeteo->getByCity($cityEn);
             $entityCity = (new City())
                 ->setNamePl($city)

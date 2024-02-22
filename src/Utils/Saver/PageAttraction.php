@@ -25,10 +25,12 @@ final readonly class PageAttraction
     public function save(PageAttractionInterface $pageAttraction, string $place, string $nation, Search $search): Search
     {
         $models = $pageAttraction->getPages($place, $nation);
+
         $this->downloaderLogger->info(sprintf('Get %s pages from "%s".', count($models), $pageAttraction->getSource()));
 
         /** @var Model[] $models */
         $models = $this->uniqueByUrl($models);
+
         $this->downloaderLogger->info(sprintf('Unique models %s.', count($models)));
 
         foreach ($models as $model) {
@@ -52,6 +54,8 @@ final readonly class PageAttraction
 
             $search->addTripPage($pageTrip);
         }
+
+        $this->entityManager->flush();
 
         return $search;
     }

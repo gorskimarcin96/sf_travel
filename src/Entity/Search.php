@@ -31,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Search
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
     #[Groups(['search', 'search_collection'])]
     private ?int $id = null;
@@ -184,7 +184,7 @@ class Search
 
     public function setNation(string $nation): static
     {
-        $this->nation = strtolower($nation);
+        $this->nation = $nation;
 
         return $this;
     }
@@ -196,7 +196,7 @@ class Search
 
     public function setPlace(string $place): static
     {
-        $this->place = strtolower($place);
+        $this->place = $place;
 
         return $this;
     }
@@ -381,7 +381,7 @@ class Search
     }
 
     /**
-     * @param string[] $todo
+     * @param class-string[] $todo
      */
     public function setTodo(array $todo): static
     {

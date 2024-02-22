@@ -2,7 +2,6 @@
 
 namespace App\Utils\Crawler\Hotel;
 
-use App\Entity\Money;
 use App\Exception\NullException;
 use App\Utils\Crawler\BookingHelper;
 use App\Utils\Crawler\Hotel\Model\Hotel;
@@ -27,7 +26,8 @@ final readonly class Booking implements HotelInterface
     ) {
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }
@@ -37,15 +37,16 @@ final readonly class Booking implements HotelInterface
      *
      * @return Hotel[]
      */
-    #[\Override] public function getHotels(
+    #[\Override]
+    public function getHotels(
         string $place,
         \DateTimeInterface $from,
         \DateTimeInterface $to,
         int $rangeFrom,
         int $rangeTo,
-        array $foods,
-        ?int $stars,
-        ?float $rate,
+        array $foods = [],
+        int $stars = null,
+        float $rate = null,
         int $adults = 2,
         int $children = 0
     ): array {
@@ -107,14 +108,15 @@ final readonly class Booking implements HotelInterface
 
         $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
 
-        $this->downloaderLogger->notice(sprintf('Got first %s hotels.', $crawler->filter($this->createAttr('property-card'))->count()));
+        $this->downloaderLogger
+            ->notice(sprintf('Got first %s hotels.', $crawler->filter($this->createAttr('property-card'))->count()));
 
         return $crawler
             ->filter($this->createAttr('property-card'))
             ->each(closure: fn (Crawler $node): Hotel => $this->createModelFromNode($node, $from, $to));
     }
 
-    public function createModelFromNode(Crawler $node, \DateTimeInterface $from, \DateTimeInterface $to): Hotel
+    private function createModelFromNode(Crawler $node, \DateTimeInterface $from, \DateTimeInterface $to): Hotel
     {
         try {
             $text = $node->filter($this->createAttr('review-score', 'div', '>div'))->first()->text();
@@ -123,7 +125,8 @@ final readonly class Booking implements HotelInterface
             $rate = null;
         }
 
-        $betweenDays = $this->parser->stringToFloat(explode(', ', $node->filter($this->createAttr('price-for-x-nights'))->first()->text())[0]);
+        $betweenDays = explode(', ', $node->filter($this->createAttr('price-for-x-nights'))->first()->text())[0];
+        $betweenDays = $this->parser->stringToFloat($betweenDays);
 
         $amount = $this->parser
             ->stringToFloat($node->filter($this->createAttr('price-and-discounted-price', 'span'))->text());
@@ -163,7 +166,7 @@ final readonly class Booking implements HotelInterface
             isset($descriptionHeader) ? [$descriptionHeader] + $descriptions : $descriptions,
             $from,
             $to,
-            (new Money())->setPrice($amount / $betweenDays),
+            \App\Factory\Money::create($amount / $betweenDays),
         );
     }
 }

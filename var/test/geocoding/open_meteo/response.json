@@ -1,0 +1,24 @@
+{
+  "results": [
+    {
+      "id": 251280,
+      "name": "Zakynthos",
+      "latitude": 37.78022,
+      "longitude": 20.89555,
+      "elevation": 8.0,
+      "feature_code": "PPLA2",
+      "country_code": "GR",
+      "admin1_id": 6697805,
+      "admin2_id": 251276,
+      "admin3_id": 8133854,
+      "timezone": "Europe/Athens",
+      "population": 11541,
+      "country_id": 390903,
+      "country": "Greece",
+      "admin1": "Ionian Islands",
+      "admin2": "Nomós Zakýnthou",
+      "admin3": "Zakynthos"
+    }
+  ],
+  "generationtime_ms": 0.83196163
+}

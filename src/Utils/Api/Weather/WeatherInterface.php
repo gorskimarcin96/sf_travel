@@ -2,9 +2,10 @@
 
 namespace App\Utils\Api\Weather;
 
+use App\Entity\SourceInterface;
 use App\Utils\Api\Weather\Model\Weather;
 
-interface WeatherInterface
+interface WeatherInterface extends SourceInterface
 {
     /**
      * @return Weather[]

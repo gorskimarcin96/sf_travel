@@ -2,7 +2,6 @@
 
 namespace App\Utils\Crawler\Trip;
 
-use App\Entity\Money;
 use App\Exception\NullException;
 use App\Utils\Crawler\Trip\Model\Trip;
 use App\Utils\Enum\Food;
@@ -24,7 +23,8 @@ final readonly class Wakacje implements TripInterface
     ) {
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }
@@ -34,15 +34,16 @@ final readonly class Wakacje implements TripInterface
      *
      * @return Trip[]
      */
-    #[\Override] public function getTrips(
+    #[\Override]
+    public function getTrips(
         string $place,
         \DateTimeInterface $from,
         \DateTimeInterface $to,
         int $rangeFrom,
         int $rangeTo,
-        array $foods,
-        ?int $stars,
-        ?float $rate,
+        array $foods = [],
+        int $stars = null,
+        float $rate = null,
         int $persons = 2
     ): array {
         $data = [];
@@ -100,8 +101,7 @@ final readonly class Wakacje implements TripInterface
 
         $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
 
-        $content = $this->httpClient->request('GET', $url)->getContent();
-        $data = (new Crawler($content))
+        $data = (new Crawler($this->httpClient->request('GET', $url)->getContent()))
             ->filter('section[data-offers-count]>div>a')
             ->each(fn (Crawler $node): Trip => $this->createModelFromNode($node));
 
@@ -129,7 +129,7 @@ final readonly class Wakacje implements TripInterface
             $this->base64->convertFromImage($node->filter('picture>img')->attr('src') ?? throw new NullException()),
             new \DateTimeImmutable($dates[0]),
             new \DateTimeImmutable($dates[1]),
-            (new Money())->setPrice($this->parser->stringToFloat($node->filter('div[data-testid="offer-listing-section-price"]')->text()))
+            \App\Factory\Money::create($this->parser->stringToFloat($node->filter('div[data-testid="offer-listing-section-price"]')->text()))
         );
     }
 }

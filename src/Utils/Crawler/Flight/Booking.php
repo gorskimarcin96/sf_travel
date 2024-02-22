@@ -2,10 +2,10 @@
 
 namespace App\Utils\Crawler\Flight;
 
-use App\Entity\Money;
 use App\Utils\Crawler\BookingHelper;
 use App\Utils\Crawler\Flight\Model\Flight;
 use App\Utils\Crawler\PantherClient;
+use App\Utils\Helper\DateTime;
 use App\Utils\Helper\Parser;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Panther\Client;
@@ -14,6 +14,7 @@ use Symfony\Component\Panther\DomCrawler\Crawler;
 final readonly class Booking extends PantherClient implements FlightInterface
 {
     use BookingHelper;
+    use DateTime;
 
     public const string URL = 'https://flights.booking.com/flights/%s-%s/';
 
@@ -22,12 +23,14 @@ final readonly class Booking extends PantherClient implements FlightInterface
         parent::__construct($client);
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }
 
-    #[\Override] public function getFlights(
+    #[\Override]
+    public function getFlights(
         string $fromAirport,
         string $toAirport,
         \DateTimeImmutable $from,
@@ -71,30 +74,32 @@ final readonly class Booking extends PantherClient implements FlightInterface
             $this->createDepartureDateTimeImmutable($node, '1'),
             $this->createDestinationDateTimeImmutable($node, '1'),
             (int) $this->parser->stringToFloat($node->filter($this->createAttr('flight_card_segment_stops_1'))->text()),
-            (new Money())->setPrice($this->parser->stringToFloat(str_replace(',', '.', $node->filter($this->createAttr('flight_card_price_total_price'))->text()))),
+            \App\Factory\Money::create($this->parser->stringToFloat(str_replace(',', '.', $node->filter($this->createAttr('flight_card_price_total_price'))->text()))),
             $this->client->getCurrentURL()
         );
     }
 
     private function createDepartureDateTimeImmutable(Crawler $node, string $number): \DateTimeImmutable
     {
-        return new \DateTimeImmutable(
-            sprintf(
-                '%s %s',
-                $node->filter($this->createAttr('flight_card_segment_departure_time_'.$number))->text(),
-                $node->filter($this->createAttr('flight_card_segment_departure_date_'.$number))->text()
-            )
+        return $this->createDateTimeImmutableFromNodes(
+            $node->filter($this->createAttr('flight_card_segment_departure_time_'.$number)),
+            $node->filter($this->createAttr('flight_card_segment_departure_date_'.$number))
         );
     }
 
     private function createDestinationDateTimeImmutable(Crawler $node, string $number): \DateTimeImmutable
     {
-        return new \DateTimeImmutable(
-            sprintf(
-                '%s %s',
-                $node->filter($this->createAttr('flight_card_segment_destination_time_'.$number))->text(),
-                $node->filter($this->createAttr('flight_card_segment_destination_date_'.$number))->text()
-            )
+        return $this->createDateTimeImmutableFromNodes(
+            $node->filter($this->createAttr('flight_card_segment_destination_time_'.$number)),
+            $node->filter($this->createAttr('flight_card_segment_destination_date_'.$number))
         );
+    }
+
+    private function createDateTimeImmutableFromNodes(Crawler $timeNode, Crawler $dateNode): \DateTimeImmutable
+    {
+        [$day, $month] = explode(' ', $dateNode->text());
+        $month = $this->monthPlToNumber($month);
+
+        return new \DateTimeImmutable(sprintf('%s %s-%s-%s', $timeNode->text(), $day, $month, date('Y')));
     }
 }

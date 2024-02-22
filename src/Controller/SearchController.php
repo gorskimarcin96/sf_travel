@@ -7,18 +7,18 @@ use App\ApiResource\Input\Search as Input;
 use App\Entity\Search;
 use App\Exception\NullException;
 use App\Factory\SearchServices;
-use App\Repository\SearchRepository;
+use App\Repository\SearchRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SearchController extends AbstractController
 {
-    /** @var string[] */
+    /** @var class-string[] */
     private readonly array $todo;
 
     public function __construct(
-        private readonly SearchRepository $searchRepository,
+        private readonly SearchRepositoryInterface $searchRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus,
         private readonly ValidatorInterface $validator,
@@ -34,8 +34,8 @@ final class SearchController extends AbstractController
 
         if (!$search instanceof Search || $input->isForce()) {
             $search = (new Search())
-                ->setNation($input->getNation())
-                ->setPlace($input->getPlace())
+                ->setNation(strtolower($input->getNation()))
+                ->setPlace(strtolower($input->getPlace()))
                 ->setFrom($input->getFrom())
                 ->setTo($input->getTo())
                 ->setFromAirport($input->getFromAirport())

@@ -15,13 +15,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Search[]    findAll()
  * @method Search[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-final class SearchRepository extends ServiceEntityRepository
+final class SearchRepository extends ServiceEntityRepository implements SearchRepositoryInterface
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
         parent::__construct($managerRegistry, Search::class);
     }
 
+    #[\Override]
     public function findByInput(Input $input): ?Search
     {
         $query = $this->createQueryBuilder('s')

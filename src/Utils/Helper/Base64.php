@@ -2,14 +2,17 @@
 
 namespace App\Utils\Helper;
 
-use App\Exception\FalseException;
+use App\Utils\File\FileManagerInterface;
 
-final class Base64
+final readonly class Base64
 {
+    public function __construct(private FileManagerInterface $fileManager)
+    {
+    }
+
     public function convertFromImage(string $path): string
     {
-        $options = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-        $content = file_get_contents($path, false, $options) ?: throw new FalseException();
+        $content = $this->fileManager->read($path, ['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
 
         return 'data:image/'.pathinfo($path, PATHINFO_EXTENSION).';base64,'.base64_encode($content);
     }

@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class TripArticle
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
     #[Groups('trip-page')]
     private ?int $id = null;

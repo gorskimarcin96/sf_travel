@@ -2,8 +2,6 @@
 
 namespace App\Utils\Crawler\OptionalTrip;
 
-use App\Entity\Money;
-use App\Exception\NationRequiredException;
 use App\Exception\NullException;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
 use App\Utils\Crawler\PantherClient;
@@ -32,18 +30,16 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
         parent::__construct($client);
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }
 
     /** @return OptionalTrip[] */
-    #[\Override] public function getOptionalTrips(string $place, string $nation = null): array
+    #[\Override]
+    public function getOptionalTrips(string $place, string $nation): array
     {
-        if (null === $nation || '' === $nation) {
-            throw new NationRequiredException();
-        }
-
         $url = self::URL.'/pl/wycieczki/'.$nation.'/'.$place.'/';
         $pageIsExists = Response::HTTP_OK === $this->httpClient->request('GET', $url)->getStatusCode();
 
@@ -127,7 +123,7 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
             [],
             self::MAIN_DOMAIN.$node->filter('a')->getAttribute('href'),
             $this->base64->convertFromImage($node->filter('img')->getAttribute('src') ?? throw new NullException()),
-            (new Money())->setPrice($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()))
+            \App\Factory\Money::create($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()))
         );
     }
 

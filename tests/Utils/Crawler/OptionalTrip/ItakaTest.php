@@ -2,33 +2,52 @@
 
 namespace App\Tests\Utils\Crawler\OptionalTrip;
 
+use App\Entity\Money;
+use App\Tests\ContainerKernelTestCase;
 use App\Utils\Crawler\OptionalTrip\Itaka;
+use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
+use App\Utils\Enum\Currency;
 use App\Utils\Faker\Invoker;
-use App\Utils\Helper\Base64;
-use App\Utils\Helper\Parser;
-use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Panther\Client;
-use Symfony\Component\Panther\ProcessManager\BrowserManagerInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ItakaTest extends TestCase
+class ItakaTest extends ContainerKernelTestCase
 {
     use Invoker;
 
-    private Itaka $itaka;
-
-    protected function setUp(): void
+    public function testGetSource(): void
     {
-        parent::setUp();
+        $this->assertSame(Itaka::class, $this->getOptionalTripItaka()->getSource());
+    }
 
-        $this->itaka = new Itaka(
-            $this->createMock(HttpClientInterface::class),
-            $this->createMock(LoggerInterface::class),
-            new Parser(),
-            new Base64(),
-            new Client($this->createMock(BrowserManagerInterface::class)),
-        );
+    public function testGetOptionalTripsByUrl(): void
+    {
+        $result = $this->getOptionalTripItaka()->getOptionalTrips('zakynthos', 'grecja');
+
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf(OptionalTrip::class, $result[0]);
+        $this->assertSame('Miasto Zakynthos nocą', $result[0]->getTitle());
+        $this->assertSame([], $result[0]->getDescription());
+        $this->assertSame('https://itaka.seeplaces.com/pl/wycieczki/grecja/zakynthos/miasto-zakynthos-noca/', $result[0]->getUrl());
+        $this->assertIsString($result[0]->getImage());
+        $this->assertInstanceOf(Money::class, $result[0]->getMoney());
+        $this->assertSame(93.03, $result[0]->getMoney()->getPrice());
+        $this->assertSame(Currency::PLN, $result[0]->getMoney()->getCurrency());
+    }
+
+    public function testGetOptionalTripsBySearchTitle(): void
+    {
+        $result = $this->getOptionalTripItaka()->getOptionalTrips('kreta', 'grecja');
+
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf(OptionalTrip::class, $result[0]);
+        $this->assertSame('Chania nocą', $result[0]->getTitle());
+        $this->assertSame(['Co zobaczysz', 'Najpiękniejsze miasto na Krecie'], $result[0]->getDescription());
+        $this->assertSame('https://itaka.seeplaces.com/pl/wycieczki/grecja/kreta-chania/chania-noca/', $result[0]->getUrl());
+        $this->assertIsString($result[0]->getImage());
+        $this->assertInstanceOf(Money::class, $result[0]->getMoney());
+        $this->assertSame(170.55, $result[0]->getMoney()->getPrice());
+        $this->assertSame(Currency::PLN, $result[0]->getMoney()->getCurrency());
     }
 
     /** @return string[][]|float[][] */
@@ -44,6 +63,6 @@ class ItakaTest extends TestCase
     /** @dataProvider getData */
     public function testParsePrice(string $input, float $expected): void
     {
-        $this->assertSame($this->invokeMethod($this->itaka, 'parsePrice', [$input]), $expected);
+        $this->assertSame($this->invokeMethod($this->getOptionalTripItaka(), 'parsePrice', [$input]), $expected);
     }
 }

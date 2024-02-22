@@ -3,14 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\MoneyRepository;
+use App\Utils\Enum\Currency;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+/** @codeCoverageIgnore */
 #[ORM\Entity(repositoryClass: MoneyRepository::class)]
 class Money
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
     #[Groups(['optional-trips', 'hotels', 'flights', 'trips'])]
     private ?int $id = null;
@@ -19,9 +21,9 @@ class Money
     #[Groups(['optional-trips', 'hotels', 'flights', 'trips'])]
     private float $price;
 
-    #[ORM\Column(length: 3)]
+    #[ORM\Column(length: 3, enumType: Currency::class)]
     #[Groups(['optional-trips', 'hotels', 'flights', 'trips'])]
-    private string $currency = 'PLN';
+    private Currency $currency = Currency::PLN;
 
     public function getId(): ?int
     {
@@ -30,7 +32,7 @@ class Money
 
     public function getPrice(): float
     {
-        return $this->price;
+        return round($this->price * 100) / 100;
     }
 
     public function setPrice(float $price): static
@@ -40,12 +42,12 @@ class Money
         return $this;
     }
 
-    public function getCurrency(): string
+    public function getCurrency(): Currency
     {
         return $this->currency;
     }
 
-    public function setCurrency(string $currency): static
+    public function setCurrency(Currency $currency): static
     {
         $this->currency = $currency;
 

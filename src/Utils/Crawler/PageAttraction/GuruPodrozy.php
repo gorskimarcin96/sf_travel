@@ -31,18 +31,21 @@ final readonly class GuruPodrozy extends AbstractPageAttraction implements PageA
         );
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }
 
     /** @return Page[] */
-    #[\Override] public function getPages(string $place, string $nation): array
+    #[\Override]
+    public function getPages(string $place, string $nation): array
     {
         return $this->getPagesFromUrls($this->getUrls($place, $nation));
     }
 
-    #[\Override] protected function getUrls(string $place, string $nation): array
+    #[\Override]
+    protected function getUrls(string $place, string $nation): array
     {
         $urls = [];
         $i = 0;

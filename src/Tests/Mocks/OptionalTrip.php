@@ -12,17 +12,20 @@ final readonly class OptionalTrip implements OptionalTripInterface
     }
 
     /** @return \App\Utils\Crawler\OptionalTrip\Model\OptionalTrip[] */
-    #[\Override] public function getOptionalTrips(string $place, string $nation = null): array
+    #[\Override]
+    public function getOptionalTrips(string $place, string $nation = null): array
     {
         return $this->data;
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }
 
-    #[\Override] public function restartPantherClient(): void
+    #[\Override]
+    public function restartPantherClient(): void
     {
     }
 }

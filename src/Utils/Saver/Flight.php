@@ -7,6 +7,7 @@ use App\Entity\Search;
 use App\Utils\Crawler\Flight\FlightInterface;
 use App\Utils\Crawler\Model\URLTrait;
 use Doctrine\ORM\EntityManagerInterface;
+use Facebook\WebDriver\Exception\Internal\DriverServerDiedException;
 use Psr\Log\LoggerInterface;
 
 final readonly class Flight
@@ -15,7 +16,8 @@ final readonly class Flight
 
     public function __construct(
         private LoggerInterface $downloaderLogger,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private bool $simulatePhpWebDriverException = false,
     ) {
     }
 
@@ -29,7 +31,12 @@ final readonly class Flight
         int $children,
         Search $search
     ): Search {
+        if ($this->simulatePhpWebDriverException) {
+            throw new DriverServerDiedException();
+        }
+
         $models = $flight->getFlights($fromAirport, $toAirport, $from, $to, $adults, $children);
+
         $this->downloaderLogger->info(sprintf('Get %s flights from "%s".', count($models), $flight->getSource()));
 
         foreach ($models as $model) {

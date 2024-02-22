@@ -37,6 +37,7 @@
     "symfony/yaml": "^6.4"
   },
   "require-dev": {
+    "ext-gd": "*",
     "behat/behat": "^3",
     "coduo/php-matcher": "^6",
     "friends-of-behat/symfony-extension": "^2",
@@ -103,7 +104,8 @@
     ],
     "phpunit": [
       "@test-database",
-      "./bin/phpunit"
+      "./bin/phpunit",
+      "./bin/console app:test:summary-image"
     ],
     "phpstan": [
       "php -d memory_limit=-1 vendor/bin/phpstan analyse -c phpstan.neon src",

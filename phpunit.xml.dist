@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          backupGlobals="false"
          colors="true"
          bootstrap="tests/bootstrap.php"
-         convertDeprecationsToExceptions="false"
->
+         convertDeprecationsToExceptions="false">
     <php>
-        <ini name="display_errors" value="1" />
-        <ini name="error_reporting" value="-1" />
-        <server name="APP_ENV" value="test" force="true" />
-        <server name="SHELL_VERBOSITY" value="-1" />
-        <server name="SYMFONY_PHPUNIT_REMOVE" value="" />
-        <server name="SYMFONY_PHPUNIT_VERSION" value="9.5" />
+        <ini name="display_errors" value="1"/>
+        <ini name="error_reporting" value="-1"/>
+        <server name="APP_ENV" value="test" force="true"/>
+        <server name="SHELL_VERBOSITY" value="-1"/>
+        <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
+        <server name="SYMFONY_PHPUNIT_VERSION" value="9.5"/>
     </php>
 
     <testsuites>
@@ -23,16 +20,29 @@
         </testsuite>
     </testsuites>
 
-    <coverage processUncoveredFiles="true">
+    <listeners>
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
+    </listeners>
+
+    <coverage>
         <include>
             <directory suffix=".php">src</directory>
         </include>
+
+        <exclude>
+            <directory suffix=".php">src/ApiResource</directory>
+            <directory suffix=".php">src/Command</directory>
+            <directory suffix=".php">src/Controller</directory>
+            <directory suffix=".php">src/Entity</directory>
+            <directory suffix=".php">src/Repository</directory>
+            <directory suffix=".php">src/Exception</directory>
+            <directory suffix=".php">src/Tests</directory>
+            <file>src/autoload.php</file>
+        </exclude>
+
+        <report>
+            <text outputFile="public/coverage.txt" showOnlySummary="true"/>
+            <html outputDirectory="public/phpunit"/>
+        </report>
     </coverage>
-
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
-    </listeners>
-
-    <extensions>
-    </extensions>
 </phpunit>

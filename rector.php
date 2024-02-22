@@ -6,6 +6,7 @@ use Rector\CodeQuality\Rector\Class_\InlineConstructorDefaultToPropertyRector;
 use Rector\Config\RectorConfig;
 use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Set\ValueObject\SetList;
+use Rector\Symfony\Set\SymfonySetList;
 use Rector\ValueObject\PhpVersion;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -21,6 +22,10 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__.'/tests',
     ]);
 
+    $rectorConfig->skip([
+        __DIR__.'/src/Tests/Mocks/WebDriver.php',
+    ]);
+
     $rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
     $rectorConfig->sets([
         SetList::CODE_QUALITY,
@@ -31,5 +36,7 @@ return static function (RectorConfig $rectorConfig): void {
         SetList::TYPE_DECLARATION,
         SetList::EARLY_RETURN,
         SetList::INSTANCEOF,
+        SymfonySetList::SYMFONY_64,
+        DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
     ]);
 };

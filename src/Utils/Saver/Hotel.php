@@ -55,6 +55,7 @@ final readonly class Hotel
 
         /** @var Model[] $models */
         $models = $this->uniqueByUrl($models);
+
         $this->downloaderLogger->info(sprintf('Unique models %s.', count($models)));
 
         foreach ($models as $model) {

@@ -4,3 +4,6 @@ includes:
 
 parameters:
     level: 8
+    excludePaths:
+        analyseAndScan:
+            - src/Tests/Mocks/WebDriver.php

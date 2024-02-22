@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class OptionalTrip implements SourceInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
     #[Groups('optional-trips')]
     private ?int $id = null;
@@ -120,7 +120,8 @@ class OptionalTrip implements SourceInterface
         return $this;
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return $this->source;
     }

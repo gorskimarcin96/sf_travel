@@ -10,13 +10,14 @@ use App\Repository\FlightRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+/** @codeCoverageIgnore */
 #[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['flights']])]
 #[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'source' => 'exact'])]
 #[ORM\Entity(repositoryClass: FlightRepository::class)]
 class Flight implements SourceInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
     #[Groups('flights')]
     private ?int $id = null;
@@ -201,7 +202,8 @@ class Flight implements SourceInterface
         return $this;
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return $this->source;
     }

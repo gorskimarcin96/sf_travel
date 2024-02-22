@@ -28,7 +28,8 @@ final readonly class OptionalTrip implements URLInterface
         return is_string($this->description) ? [$this->description] : $this->description;
     }
 
-    #[\Override] public function getUrl(): string
+    #[\Override]
+    public function getUrl(): string
     {
         return $this->url;
     }

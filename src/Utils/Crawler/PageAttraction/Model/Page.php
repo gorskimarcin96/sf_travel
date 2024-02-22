@@ -11,7 +11,8 @@ final class Page implements URLInterface
     {
     }
 
-    #[\Override] public function getUrl(): string
+    #[\Override]
+    public function getUrl(): string
     {
         return $this->url;
     }

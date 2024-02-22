@@ -2,9 +2,7 @@
 
 namespace App\Utils\Crawler\OptionalTrip;
 
-use App\Entity\Money;
-use App\Exception\NationRequiredException;
-use App\Exception\NullException;
+use App\Factory\Money;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
 use App\Utils\Crawler\PantherClient;
 use App\Utils\Helper\Base64;
@@ -30,18 +28,16 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
         parent::__construct($client);
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }
 
     /** @return OptionalTrip[] */
-    #[\Override] public function getOptionalTrips(string $place, string $nation = null): array
+    #[\Override]
+    public function getOptionalTrips(string $place, string $nation): array
     {
-        if (null === $nation || '' === $nation) {
-            throw new NationRequiredException();
-        }
-
         $url = self::URL.'/wycieczki-fakultatywne/'.$nation.'/'.$place.'/';
         $pageIsExists = Response::HTTP_OK === $this->httpClient->request('GET', $url)->getStatusCode();
 
@@ -65,7 +61,7 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
             ->filter('a.szukaj-kierunek-card')
             ->each(fn (Crawler $crawler): PantherCrawler => $crawler);
 
-        $nodes = array_filter($nodes, static fn (PantherCrawler $pantherCrawler): bool => str_contains($pantherCrawler->attr('href') ?? throw new NullException(), $place));
+        $nodes = array_filter($nodes, static fn (PantherCrawler $pantherCrawler): bool => str_contains(strtolower($pantherCrawler->text()), $place));
         $urls = array_map(static fn (PantherCrawler $pantherCrawler): string => self::URL.$pantherCrawler->attr('href'), $nodes);
 
         $this->downloaderLogger->info(sprintf('Found pages: %s', implode(',', $urls)));
@@ -118,7 +114,7 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
             $node->filter('.kf-opis-wycieczki-atrybut-podrzedny__opis>p')->each(fn (PantherCrawler $node): string => $node->text()),
             $url,
             $this->base64->convertFromImage('https:'.$node->filter('img.kf-gallery--desktop__element')->attr('src')),
-            (new Money())->setPrice($this->parser->stringToFloat($node->filter('span.konfigurator__text--cena')->text()))
+            Money::create($this->parser->stringToFloat($node->filter('span.konfigurator__text--cena')->text()))
         );
     }
 }

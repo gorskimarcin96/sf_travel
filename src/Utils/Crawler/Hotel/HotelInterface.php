@@ -18,9 +18,9 @@ interface HotelInterface extends SourceInterface
         \DateTimeInterface $to,
         int $rangeFrom,
         int $rangeTo,
-        array $foods,
-        ?int $stars,
-        ?float $rate,
+        array $foods = [],
+        int $stars = null,
+        float $rate = null,
         int $adults = 2,
         int $children = 0,
     ): array;

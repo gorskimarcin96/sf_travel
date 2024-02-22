@@ -26,7 +26,8 @@ final readonly class TysiacStronSwiata extends AbstractPageAttraction implements
         );
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }

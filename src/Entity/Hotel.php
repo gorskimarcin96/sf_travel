@@ -11,13 +11,14 @@ use App\Utils\Enum\Food;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+/** @codeCoverageIgnore */
 #[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['hotels']])]
 #[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'source' => 'exact'])]
 #[ORM\Entity(repositoryClass: HotelRepository::class)]
 class Hotel implements SourceInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
     #[Groups('hotels')]
     private ?int $id = null;
@@ -225,7 +226,8 @@ class Hotel implements SourceInterface
         return $this;
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return $this->source;
     }

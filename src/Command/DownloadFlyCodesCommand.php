@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'download:fly-codes', description: 'Download fly codes.')]
+#[AsCommand(name: 'app:download:fly-codes', description: 'Download fly codes.')]
 final class DownloadFlyCodesCommand extends Command
 {
     public function __construct(private readonly Wikipedia $wikipedia, private readonly string $projectDir)
@@ -16,7 +16,8 @@ final class DownloadFlyCodesCommand extends Command
         parent::__construct();
     }
 
-    #[\Override] protected function execute(InputInterface $input, OutputInterface $output): int
+    #[\Override]
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->wikipedia->getFlyCodes() as $flyCode) {
             $data[] = [

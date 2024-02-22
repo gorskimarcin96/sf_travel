@@ -48,5 +48,9 @@ services:
     arguments:
       $seleniumUrl: '%env(SELENIUM_URL)%'
 
-  App\Utils\Api\Translation\DeepL:
+  App\Utils\Api\Translation\TranslationInterface:
+    class: App\Utils\Api\Translation\DeepL
     arguments: [ '%deepl.key%' ]
+
+  FileManagerInterface:
+    class: App\Utils\File\FileManager

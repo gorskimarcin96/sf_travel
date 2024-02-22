@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Weather[]    findAll()
  * @method Weather[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-final class WeatherRepository extends ServiceEntityRepository
+final class WeatherRepository extends ServiceEntityRepository implements WeatherRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -25,6 +25,7 @@ final class WeatherRepository extends ServiceEntityRepository
     /**
      * @return Weather[]
      */
+    #[\Override]
     public function findByCityAndBetweenDateAndSource(
         City $city,
         \DateTimeInterface $from,

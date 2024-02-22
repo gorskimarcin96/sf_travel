@@ -2,37 +2,25 @@
 
 namespace App\Tests\Factory;
 
-use App\Factory\SearchServices;
+use App\Tests\ContainerKernelTestCase;
 use App\Utils\Crawler\OptionalTrip\Itaka;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class TripServicesTest extends KernelTestCase
+class TripServicesTest extends ContainerKernelTestCase
 {
-    private SearchServices $tripServices;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        /** @var SearchServices $tripServices */
-        $tripServices = self::getContainer()->get(SearchServices::class);
-        $this->tripServices = $tripServices;
-    }
-
     public function testCreate(): void
     {
-        $this->assertIsArray($this->tripServices->create());
+        $this->assertIsArray($this->getSearchServices()->create());
     }
 
     public function testFindByClassName(): void
     {
-        $this->assertInstanceOf(Itaka::class, $this->tripServices->findByClassName(Itaka::class));
+        $this->assertInstanceOf(Itaka::class, $this->getSearchServices()->findByClassName(Itaka::class));
     }
 
     public function testFindByClassNameFailed(): void
     {
         $this->expectException(\LogicException::class);
 
-        $this->tripServices->findByClassName(\stdClass::class);
+        $this->getSearchServices()->findByClassName(\stdClass::class);
     }
 }

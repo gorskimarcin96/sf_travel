@@ -26,7 +26,8 @@ final readonly class Travelizer extends AbstractPageAttraction implements PageAt
         );
     }
 
-    #[\Override] public function getSource(): string
+    #[\Override]
+    public function getSource(): string
     {
         return self::class;
     }

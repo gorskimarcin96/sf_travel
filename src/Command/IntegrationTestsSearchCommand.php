@@ -34,7 +34,8 @@ final class IntegrationTestsSearchCommand extends Command
         $this->services = array_map(static fn (object $class): string => $class::class, $tripServices->create());
     }
 
-    #[\Override] protected function configure(): void
+    #[\Override]
+    protected function configure(): void
     {
         $this
             ->addArgument('nation', InputArgument::REQUIRED, 'Nation')
@@ -44,7 +45,8 @@ final class IntegrationTestsSearchCommand extends Command
             ->addArgument('service', InputArgument::OPTIONAL, 'Service');
     }
 
-    #[\Override] protected function execute(InputInterface $input, OutputInterface $output): int
+    #[\Override]
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /**
          * @var string                      $nation

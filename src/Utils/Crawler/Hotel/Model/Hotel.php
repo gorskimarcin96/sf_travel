@@ -31,7 +31,8 @@ final readonly class Hotel implements URLInterface
         return $this->title;
     }
 
-    #[\Override] public function getUrl(): string
+    #[\Override]
+    public function getUrl(): string
     {
         return $this->url;
     }

@@ -11,6 +11,7 @@ docker/.env
 /public/bundles/
 /var/
 /vendor/
+!/var/test
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###
@@ -21,6 +22,7 @@ docker/.env
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
+/public/phpunit
 ###< phpunit/phpunit ###
 
 ###> friendsofphp/php-cs-fixer ###

@@ -9,9 +9,8 @@
 > 1. Trips
 > 2. Hotels
 > 3. Flights
-> 4. Last minute offers (in the future)
-> 5. Curiosities
-> 6. Weathers
+> 4. Curiosities
+> 5. Weathers
 > 
 > The application doesn't require authorization.
 > 
@@ -103,3 +102,6 @@ docker-compose -f docker/docker-compose.yml exec backend composer csfix
 ```sh
 docker-compose -f docker/docker-compose.yml exec backend composer behat
 ```
+
+#### Report test coverage
+![coverage.png](public%2Fcoverage.png)
