@@ -17,7 +17,7 @@ final readonly class DeepL implements TranslationInterface
      * @return Translation[]
      */
     #[\Override]
-    public function translate(string $text, string $targetLang, string $sourceLang = null): array
+    public function translate(string $text, string $targetLang, ?string $sourceLang = null): array
     {
         $data = $this->client->request('POST', self::API_DOMAIN, [
             'headers' => ['Authorization' => 'DeepL-Auth-Key '.$this->apiKey],

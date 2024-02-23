@@ -45,7 +45,7 @@ final readonly class Response implements ResponseInterface
     }
 
     #[\Override]
-    public function getInfo(string $type = null): mixed
+    public function getInfo(?string $type = null): mixed
     {
         throw new \LogicException('Method is not implemented.');
     }

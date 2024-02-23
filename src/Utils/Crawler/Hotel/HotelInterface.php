@@ -19,8 +19,8 @@ interface HotelInterface extends SourceInterface
         int $rangeFrom,
         int $rangeTo,
         array $foods = [],
-        int $stars = null,
-        float $rate = null,
+        ?int $stars = null,
+        ?float $rate = null,
         int $adults = 2,
         int $children = 0,
     ): array;

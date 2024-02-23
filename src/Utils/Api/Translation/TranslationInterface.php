@@ -9,5 +9,5 @@ interface TranslationInterface
     /**
      * @return Translation[]
      */
-    public function translate(string $text, string $targetLang, string $sourceLang = null): array;
+    public function translate(string $text, string $targetLang, ?string $sourceLang = null): array;
 }

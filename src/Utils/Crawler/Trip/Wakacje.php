@@ -42,8 +42,8 @@ final readonly class Wakacje implements TripInterface
         int $rangeFrom,
         int $rangeTo,
         array $foods = [],
-        int $stars = null,
-        float $rate = null,
+        ?int $stars = null,
+        ?float $rate = null,
         int $persons = 2
     ): array {
         $data = [];

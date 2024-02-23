@@ -268,7 +268,7 @@ final class EntityManager implements EntityManagerInterface
     }
 
     #[\Override]
-    public function refresh(object $object, int $lockMode = null): void
+    public function refresh(object $object, ?int $lockMode = null): void
     {
         throw new \LogicException('Method is not implemented.');
     }
@@ -276,7 +276,7 @@ final class EntityManager implements EntityManagerInterface
     /**
      * @return object[]
      */
-    public function getFlushEntities(string $className = null): array
+    public function getFlushEntities(?string $className = null): array
     {
         return null === $className ?
             $this->flushEntities :

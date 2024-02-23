@@ -13,7 +13,7 @@ final readonly class OptionalTrip implements OptionalTripInterface
 
     /** @return \App\Utils\Crawler\OptionalTrip\Model\OptionalTrip[] */
     #[\Override]
-    public function getOptionalTrips(string $place, string $nation = null): array
+    public function getOptionalTrips(string $place, ?string $nation = null): array
     {
         return $this->data;
     }

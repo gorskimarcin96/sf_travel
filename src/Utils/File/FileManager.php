@@ -12,7 +12,7 @@ final readonly class FileManager implements FileManagerInterface
     }
 
     /**
-     * @param array<string, array<string, boolean>> $options
+     * @param array<string, array<string, bool>> $options
      */
     #[\Override]
     public function read(string $path, array $options = []): string

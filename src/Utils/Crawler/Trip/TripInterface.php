@@ -20,8 +20,8 @@ interface TripInterface extends SourceInterface
         int $rangeFrom,
         int $rangeTo,
         array $foods = [],
-        int $stars = null,
-        float $rate = null,
+        ?int $stars = null,
+        ?float $rate = null,
         int $persons = 2
     ): array;
 }

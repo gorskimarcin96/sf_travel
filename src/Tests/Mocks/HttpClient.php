@@ -42,7 +42,7 @@ final class HttpClient implements HttpClientInterface
     #[\Override]
     public function stream(
         iterable|ResponseInterface $responses,
-        float $timeout = null
+        ?float $timeout = null
     ): ResponseStreamInterface {
         throw new \LogicException('Method is not implemented.');
     }

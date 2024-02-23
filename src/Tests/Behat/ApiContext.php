@@ -25,7 +25,7 @@ final class ApiContext implements Context
      *
      * @throws \Exception
      */
-    public function iSendARequestTo(string $method, string $url, PyStringNode $pyStringNode = null): void
+    public function iSendARequestTo(string $method, string $url, ?PyStringNode $pyStringNode = null): void
     {
         $request = Request::create($url, $method, [], [], [], [], $pyStringNode);
         'POST' === $method ?
