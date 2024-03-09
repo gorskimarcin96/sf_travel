@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\ApiResource\Input\Search as Input;
 use App\Entity\Search;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -79,5 +80,14 @@ final class SearchRepository extends ServiceEntityRepository implements SearchRe
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    #[\Override]
+    public function updateFinished(int $id): void
+    {
+        $searcher = $this->find($id) ?? throw new EntityNotFoundException();
+
+        $this->_em->persist($searcher->setTodo([]));
+        $this->_em->flush();
     }
 }

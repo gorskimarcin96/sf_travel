@@ -11,4 +11,6 @@ interface SearchRepositoryInterface
     public function find(int $id, ?int $lockMode = null, ?int $lockVersion = null);
 
     public function findByInput(Input $input): ?Search;
+
+    public function updateFinished(int $id): void;
 }

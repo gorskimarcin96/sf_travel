@@ -30,7 +30,7 @@ services:
       - queuer
     restart: always
   queuer:
-    image: rabbitmq:3.9.5
+    image: rabbitmq:3.13.0-management
     ports:
       - "127.0.0.1:5672:5672"
       - "127.0.0.1:15672:15672"

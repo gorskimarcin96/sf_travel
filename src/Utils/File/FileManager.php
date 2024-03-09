@@ -17,7 +17,7 @@ final readonly class FileManager implements FileManagerInterface
     #[\Override]
     public function read(string $path, array $options = []): string
     {
-        if (!filter_var($path, FILTER_VALIDATE_URL)) {
+        if (!str_starts_with($path, 'http')) {
             $path = sprintf('%s/%s', $this->projectDir, $path);
 
             if (!file_exists($path)) {

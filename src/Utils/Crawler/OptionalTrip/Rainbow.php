@@ -100,7 +100,7 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
         }, $urls);
 
         /** @var OptionalTrip[] $data */
-        $data = array_filter($data, static fn (OptionalTrip|null $optionalTrip): bool => $optionalTrip instanceof OptionalTrip);
+        $data = array_filter($data, static fn (?OptionalTrip $optionalTrip): bool => $optionalTrip instanceof OptionalTrip);
 
         $this->downloaderLogger->info(sprintf('Found trips: %s', count($data)));
 

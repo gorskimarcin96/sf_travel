@@ -99,7 +99,7 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
             });
 
         /** @var OptionalTrip[] $data */
-        $data = array_filter($data, static fn (OptionalTrip|null $optionalTrip): bool => $optionalTrip instanceof OptionalTrip);
+        $data = array_filter($data, static fn (?OptionalTrip $optionalTrip): bool => $optionalTrip instanceof OptionalTrip);
 
         foreach ($data as $index => $datum) {
             $data[$index] = new OptionalTrip(

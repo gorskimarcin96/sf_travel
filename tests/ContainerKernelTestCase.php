@@ -25,7 +25,6 @@ use App\Utils\Crawler\Hotel\Booking as HotelBooking;
 use App\Utils\Crawler\OptionalTrip\Itaka as OptionalTripItaka;
 use App\Utils\Crawler\OptionalTrip\Rainbow as OptionalTripRainbow;
 use App\Utils\Crawler\PageAttraction\BliskoCorazDalej;
-use App\Utils\Crawler\PageAttraction\GuruPodrozy;
 use App\Utils\Crawler\PageAttraction\MamaSaidBeCool;
 use App\Utils\Crawler\PageAttraction\PodrozeBezOsci;
 use App\Utils\Crawler\PageAttraction\TasteAway;
@@ -194,11 +193,6 @@ abstract class ContainerKernelTestCase extends KernelTestCase
     public function getBliskoCorazDalej(): BliskoCorazDalej
     {
         return new BliskoCorazDalej(HttpClient::create(), new Base64(new Mocks\FileManager()), new Logger());
-    }
-
-    public function getGuruPodrozy(): GuruPodrozy
-    {
-        return new GuruPodrozy(HttpClient::create(), new Base64(new Mocks\FileManager()), new Logger());
     }
 
     public function getMamaSaidBeCool(): MamaSaidBeCool

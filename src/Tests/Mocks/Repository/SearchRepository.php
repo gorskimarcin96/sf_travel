@@ -39,4 +39,9 @@ final class SearchRepository extends ServiceEntityRepository implements SearchRe
     {
         return null;
     }
+
+    #[\Override]
+    public function updateFinished(int $id): void
+    {
+    }
 }

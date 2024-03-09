@@ -54,6 +54,8 @@ final readonly class SearchHandler
         $searchServiceClass = $entity->getServiceTodo();
 
         if ($searchServiceClass) {
+            $this->downloaderLogger->info(sprintf('Getting from %s for %s.', $searchServiceClass, $entity->getId()));
+
             try {
                 /** @var OptionalTripInterface|PageAttractionInterface|HotelInterface|FlightInterface|WeatherInterface|TripInterface $service */
                 $service = $this->tripServices->findByClassName($searchServiceClass);
