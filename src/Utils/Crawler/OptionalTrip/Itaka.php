@@ -122,7 +122,7 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
             $node->filter('.excursion-tile__title')->text(),
             [],
             self::MAIN_DOMAIN.$node->filter('a')->getAttribute('href'),
-            $this->base64->convertFromImage($node->filter('img')->getAttribute('src') ?? throw new NullException()),
+            $this->base64->convertFromImage($node->filter('img')->getAttribute('src') ?? throw new NullException()) ?? throw new NullException(),
             \App\Factory\Money::create($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()))
         );
     }

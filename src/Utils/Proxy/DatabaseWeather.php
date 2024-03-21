@@ -12,6 +12,7 @@ use App\Utils\Api\Weather\WeatherInterface;
 use App\Utils\Helper\DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 final readonly class DatabaseWeather
 {
@@ -23,6 +24,7 @@ final readonly class DatabaseWeather
         private TranslationInterface $translation,
         private GeocodingOpenMeteo $geocodingOpenMeteo,
         private EntityManagerInterface $entityManager,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -36,24 +38,43 @@ final readonly class DatabaseWeather
         \DateTimeInterface $to
     ): array {
         if (!($entityCity = $this->cityRepository->findByNamePl($city)) instanceof City) {
-            $cityEn = $this->translation->translate($city, 'en', 'pl')[0]->getText();
-            $geocoding = $this->geocodingOpenMeteo->getByCity($cityEn);
-            $entityCity = (new City())
-                ->setNamePl($city)
-                ->setNameEn($cityEn)
-                ->setCountry($geocoding->getCountry())
-                ->setCountryCode($geocoding->getCountryCode())
-                ->setLatitude($geocoding->getLatitude())
-                ->setLongitude($geocoding->getLongitude());
+            try {
+                $cityEn = $this->translation->translate($city, 'en', 'pl')[0]->getText();
+            } catch (\Throwable $throwable) {
+                $this->logger->warning(sprintf('%s: %s', $throwable::class, $throwable->getMessage()));
 
-            $this->entityManager->persist($entityCity);
+                $cityEn = $city;
+            }
+
+            try {
+                $geocoding = $this->geocodingOpenMeteo->getByCity($cityEn);
+                $entityCity = (new City())
+                    ->setNamePl($city)
+                    ->setNameEn($cityEn)
+                    ->setCountry($geocoding->getCountry())
+                    ->setCountryCode($geocoding->getCountryCode())
+                    ->setLatitude($geocoding->getLatitude())
+                    ->setLongitude($geocoding->getLongitude());
+
+                $this->entityManager->persist($entityCity);
+            } catch (\Throwable $throwable) {
+                $this->logger->warning(sprintf('%s: %s', $throwable::class, $throwable->getMessage()));
+
+                return [];
+            }
         }
 
         $arrayWeathers = $this->weatherRepository->findByCityAndBetweenDateAndSource($entityCity, $from, $to, $weatherService::class);
         $collectionWeather = new ArrayCollection($arrayWeathers);
 
         if ($collectionWeather->count() !== $this->countDaysBetween($from, $to)) {
-            $serviceWeathers = $weatherService->getByCityAndBetweenDate($entityCity->getNameEn(), $from, $to);
+            try {
+                $serviceWeathers = $weatherService->getByCityAndBetweenDate($entityCity->getNameEn(), $from, $to);
+            } catch (\Throwable $throwable) {
+                $this->logger->warning(sprintf('%s: %s', $throwable::class, $throwable->getMessage()));
+
+                $serviceWeathers = [];
+            }
 
             foreach ($serviceWeathers as $serviceWeather) {
                 if (!$collectionWeather->exists(function (int $key, EntityWeather $entity) use ($serviceWeather): bool {

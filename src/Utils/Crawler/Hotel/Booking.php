@@ -161,7 +161,7 @@ final readonly class Booking implements HotelInterface
             $food,
             $node->filter($this->createAttr('rating-stars', 'div', '>span'))->count(),
             $rate,
-            $this->base64->convertFromImage($node->filter('img')->attr('src') ?? throw new NullException()),
+            $this->base64->convertFromImage($node->filter('img')->attr('src') ?? throw new NullException()) ?? throw new NullException(),
             $node->filter($this->createAttr('address', 'span'))->text(),
             isset($descriptionHeader) ? [$descriptionHeader] + $descriptions : $descriptions,
             $from,

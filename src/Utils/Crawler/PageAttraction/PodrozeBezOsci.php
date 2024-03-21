@@ -67,7 +67,10 @@ final readonly class PodrozeBezOsci extends AbstractPageAttraction implements Pa
                     && $crawler->filter('p img')->count()
                 ) {
                     $src = $crawler->filter('p img')->first()->attr('src') ?? throw new NullException();
-                    $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
+
+                    if (null !== $image = $this->base64->convertFromImage($src)) {
+                        $page->lastArticle()?->addImage($image);
+                    }
                 } elseif (in_array($crawler->nodeName(), $this->pageAttractionOptions->getTextSelectors())) {
                     $page->lastArticle()?->addDescription($crawler->text());
                 }

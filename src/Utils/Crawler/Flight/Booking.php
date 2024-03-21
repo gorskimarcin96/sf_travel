@@ -98,7 +98,7 @@ final readonly class Booking extends PantherClient implements FlightInterface
     private function createDateTimeImmutableFromNodes(Crawler $timeNode, Crawler $dateNode): \DateTimeImmutable
     {
         [$day, $month] = explode(' ', $dateNode->text());
-        $month = $this->monthPlToNumber($month);
+        $month = $this->monthToNumber($month);
 
         return new \DateTimeImmutable(sprintf('%s %s-%s-%s', $timeNode->text(), $day, $month, date('Y')));
     }

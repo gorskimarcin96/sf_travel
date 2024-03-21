@@ -21,7 +21,7 @@ class Base64Test extends ContainerKernelTestCase
     /** @dataProvider getData */
     public function testConvertFromImage(string $input, string $expected): void
     {
-        $base64 = new Base64($this->getFileManager());
+        $base64 = new Base64($this->getFileManager(), new \Symfony\Component\HttpKernel\Log\Logger());
 
         $this->assertSame($base64->convertFromImage($input), $expected);
     }

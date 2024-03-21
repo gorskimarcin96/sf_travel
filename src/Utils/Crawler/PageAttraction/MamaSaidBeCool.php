@@ -2,7 +2,6 @@
 
 namespace App\Utils\Crawler\PageAttraction;
 
-use App\Exception\NullException;
 use App\Utils\Crawler\PageAttraction\Model\Article;
 use App\Utils\Crawler\PageAttraction\Model\Page;
 use App\Utils\Crawler\PageAttraction\Model\PageAttractionOptions;
@@ -19,6 +18,7 @@ final readonly class MamaSaidBeCool extends AbstractPageAttraction implements Pa
         HttpClientInterface $httpClient,
         Base64 $base64,
         LoggerInterface $downloaderLogger,
+        private LoggerInterface $logger,
     ) {
         parent::__construct(
             $httpClient,
@@ -56,24 +56,30 @@ final readonly class MamaSaidBeCool extends AbstractPageAttraction implements Pa
             $page->addArticle(new Article($crawler->filter('h1')->text()));
 
             $crawler->filter($this->pageAttractionOptions->getMainContentSelector())->each(function (Crawler $crawler) use ($page): void {
-                if (
-                    in_array($crawler->nodeName(), $this->pageAttractionOptions->getTitleSelectors())
-                    && $crawler->text()
-                ) {
-                    $page->addArticle(new Article($crawler->text()));
-                } elseif ('p' === $crawler->nodeName() && str_contains($crawler->text(), 'mapie')) {
-                    $page->setMap($crawler->filter('a')->first()->attr('href'));
-                } elseif (
-                    in_array($crawler->nodeName(), $this->pageAttractionOptions->getImageSelectors())
-                    && $crawler->filter('img')->count()
-                ) {
-                    $src = $crawler->filter('img')->eq(1)->attr('src') ?? throw new NullException();
-                    $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
-                } elseif (
-                    in_array($crawler->nodeName(), $this->pageAttractionOptions->getTextSelectors())
-                    && u($crawler->text())->trim()->toString()
-                ) {
-                    $page->lastArticle()?->addDescription(u($crawler->text())->trim()->toString());
+                try {
+                    if (
+                        in_array($crawler->nodeName(), $this->pageAttractionOptions->getTitleSelectors())
+                        && $crawler->text()
+                    ) {
+                        $page->addArticle(new Article($crawler->text()));
+                    } elseif ('p' === $crawler->nodeName() && str_contains($crawler->text(), 'mapie')) {
+                        $page->setMap($crawler->filter('a')->first()->attr('href'));
+                    } elseif (
+                        in_array($crawler->nodeName(), $this->pageAttractionOptions->getImageSelectors())
+                        && $crawler->filter('img')->count()
+                        && null !== $src = $crawler->filter('img')->eq(1)->attr('src')
+                    ) {
+                        if (null !== $image = $this->base64->convertFromImage($src)) {
+                            $page->lastArticle()?->addImage($image);
+                        }
+                    } elseif (
+                        in_array($crawler->nodeName(), $this->pageAttractionOptions->getTextSelectors())
+                        && u($crawler->text())->trim()->toString()
+                    ) {
+                        $page->lastArticle()?->addDescription(u($crawler->text())->trim()->toString());
+                    }
+                } catch (\Throwable $throwable) {
+                    $this->logger->error(sprintf('%s: %s', $throwable::class, $throwable->getMessage()));
                 }
             });
 

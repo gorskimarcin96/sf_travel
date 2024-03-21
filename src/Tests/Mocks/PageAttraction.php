@@ -23,4 +23,10 @@ final readonly class PageAttraction implements PageAttractionInterface
     {
         return self::class;
     }
+
+    #[\Override]
+    public function isEnabled(): bool
+    {
+        return true;
+    }
 }

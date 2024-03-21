@@ -60,4 +60,10 @@ final readonly class GuruPodrozy extends AbstractPageAttraction implements PageA
 
         return $urls;
     }
+
+    #[\Override]
+    public function isEnabled(): bool
+    {
+        return false;
+    }
 }

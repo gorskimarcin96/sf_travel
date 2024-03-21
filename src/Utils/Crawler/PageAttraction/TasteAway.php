@@ -48,6 +48,11 @@ final readonly class TasteAway extends AbstractPageAttraction implements PageAtt
     protected function getUrls(string $place, string $nation): array
     {
         $response = $this->httpClient->request('GET', sprintf('%s/%s', $this->pageAttractionOptions->getUrl(), $nation));
+
+        if (Response::HTTP_NOT_FOUND === $response->getStatusCode()) {
+            return [];
+        }
+
         $crawler = new Crawler($response->getContent());
         $urls = $crawler->filter($this->pageAttractionOptions->getMainPageSelector())->each(fn (Crawler $crawler): string => $crawler->attr('href') ?? throw new NullException());
         $i = 2;

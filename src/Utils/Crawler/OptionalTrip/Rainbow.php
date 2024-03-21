@@ -2,6 +2,7 @@
 
 namespace App\Utils\Crawler\OptionalTrip;
 
+use App\Exception\NullException;
 use App\Factory\Money;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
 use App\Utils\Crawler\PantherClient;
@@ -113,7 +114,7 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
             $node->filter('h1')->text(),
             $node->filter('.kf-opis-wycieczki-atrybut-podrzedny__opis>p')->each(fn (PantherCrawler $node): string => $node->text()),
             $url,
-            $this->base64->convertFromImage('https:'.$node->filter('img.kf-gallery--desktop__element')->attr('src')),
+            $this->base64->convertFromImage('https:'.$node->filter('img.kf-gallery--desktop__element')->attr('src')) ?? throw new NullException(),
             Money::create($this->parser->stringToFloat($node->filter('span.konfigurator__text--cena')->text()))
         );
     }

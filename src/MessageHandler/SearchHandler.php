@@ -61,7 +61,7 @@ final readonly class SearchHandler
                 if ($service instanceof OptionalTripInterface) {
                     $entity = $this->saveOptionalTrips($entity, $service);
                 } elseif ($service instanceof PageAttractionInterface) {
-                    $entity = $this->savePageAttractions($entity, $service);
+                    $entity = $service->isEnabled() ? $this->savePageAttractions($entity, $service) : $entity;
                 } elseif ($service instanceof HotelInterface) {
                     $entity = $this->saveHotels($entity, $service);
                 } elseif ($service instanceof FlightInterface) {

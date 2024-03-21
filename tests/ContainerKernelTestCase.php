@@ -74,7 +74,7 @@ abstract class ContainerKernelTestCase extends KernelTestCase
             $this->getFileManager()->read('var/test/hotel/booking/response.html')
         );
 
-        return new HotelBooking($httpClient, new Base64(new FileManager('')), new Parser(), new Logger());
+        return new HotelBooking($httpClient, new Base64(new FileManager(''), new Logger()), new Parser(), new Logger());
     }
 
     public function getFlightBooking(): FlightBooking
@@ -149,7 +149,7 @@ abstract class ContainerKernelTestCase extends KernelTestCase
             HttpClient::create()->addRequest('GET', $url, $content),
             new Logger(),
             new Parser(),
-            new Base64($FM),
+            new Base64($FM, new Logger()),
             new Client(new BrowserManager(new WebDriver($responses)))
         );
     }
@@ -175,7 +175,7 @@ abstract class ContainerKernelTestCase extends KernelTestCase
             HttpClient::create()->addRequest('GET', $url, $content),
             new Logger(),
             new Parser(),
-            new Base64(new Mocks\FileManager()),
+            new Base64(new Mocks\FileManager(), new Logger()),
             new Client(new BrowserManager(new WebDriver($responses)))
         );
     }
@@ -188,17 +188,17 @@ abstract class ContainerKernelTestCase extends KernelTestCase
             ->addRequest('GET', sprintf($baseUrl, 1), $content)
             ->addRequest('GET', sprintf($baseUrl, 2), $content);
 
-        return new TripWakacje($httpClient, new Parser(), new Base64(new Mocks\FileManager()), new Logger());
+        return new TripWakacje($httpClient, new Parser(), new Base64(new Mocks\FileManager(), new Logger()), new Logger(), new Logger());
     }
 
     public function getBliskoCorazDalej(): BliskoCorazDalej
     {
-        return new BliskoCorazDalej(HttpClient::create(), new Base64(new Mocks\FileManager()), new Logger());
+        return new BliskoCorazDalej(HttpClient::create(), new Base64(new Mocks\FileManager(), new Logger()), new Logger());
     }
 
     public function getGuruPodrozy(): GuruPodrozy
     {
-        return new GuruPodrozy(HttpClient::create(), new Base64(new Mocks\FileManager()), new Logger());
+        return new GuruPodrozy(HttpClient::create(), new Base64(new Mocks\FileManager(), new Logger()), new Logger());
     }
 
     public function getMamaSaidBeCool(): MamaSaidBeCool
@@ -213,7 +213,7 @@ abstract class ContainerKernelTestCase extends KernelTestCase
             $this->getFileManager()->read('var/test/page_attraction/mama_said_be_cool/response_2.html')
         );
 
-        return new MamaSaidBeCool($httpClient, new Base64(new Mocks\FileManager()), new Logger());
+        return new MamaSaidBeCool($httpClient, new Base64(new Mocks\FileManager(), new Logger()), new Logger(), new Logger());
     }
 
     public function getPodrozeBezOsci(): PodrozeBezOsci
@@ -228,22 +228,22 @@ abstract class ContainerKernelTestCase extends KernelTestCase
             $this->getFileManager()->read('var/test/page_attraction/podrozebezosci/response_2.html')
         );
 
-        return new PodrozeBezOsci($httpClient, new Base64(new Mocks\FileManager()), new Logger());
+        return new PodrozeBezOsci($httpClient, new Base64(new Mocks\FileManager(), new Logger()), new Logger());
     }
 
     public function getTasteAway(): TasteAway
     {
-        return new TasteAway(HttpClient::create(), new Base64(new Mocks\FileManager()), new Logger());
+        return new TasteAway(HttpClient::create(), new Base64(new Mocks\FileManager(), new Logger()), new Logger());
     }
 
     public function getTravelizer(): Travelizer
     {
-        return new Travelizer(HttpClient::create(), new Base64(new Mocks\FileManager()), new Logger());
+        return new Travelizer(HttpClient::create(), new Base64(new Mocks\FileManager(), new Logger()), new Logger());
     }
 
     public function getTysiacStronSwiata(): TysiacStronSwiata
     {
-        return new TysiacStronSwiata(HttpClient::create(), new Base64(new Mocks\FileManager()), new Logger());
+        return new TysiacStronSwiata(HttpClient::create(), new Base64(new Mocks\FileManager(), new Logger()), new Logger());
     }
 
     public function getSaverFlight(bool $simulatePhpWebDriverException = false): SaverFlight
@@ -283,7 +283,8 @@ abstract class ContainerKernelTestCase extends KernelTestCase
             $this->getWeatherRepository(),
             $this->getTranslation(),
             $this->getGeocodingOpenMeteo(),
-            $this->getEntityManager()
+            $this->getEntityManager(),
+            new Logger()
         );
     }
 

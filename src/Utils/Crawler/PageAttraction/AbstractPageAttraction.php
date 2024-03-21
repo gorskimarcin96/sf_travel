@@ -10,6 +10,7 @@ use App\Utils\Helper\Base64;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 use function Symfony\Component\String\u;
@@ -75,7 +76,9 @@ abstract readonly class AbstractPageAttraction
                             return;
                         }
 
-                        $page->lastArticle()?->addImage($this->base64->convertFromImage($src));
+                        if (null !== $image = $this->base64->convertFromImage($src)) {
+                            $page->lastArticle()?->addImage($image);
+                        }
                     });
                 } elseif (
                     in_array($crawler->nodeName(), $this->pageAttractionOptions->getTextSelectors())
@@ -98,9 +101,20 @@ abstract readonly class AbstractPageAttraction
      */
     protected function getUrls(string $place, string $nation): array
     {
-        $crawler = new Crawler($this->httpClient->request('GET', sprintf('%s/%s', $this->pageAttractionOptions->getUrl(), $nation))->getContent());
+        $response = $this->httpClient->request('GET', sprintf('%s/%s', $this->pageAttractionOptions->getUrl(), $nation));
+
+        if (Response::HTTP_NOT_FOUND === $response->getStatusCode()) {
+            return [];
+        }
+
+        $crawler = new Crawler($response->getContent());
         $collection = new ArrayCollection($crawler->filter($this->pageAttractionOptions->getMainPageSelector())->each(fn (Crawler $crawler): string => $crawler->filter('a')->first()->attr('href') ?? throw new NullException()));
 
         return $collection->filter(fn (string $url): bool => str_contains($url, $place))->toArray();
+    }
+
+    public function isEnabled(): bool
+    {
+        return true;
     }
 }

@@ -20,6 +20,7 @@ final readonly class Wakacje implements TripInterface
         private Parser $parser,
         private Base64 $base64,
         private LoggerInterface $downloaderLogger,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -103,14 +104,16 @@ final readonly class Wakacje implements TripInterface
 
         $data = (new Crawler($this->httpClient->request('GET', $url)->getContent()))
             ->filter('section[data-offers-count]>div>a')
-            ->each(fn (Crawler $node): Trip => $this->createModelFromNode($node));
+            ->each(fn (Crawler $node): ?Trip => $this->createModelFromNode($node));
+
+        $data = array_filter($data, static fn (?Trip $trip): bool => $trip instanceof Trip);
 
         $this->downloaderLogger->info(sprintf('Found trips: %s', count($data)));
 
         return $data;
     }
 
-    private function createModelFromNode(Crawler $node): Trip
+    private function createModelFromNode(Crawler $node): ?Trip
     {
         try {
             $rate = $this->parser->stringToFloat($node->filter('div[data-testid="RateBox"]')->text());
@@ -119,17 +122,24 @@ final readonly class Wakacje implements TripInterface
         }
 
         $dates = explode('- ', $node->filter('span[data-testid="offer-listing-duration-date"]')->first()->text());
+        $image = $this->base64->convertFromImage($node->filter('picture>img')->attr('src') ?? throw new NullException());
 
-        return new Trip(
-            $node->filter('h4')->text(),
-            $node->attr('href') ?? throw new NullException(),
-            Food::fromValue($node->filter('span[data-testid="offer-listing-services"]')->text()),
-            (int) $node->filter('div[data-testid="offer-listing-category"]')->attr('title'),
-            $rate,
-            $this->base64->convertFromImage($node->filter('picture>img')->attr('src') ?? throw new NullException()),
-            new \DateTimeImmutable($dates[0]),
-            new \DateTimeImmutable($dates[1]),
-            \App\Factory\Money::create($this->parser->stringToFloat($node->filter('div[data-testid="offer-listing-section-price"]')->text()))
-        );
+        try {
+            return new Trip(
+                $node->filter('h4')->text(),
+                $node->attr('href') ?? throw new NullException(),
+                Food::fromValue($node->filter('span[data-testid="offer-listing-services"]')->text()),
+                (int) $node->filter('div[data-testid="offer-listing-category"]')->attr('title'),
+                $rate,
+                $image ?? throw new NullException(),
+                new \DateTimeImmutable($dates[0]),
+                new \DateTimeImmutable($dates[1]),
+                \App\Factory\Money::create($this->parser->stringToFloat($node->filter('div[data-testid="offer-listing-section-price"]')->text()))
+            );
+        } catch (\Throwable $throwable) {
+            $this->logger->error(sprintf('%s: %s', $throwable::class, $throwable->getMessage()));
+
+            return null;
+        }
     }
 }

@@ -9,4 +9,6 @@ interface PageAttractionInterface extends SourceInterface
 {
     /** @return Page[] */
     public function getPages(string $place, string $nation): array;
+
+    public function isEnabled(): bool;
 }
