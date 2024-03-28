@@ -2,8 +2,8 @@
 
 namespace App\Tests\Utils\Crawler\Flight;
 
-use App\Entity\Money;
 use App\Tests\ContainerKernelTestCase;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Flight\Booking;
 use App\Utils\Crawler\Flight\Model\Flight;
 use App\Utils\Enum\Currency;

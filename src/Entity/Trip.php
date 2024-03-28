@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use App\Entity\Traits\MoneyTrait;
 use App\Repository\TripRepository;
 use App\Utils\Enum\Food;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: TripRepository::class)]
 class Trip implements SourceInterface
 {
+    use MoneyTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
@@ -53,11 +56,6 @@ class Trip implements SourceInterface
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT)]
     #[Groups('trips')]
     private string $image;
-
-    #[ORM\OneToOne(cascade: ['all'])]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    #[Groups('trips')]
-    private Money $money;
 
     #[ORM\Column(length: 255)]
     #[Groups('trips')]
@@ -170,18 +168,6 @@ class Trip implements SourceInterface
     public function setImage(string $image): static
     {
         $this->image = $image;
-
-        return $this;
-    }
-
-    public function getMoney(): Money
-    {
-        return $this->money;
-    }
-
-    public function setMoney(Money $money): static
-    {
-        $this->money = $money;
 
         return $this;
     }

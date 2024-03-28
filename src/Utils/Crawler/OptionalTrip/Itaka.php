@@ -3,6 +3,7 @@
 namespace App\Utils\Crawler\OptionalTrip;
 
 use App\Exception\NullException;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
 use App\Utils\Crawler\PantherClient;
 use App\Utils\Helper\Base64;
@@ -123,7 +124,7 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
             [],
             self::MAIN_DOMAIN.$node->filter('a')->getAttribute('href'),
             $this->base64->convertFromImage($node->filter('img')->getAttribute('src') ?? throw new NullException()) ?? throw new NullException(),
-            \App\Factory\Money::create($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()))
+            new Money($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()))
         );
     }
 

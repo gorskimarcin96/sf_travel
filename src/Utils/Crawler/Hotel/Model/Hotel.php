@@ -2,7 +2,7 @@
 
 namespace App\Utils\Crawler\Hotel\Model;
 
-use App\Entity\Money;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Model\URLInterface;
 use App\Utils\Enum\Food;
 

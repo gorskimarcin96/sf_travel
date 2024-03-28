@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use App\Entity\Traits\MoneyTrait;
 use App\Repository\FlightRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -16,6 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: FlightRepository::class)]
 class Flight implements SourceInterface
 {
+    use MoneyTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
@@ -57,11 +60,6 @@ class Flight implements SourceInterface
     #[ORM\Column(length: 1000)]
     #[Groups('flights')]
     private string $url;
-
-    #[ORM\OneToOne(cascade: ['all'])]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    #[Groups('flights')]
-    private Money $money;
 
     #[ORM\Column(length: 255)]
     #[Groups('flights')]
@@ -186,18 +184,6 @@ class Flight implements SourceInterface
     public function setUrl(string $url): static
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function getMoney(): Money
-    {
-        return $this->money;
-    }
-
-    public function setMoney(Money $money): static
-    {
-        $this->money = $money;
 
         return $this;
     }

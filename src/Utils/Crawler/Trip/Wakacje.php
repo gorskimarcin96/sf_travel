@@ -3,6 +3,7 @@
 namespace App\Utils\Crawler\Trip;
 
 use App\Exception\NullException;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Trip\Model\Trip;
 use App\Utils\Enum\Food;
 use App\Utils\Helper\Base64;
@@ -134,7 +135,7 @@ final readonly class Wakacje implements TripInterface
                 $image ?? throw new NullException(),
                 new \DateTimeImmutable($dates[0]),
                 new \DateTimeImmutable($dates[1]),
-                \App\Factory\Money::create($this->parser->stringToFloat($node->filter('div[data-testid="offer-listing-section-price"]')->text()))
+                new Money($this->parser->stringToFloat($node->filter('div[data-testid="offer-listing-section-price"]')->text()))
             );
         } catch (\Throwable $throwable) {
             $this->logger->error(sprintf('%s: %s', $throwable::class, $throwable->getMessage()));

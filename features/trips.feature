@@ -31,11 +31,8 @@ Feature: Searcher
         "from": "2000-01-01T00:00:00+00:00",
         "to": "2000-01-07T00:00:00+00:00",
         "image": "image",
-        "money": {
-          "id": 1,
-          "price": 500.00,
-          "currency":"PLN"
-        },
+        "price": 500.00,
+        "currency":"PLN",
         "source": "xyz"
       },
       {
@@ -48,11 +45,8 @@ Feature: Searcher
         "from": "2000-01-01T00:00:00+00:00",
         "to": "2000-01-07T00:00:00+00:00",
         "image": "image",
-        "money": {
-          "id": 2,
-          "price": 499.99,
-          "currency":"PLN"
-        },
+        "price": 499.99,
+        "currency":"PLN",
         "source": "abc"
       }
     ]
@@ -75,11 +69,8 @@ Feature: Searcher
         "from": "2000-01-01T00:00:00+00:00",
         "to": "2000-01-07T00:00:00+00:00",
         "image": "image",
-        "money": {
-          "id": 2,
-          "price": 499.99,
-          "currency":"PLN"
-        },
+        "price": 499.99,
+        "currency":"PLN",
         "source": "abc"
       }
     ]

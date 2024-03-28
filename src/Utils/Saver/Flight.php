@@ -49,7 +49,8 @@ final readonly class Flight
                 ->setToStart($model->getToStart())
                 ->setToEnd($model->getToEnd())
                 ->setToStops($model->getToStops())
-                ->setMoney($model->getMoney())
+                ->setPrice($model->getMoney()->getPrice())
+                ->setCurrency($model->getMoney()->getCurrency())
                 ->setUrl($model->getUrl())
                 ->setSource($flight->getSource());
 

@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use App\Entity\Traits\MoneyTrait;
 use App\Repository\OptionalTripRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -15,6 +16,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: OptionalTripRepository::class)]
 class OptionalTrip implements SourceInterface
 {
+    use MoneyTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
@@ -43,11 +46,6 @@ class OptionalTrip implements SourceInterface
     #[ORM\Column(length: 255)]
     #[Groups('optional-trips')]
     private string $source;
-
-    #[ORM\OneToOne(cascade: ['all'])]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    #[Groups('optional-trips')]
-    private Money $money;
 
     #[ORM\ManyToOne(inversedBy: 'optionalTrips')]
     private ?Search $search = null;
@@ -129,18 +127,6 @@ class OptionalTrip implements SourceInterface
     public function setSource(string $source): static
     {
         $this->source = $source;
-
-        return $this;
-    }
-
-    public function getMoney(): Money
-    {
-        return $this->money;
-    }
-
-    public function setMoney(Money $money): static
-    {
-        $this->money = $money;
 
         return $this;
     }

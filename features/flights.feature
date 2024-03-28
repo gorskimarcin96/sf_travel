@@ -33,11 +33,8 @@ Feature: Searcher
     "toEnd": "2000-01-07T12:00:00+00:00",
     "toStops": 0,
     "url": "https:\/\/example.org",
-    "money": {
-      "id": 1,
-      "price": 500.0,
-      "currency": "PLN"
-    },
+    "price": 500.0,
+    "currency": "PLN",
     "source": "xyz"
   },
   {
@@ -51,11 +48,8 @@ Feature: Searcher
     "toEnd": "2000-01-07T16:00:00+00:00",
     "toStops": 0,
     "url": "https:\/\/example.org",
-    "money": {
-      "id": 2,
-      "price": 2999.99,
-      "currency": "PLN"
-    },
+    "price": 2999.99,
+    "currency": "PLN",
     "source": "abc"
   },
   {
@@ -69,11 +63,8 @@ Feature: Searcher
     "toEnd": "2000-01-07T20:00:00+00:00",
     "toStops": 1,
     "url": "https:\/\/example.org",
-    "money": {
-      "id": 3,
-      "price": 2.3,
-      "currency": "PLN"
-    },
+    "price": 2.3,
+    "currency": "PLN",
     "source": "abc"
   }
 ]
@@ -97,11 +88,8 @@ Feature: Searcher
     "toEnd": "2000-01-07T16:00:00+00:00",
     "toStops": 0,
     "url": "https:\/\/example.org",
-    "money": {
-      "id": 2,
-      "price": 2999.99,
-      "currency": "PLN"
-    },
+    "price": 2999.99,
+    "currency": "PLN",
     "source": "abc"
   },
   {
@@ -115,11 +103,8 @@ Feature: Searcher
     "toEnd": "2000-01-07T20:00:00+00:00",
     "toStops": 1,
     "url": "https:\/\/example.org",
-    "money": {
-      "id": 3,
-      "price": 2.3,
-      "currency": "PLN"
-    },
+    "price": 2.3,
+    "currency": "PLN",
     "source": "abc"
   }
 ]

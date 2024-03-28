@@ -3,6 +3,7 @@
 namespace App\Utils\Crawler\Flight;
 
 use App\Utils\Crawler\BookingHelper;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Flight\Model\Flight;
 use App\Utils\Crawler\PantherClient;
 use App\Utils\Helper\DateTime;
@@ -74,7 +75,7 @@ final readonly class Booking extends PantherClient implements FlightInterface
             $this->createDepartureDateTimeImmutable($node, '1'),
             $this->createDestinationDateTimeImmutable($node, '1'),
             (int) $this->parser->stringToFloat($node->filter($this->createAttr('flight_card_segment_stops_1'))->text()),
-            \App\Factory\Money::create($this->parser->stringToFloat(str_replace(',', '.', $node->filter($this->createAttr('flight_card_price_total_price'))->text()))),
+            new Money($this->parser->stringToFloat(str_replace(',', '.', $node->filter($this->createAttr('flight_card_price_total_price'))->text()))),
             $this->client->getCurrentURL()
         );
     }

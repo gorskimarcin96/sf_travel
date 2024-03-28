@@ -37,11 +37,8 @@ Feature: Searcher
     "food": "all-inclusive",
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
-    "money": {
-      "id": 1,
-      "price": 500.0,
-      "currency": "PLN"
-    },
+    "price": 500.0,
+    "currency": "PLN",
     "source": "xyz"
   },
   {
@@ -58,11 +55,8 @@ Feature: Searcher
     "food": "breakfast",
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
-    "money": {
-      "id": 2,
-      "price": 2999.99,
-      "currency": "PLN"
-    },
+    "price": 2999.99,
+    "currency": "PLN",
     "source": "abc"
   },
   {
@@ -79,11 +73,8 @@ Feature: Searcher
     "food": "breakfast",
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
-    "money": {
-      "id": 3,
-      "price": 2.3,
-      "currency": "PLN"
-    },
+    "price": 2.3,
+    "currency": "PLN",
     "source": "abc"
   }
 ]
@@ -110,11 +101,8 @@ Feature: Searcher
     "food": "breakfast",
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
-    "money": {
-      "id": 2,
-      "price": 2999.99,
-      "currency": "PLN"
-    },
+    "price": 2999.99,
+    "currency": "PLN",
     "source": "abc"
   },
   {
@@ -131,11 +119,8 @@ Feature: Searcher
     "food": "breakfast",
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
-    "money": {
-      "id": 3,
-      "price": 2.3,
-      "currency": "PLN"
-    },
+    "price": 2.3,
+    "currency": "PLN",
     "source": "abc"
   }
 ]

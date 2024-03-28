@@ -1,22 +1,13 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Traits;
 
-use App\Repository\MoneyRepository;
 use App\Utils\Enum\Currency;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/** @codeCoverageIgnore */
-#[ORM\Entity(repositoryClass: MoneyRepository::class)]
-class Money
+trait MoneyTrait
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue('SEQUENCE')]
-    #[ORM\Column]
-    #[Groups(['optional-trips', 'hotels', 'flights', 'trips'])]
-    private ?int $id = null;
-
     #[ORM\Column]
     #[Groups(['optional-trips', 'hotels', 'flights', 'trips'])]
     private float $price;
@@ -24,11 +15,6 @@ class Money
     #[ORM\Column(length: 3, enumType: Currency::class)]
     #[Groups(['optional-trips', 'hotels', 'flights', 'trips'])]
     private Currency $currency = Currency::PLN;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getPrice(): float
     {

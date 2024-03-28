@@ -44,7 +44,8 @@ final readonly class OptionalTrip
                 ->setUrl($model->getUrl())
                 ->setImage($model->getImage())
                 ->setSource($optionalTrip->getSource())
-                ->setMoney($model->getMoney());
+                ->setPrice($model->getMoney()->getPrice())
+                ->setCurrency($model->getMoney()->getCurrency());
 
             $this->entityManager->persist($entity);
 

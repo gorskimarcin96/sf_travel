@@ -4,8 +4,8 @@ namespace App\Tests\Utils\Saver;
 
 use App\Entity\Search;
 use App\Entity\Trip;
-use App\Factory\Money;
 use App\Tests\ContainerKernelTestCase;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Trip\Model\Trip as TripModel;
 use App\Utils\Crawler\Trip\TripInterface;
 use App\Utils\Enum\Currency;
@@ -31,7 +31,7 @@ class TripTest extends ContainerKernelTestCase
                     '#',
                     new \DateTimeImmutable('01-01-2000'),
                     new \DateTimeImmutable('07-01-2000'),
-                    Money::create(1999.99)
+                    new Money(1999.99)
                 ),
                 new TripModel(
                     'Second trip',
@@ -42,7 +42,7 @@ class TripTest extends ContainerKernelTestCase
                     '#',
                     new \DateTimeImmutable('01-01-2000'),
                     new \DateTimeImmutable('05-01-2000'),
-                    Money::create(499.99, Currency::EUR)
+                    new Money(499.99, Currency::EUR)
                 ),
                 new TripModel(
                     'Third trip',
@@ -53,7 +53,7 @@ class TripTest extends ContainerKernelTestCase
                     '#',
                     new \DateTimeImmutable('02-01-2000'),
                     new \DateTimeImmutable('07-01-2000'),
-                    Money::create(1999.99)
+                    new Money(1999.99)
                 ),
             ]);
         $tripService
@@ -88,9 +88,8 @@ class TripTest extends ContainerKernelTestCase
         $this->assertSame('#', $tripEntities[0]->getImage());
         $this->assertSame(946684800, $tripEntities[0]->getFrom()->getTimestamp());
         $this->assertSame(947203200, $tripEntities[0]->getTo()->getTimestamp());
-        $this->assertInstanceOf(\App\Entity\Money::class, $tripEntities[0]->getMoney());
-        $this->assertSame(1999.99, $tripEntities[0]->getMoney()->getPrice());
-        $this->assertSame(Currency::PLN, $tripEntities[0]->getMoney()->getCurrency());
+        $this->assertSame(1999.99, $tripEntities[0]->getPrice());
+        $this->assertSame(Currency::PLN, $tripEntities[0]->getCurrency());
         $this->assertSame(__CLASS__, $tripEntities[0]->getSource());
     }
 }

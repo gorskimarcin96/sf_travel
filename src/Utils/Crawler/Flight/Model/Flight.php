@@ -2,7 +2,7 @@
 
 namespace App\Utils\Crawler\Flight\Model;
 
-use App\Entity\Money;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Model\URLInterface;
 
 final readonly class Flight implements URLInterface

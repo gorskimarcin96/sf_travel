@@ -10,10 +10,10 @@ Feature: Searcher
       | 1  | grecja | zakynthos | 2000-01-01 | 2000-01-07 | 2000-01-01 |
       | 2  | grecja | rodos     | 2000-01-01 | 2000-01-07 | 2000-01-01 |
     And there are optional trips
-      | id | title   | description             | url                 | image               | source | search_id |
-      | 1  | title 1 | description;description | https://example.org | https://example.jpg | xyz    | 1         |
-      | 2  | title 2 |                         | https://example.org | https://example.jpg | abc    | 1         |
-      | 3  | title 3 | description             | https://example.org | https://example.jpg | abc    | 1         |
+      | id | title   | description             | url                 | image               | source | price | search_id |
+      | 1  | title 1 | description;description | https://example.org | https://example.jpg | xyz    | 99.99 | 1         |
+      | 2  | title 2 |                         | https://example.org | https://example.jpg | abc    | 99.99 | 1         |
+      | 3  | title 3 | description             | https://example.org | https://example.jpg | abc    | 99.99 | 1         |
 
   Scenario: Get optional trips
     When I send a "GET" request to "/optional_trips"
@@ -31,7 +31,9 @@ Feature: Searcher
     ],
     "url": "https:\/\/example.org",
     "image": "https:\/\/example.jpg",
-    "source": "xyz"
+    "source": "xyz",
+    "price": 99.99,
+    "currency": "PLN"
   },
   {
     "id": 2,
@@ -41,7 +43,9 @@ Feature: Searcher
     ],
     "url": "https:\/\/example.org",
     "image": "https:\/\/example.jpg",
-    "source": "abc"
+    "source": "abc",
+    "price": 99.99,
+    "currency": "PLN"
   },
   {
     "id": 3,
@@ -51,7 +55,9 @@ Feature: Searcher
     ],
     "url": "https:\/\/example.org",
     "image": "https:\/\/example.jpg",
-    "source": "abc"
+    "source": "abc",
+    "price": 99.99,
+    "currency": "PLN"
   }
 ]
 """
@@ -71,7 +77,9 @@ Feature: Searcher
     ],
     "url": "https:\/\/example.org",
     "image": "https:\/\/example.jpg",
-    "source": "abc"
+    "source": "abc",
+    "price": 99.99,
+    "currency": "PLN"
   },
   {
     "id": 3,
@@ -81,7 +89,9 @@ Feature: Searcher
     ],
     "url": "https:\/\/example.org",
     "image": "https:\/\/example.jpg",
-    "source": "abc"
+    "source": "abc",
+    "price": 99.99,
+    "currency": "PLN"
   }
 ]
 """

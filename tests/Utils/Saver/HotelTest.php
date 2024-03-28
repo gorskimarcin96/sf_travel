@@ -4,8 +4,8 @@ namespace App\Tests\Utils\Saver;
 
 use App\Entity\Hotel;
 use App\Entity\Search;
-use App\Factory\Money;
 use App\Tests\ContainerKernelTestCase;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Hotel\HotelInterface;
 use App\Utils\Crawler\Hotel\Model\Hotel as HotelModel;
 use App\Utils\Enum\Currency;
@@ -33,7 +33,7 @@ class HotelTest extends ContainerKernelTestCase
                     ['It\'s nice!'],
                     new \DateTimeImmutable('01-01-2020'),
                     new \DateTimeImmutable('07-01-2020'),
-                    Money::create(1999.99),
+                    new Money(1999.99),
                 ),
                 new HotelModel(
                     'Second hotel',
@@ -46,7 +46,7 @@ class HotelTest extends ContainerKernelTestCase
                     [],
                     new \DateTimeImmutable('03-01-2020'),
                     new \DateTimeImmutable('07-01-2020'),
-                    Money::create(999.99),
+                    new Money(999.99),
                 ),
             ]);
         $hotelService
@@ -83,9 +83,8 @@ class HotelTest extends ContainerKernelTestCase
         $this->assertSame(['It\'s nice!'], $hotelEntities[0]->getDescriptions());
         $this->assertSame(1577836800, $hotelEntities[0]->getFrom()->getTimestamp());
         $this->assertSame(1578355200, $hotelEntities[0]->getTo()->getTimestamp());
-        $this->assertInstanceOf(\App\Entity\Money::class, $hotelEntities[0]->getMoney());
-        $this->assertSame(1999.99, $hotelEntities[0]->getMoney()->getPrice());
-        $this->assertSame(Currency::PLN, $hotelEntities[0]->getMoney()->getCurrency());
+        $this->assertSame(1999.99, $hotelEntities[0]->getPrice());
+        $this->assertSame(Currency::PLN, $hotelEntities[0]->getCurrency());
         $this->assertSame(__CLASS__, $hotelEntities[0]->getSource());
     }
 }

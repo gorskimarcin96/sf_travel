@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use App\Entity\Traits\MoneyTrait;
 use App\Repository\HotelRepository;
 use App\Utils\Enum\Food;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,6 +18,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: HotelRepository::class)]
 class Hotel implements SourceInterface
 {
+    use MoneyTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
@@ -63,11 +66,6 @@ class Hotel implements SourceInterface
     #[ORM\Column()]
     #[Groups('hotels')]
     private array $descriptions = [];
-
-    #[ORM\OneToOne(cascade: ['all'])]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    #[Groups('hotels')]
-    private Money $money;
 
     #[ORM\Column(length: 255)]
     #[Groups('hotels')]
@@ -210,18 +208,6 @@ class Hotel implements SourceInterface
     public function setDescriptions(array $descriptions): static
     {
         $this->descriptions = $descriptions;
-
-        return $this;
-    }
-
-    public function getMoney(): Money
-    {
-        return $this->money;
-    }
-
-    public function setMoney(Money $money): static
-    {
-        $this->money = $money;
 
         return $this;
     }

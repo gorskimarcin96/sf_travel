@@ -2,8 +2,8 @@
 
 namespace App\Tests\Utils\Crawler\OptionalTrip;
 
-use App\Entity\Money;
 use App\Tests\ContainerKernelTestCase;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\OptionalTrip\Model\OptionalTrip;
 use App\Utils\Crawler\OptionalTrip\Rainbow;
 use App\Utils\Enum\Currency;

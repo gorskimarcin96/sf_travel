@@ -2,8 +2,8 @@
 
 namespace App\Tests\Utils\Crawler\Hotel;
 
-use App\Entity\Money;
 use App\Tests\ContainerKernelTestCase;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Hotel\Booking;
 use App\Utils\Crawler\Hotel\Model\Hotel;
 use App\Utils\Enum\Currency;

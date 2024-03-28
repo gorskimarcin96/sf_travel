@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Money;
+use App\Utils\Crawler\Common\Money;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

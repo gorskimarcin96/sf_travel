@@ -2,7 +2,7 @@
 
 namespace App\Utils\Crawler\OptionalTrip\Model;
 
-use App\Entity\Money;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Model\URLInterface;
 
 final readonly class OptionalTrip implements URLInterface

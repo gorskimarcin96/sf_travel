@@ -4,6 +4,7 @@ namespace App\Utils\Crawler\Hotel;
 
 use App\Exception\NullException;
 use App\Utils\Crawler\BookingHelper;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Hotel\Model\Hotel;
 use App\Utils\Enum\Food;
 use App\Utils\Helper\Base64;
@@ -166,7 +167,7 @@ final readonly class Booking implements HotelInterface
             isset($descriptionHeader) ? [$descriptionHeader] + $descriptions : $descriptions,
             $from,
             $to,
-            \App\Factory\Money::create($amount / $betweenDays),
+            new Money($amount / $betweenDays),
         );
     }
 }

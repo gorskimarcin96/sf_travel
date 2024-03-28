@@ -2,8 +2,8 @@
 
 namespace App\Tests\Utils\Crawler\Trip;
 
-use App\Entity\Money;
 use App\Tests\ContainerKernelTestCase;
+use App\Utils\Crawler\Common\Money;
 use App\Utils\Crawler\Trip\Model\Trip;
 use App\Utils\Crawler\Trip\Wakacje;
 use App\Utils\Enum\Currency;

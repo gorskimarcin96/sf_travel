@@ -19,10 +19,10 @@ Feature: Searcher
       | 2  | title 2 | City    | 9     | 9.9  | 2999.99 | breakfast     |                         | 2000-01-01 | 2000-01-07 | https://example.org | https://example.jpg | abc    | 1         |
       | 3  | title 3 | City    | 3     | 0.3  | 2.30    | breakfast     | description             | 2000-01-01 | 2000-01-07 | https://example.org | https://example.jpg | abc    | 1         |
     And there are optional trips
-      | id | title   | description             | url                 | image               | source | search_id |
-      | 1  | title 1 | description;description | https://example.org | https://example.jpg | xyz    | 1         |
-      | 2  | title 2 |                         | https://example.org | https://example.jpg | abc    | 1         |
-      | 3  | title 3 | description             | https://example.org | https://example.jpg | abc    | 1         |
+      | id | title   | description             | url                 | image               | source | price | search_id |
+      | 1  | title 1 | description;description | https://example.org | https://example.jpg | xyz    | 99.99 | 1         |
+      | 2  | title 2 |                         | https://example.org | https://example.jpg | abc    | 99.99 | 1         |
+      | 3  | title 3 | description             | https://example.org | https://example.jpg | abc    | 99.99 | 1         |
     And there are trip pages
       | id | url                 | map    | source | search_id |
       | 1  | https://example.org | string | xyz    | 1         |

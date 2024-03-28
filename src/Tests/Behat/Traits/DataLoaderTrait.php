@@ -83,6 +83,8 @@ trait DataLoaderTrait
                 ->setUrl($row['url'])
                 ->setImage($row['image'])
                 ->setSource($row['source'])
+                ->setPrice($row['price'])
+                ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
                 ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
 
             $this->entityManager->persist($optionalTrip);
@@ -148,7 +150,8 @@ trait DataLoaderTrait
                 ->setStars($row['stars'])
                 ->setRate($row['rate'])
                 ->setFood(Food::from($row['food']))
-                ->setMoney(\App\Factory\Money::create($row['price']))
+                ->setPrice($row['price'])
+                ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
                 ->setSource($row['source'])
                 ->setFrom(new \DateTimeImmutable($row['from']))
                 ->setTo(new \DateTimeImmutable($row['to']))
@@ -177,7 +180,8 @@ trait DataLoaderTrait
                 ->setToEnd(new \DateTimeImmutable($row['to_end']))
                 ->setToStops($row['to_stops'])
                 ->setUrl($row['url'])
-                ->setMoney(\App\Factory\Money::create($row['price']))
+                ->setPrice($row['price'])
+                ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
                 ->setSource($row['source'])
                 ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
 
@@ -222,7 +226,8 @@ trait DataLoaderTrait
                 ->setUrl($row['url'])
                 ->setImage($row['image'])
                 ->setFood(Food::from($row['food']))
-                ->setMoney(\App\Factory\Money::create($row['price']))
+                ->setPrice($row['price'])
+                ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
                 ->setSource($row['source'])
                 ->setFrom(new \DateTimeImmutable($row['from']))
                 ->setTo(new \DateTimeImmutable($row['to']))
