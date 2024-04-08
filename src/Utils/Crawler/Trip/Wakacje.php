@@ -101,7 +101,7 @@ final readonly class Wakacje implements TripInterface
         );
         $url = sprintf('%s/%s/?%s', self::URL, $place, $query);
 
-        $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
+        $this->downloaderLogger->info('Download data from', [$url]);
 
         $data = (new Crawler($this->httpClient->request('GET', $url)->getContent()))
             ->filter('section[data-offers-count]>div>a')
@@ -135,7 +135,7 @@ final readonly class Wakacje implements TripInterface
                 $image ?? throw new NullException(),
                 new \DateTimeImmutable($dates[0]),
                 new \DateTimeImmutable($dates[1]),
-                new Money($this->parser->stringToFloat($node->filter('div[data-testid="offer-listing-section-price"]')->text()))
+                new Money($this->parser->stringToFloat($node->filter('div[data-testid="offer-listing-section-price"]')->text()), true)
             );
         } catch (\Throwable $throwable) {
             $this->logger->error(sprintf('%s: %s', $throwable::class, $throwable->getMessage()));

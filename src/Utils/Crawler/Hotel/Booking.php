@@ -105,7 +105,7 @@ final readonly class Booking implements HotelInterface
         $params = array_map(static fn ($key, $value): string => $key.'='.$value, array_keys($params), $params);
         $url = self::URL.'?'.implode('&', $params);
 
-        $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
+        $this->downloaderLogger->info('Download data from', [$url]);
 
         $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
 
@@ -125,9 +125,6 @@ final readonly class Booking implements HotelInterface
         } catch (\Throwable) {
             $rate = null;
         }
-
-        $betweenDays = explode(', ', $node->filter($this->createAttr('price-for-x-nights'))->first()->text())[0];
-        $betweenDays = $this->parser->stringToFloat($betweenDays);
 
         $amount = $this->parser
             ->stringToFloat($node->filter($this->createAttr('price-and-discounted-price', 'span'))->text());
@@ -167,7 +164,7 @@ final readonly class Booking implements HotelInterface
             isset($descriptionHeader) ? [$descriptionHeader] + $descriptions : $descriptions,
             $from,
             $to,
-            new Money($amount / $betweenDays),
+            new Money($amount, false),
         );
     }
 }

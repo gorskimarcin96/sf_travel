@@ -45,7 +45,8 @@ class BookingTest extends ContainerKernelTestCase
         $this->assertSame($from->getTimestamp(), $result[0]->getFrom()->getTimestamp());
         $this->assertSame($to->getTimestamp(), $result[0]->getTo()->getTimestamp());
         $this->assertInstanceOf(Money::class, $result[0]->getMoney());
-        $this->assertSame(654.67, $result[0]->getMoney()->getPrice());
+        $this->assertSame(3928.0, $result[0]->getMoney()->getPrice());
+        $this->assertSame(false, $result[0]->getMoney()->isPriceForOnePerson());
         $this->assertSame(Currency::PLN, $result[0]->getMoney()->getCurrency());
     }
 }

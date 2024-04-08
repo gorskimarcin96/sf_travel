@@ -33,6 +33,7 @@ Feature: Searcher
     "image": "https:\/\/example.jpg",
     "source": "xyz",
     "price": 99.99,
+    "priceForOnePerson": true,
     "currency": "PLN"
   },
   {
@@ -45,6 +46,7 @@ Feature: Searcher
     "image": "https:\/\/example.jpg",
     "source": "abc",
     "price": 99.99,
+    "priceForOnePerson": true,
     "currency": "PLN"
   },
   {
@@ -57,6 +59,7 @@ Feature: Searcher
     "image": "https:\/\/example.jpg",
     "source": "abc",
     "price": 99.99,
+    "priceForOnePerson": true,
     "currency": "PLN"
   }
 ]
@@ -79,6 +82,7 @@ Feature: Searcher
     "image": "https:\/\/example.jpg",
     "source": "abc",
     "price": 99.99,
+    "priceForOnePerson": true,
     "currency": "PLN"
   },
   {
@@ -91,6 +95,7 @@ Feature: Searcher
     "image": "https:\/\/example.jpg",
     "source": "abc",
     "price": 99.99,
+    "priceForOnePerson": true,
     "currency": "PLN"
   }
 ]

@@ -77,7 +77,7 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
     /** @return OptionalTrip[] */
     private function getByUrl(string $url): array
     {
-        $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
+        $this->downloaderLogger->info('Download data from', [$url]);
         $this->client->request('GET', $url);
         $this->client->waitFor('#bloczkiHTMLID');
 
@@ -115,7 +115,7 @@ final readonly class Rainbow extends PantherClient implements OptionalTripInterf
             $node->filter('.kf-opis-wycieczki-atrybut-podrzedny__opis>p')->each(fn (PantherCrawler $node): string => $node->text()),
             $url,
             $this->base64->convertFromImage('https:'.$node->filter('img.kf-gallery--desktop__element')->attr('src')) ?? throw new NullException(),
-            new Money($this->parser->stringToFloat($node->filter('span.konfigurator__text--cena')->text()))
+            new Money($this->parser->stringToFloat($node->filter('span.konfigurator__text--cena')->text()), true)
         );
     }
 }

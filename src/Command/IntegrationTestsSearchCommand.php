@@ -65,8 +65,10 @@ final class IntegrationTestsSearchCommand extends Command
         $search = (new Search())
             ->setNation($nation)
             ->setPlace($place)
-            ->setFrom((new \DateTimeImmutable())->modify('+14 days'))
-            ->setTo((new \DateTimeImmutable())->modify('+21 days'))
+            ->setRangeFrom(7)
+            ->setRangeTo(15)
+            ->setFrom($this->getFrom())
+            ->setTo($this->getTo())
             ->setFromAirport($fromAirport)
             ->setToAirport($toAirport)
             ->setAdults(2)
@@ -91,5 +93,24 @@ final class IntegrationTestsSearchCommand extends Command
         $symfonyStyle->newLine();
 
         return Command::SUCCESS;
+    }
+
+    private function getYear(): int
+    {
+        return (int) (new \DateTimeImmutable())->format('Y');
+    }
+
+    private function getFrom(): \DateTimeImmutable
+    {
+        $date = (new \DateTimeImmutable())->setDate($this->getYear(), 6, 1);
+
+        return $date > new \DateTimeImmutable() ? $date : $date->modify('+1 year');
+    }
+
+    private function getTo(): \DateTimeImmutable
+    {
+        $date = (new \DateTimeImmutable())->setDate($this->getYear(), 6, 30);
+
+        return $date > new \DateTimeImmutable() ? $date : $date->modify('+1 year');
     }
 }

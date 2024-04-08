@@ -38,6 +38,7 @@ class BookingTest extends ContainerKernelTestCase
         $this->assertInstanceOf(Money::class, $result[0]->getMoney());
         $this->assertSame(2909.21, $result[0]->getMoney()->getPrice());
         $this->assertSame(Currency::PLN, $result[0]->getMoney()->getCurrency());
+        $this->assertSame(false, $result[0]->getMoney()->isPriceForOnePerson());
         $this->assertSame(
             'https://flights.booking.com/flights/WAW-ZTH/?type=ROUNDTRIP&cabinClass=ECONOMY&sort=BEST&travelPurpose=leisure&adults=2&children=0&from=WAW&to=ZTH&depart=2020-01-01&return=2020-01-07',
             $result[0]->getUrl()

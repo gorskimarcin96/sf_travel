@@ -6,7 +6,7 @@ use App\Utils\Enum\Currency;
 
 class Money
 {
-    public function __construct(private float $price, private Currency $currency = Currency::PLN)
+    public function __construct(private float $price, private bool $priceForOnePerson, private Currency $currency = Currency::PLN)
     {
     }
 
@@ -18,6 +18,18 @@ class Money
     public function setPrice(float $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function isPriceForOnePerson(): bool
+    {
+        return $this->priceForOnePerson;
+    }
+
+    public function setPriceForOnePerson(bool $priceForOnePerson): static
+    {
+        $this->priceForOnePerson = $priceForOnePerson;
 
         return $this;
     }

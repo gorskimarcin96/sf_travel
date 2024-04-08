@@ -50,7 +50,7 @@ final readonly class MamaSaidBeCool extends AbstractPageAttraction implements Pa
     protected function getPagesFromUrls(array $urls): array
     {
         $pages = array_map(function (string $url): Page {
-            $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
+            $this->downloaderLogger->info('Download data from', [$url]);
             $crawler = new Crawler($this->httpClient->request('GET', $url)->getContent());
             $page = new Page($url);
             $page->addArticle(new Article($crawler->filter('h1')->text()));

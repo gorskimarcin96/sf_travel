@@ -11,7 +11,7 @@ monolog:
       type: stream
       path: "%kernel.logs_dir%/downloader.log"
       channels: [ "downloader" ]
-      level: info
+      level: debug
     queue:
       channels: [ "queue" ]
       path: "%kernel.logs_dir%/queue.log"

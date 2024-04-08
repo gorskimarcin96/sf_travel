@@ -15,11 +15,11 @@ class URLTraitTest extends TestCase
     public function testUniqueByUrl(): void
     {
         $models = [
-            new Hotel('title 1', 'https://example.1.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0)),
-            new Hotel('title 2', 'https://example.2.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0)),
-            new Hotel('title 3', 'https://example.3.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0)),
-            new Hotel('title 4', 'https://example.4.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0)),
-            new Hotel('title 5', 'https://example.5.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0)),
+            new Hotel('title 1', 'https://example.1.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0, false)),
+            new Hotel('title 2', 'https://example.2.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0, false)),
+            new Hotel('title 3', 'https://example.3.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0, false)),
+            new Hotel('title 4', 'https://example.4.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0, false)),
+            new Hotel('title 5', 'https://example.5.com', Food::ALL_INCLUSIVE, 0, null, '', '', [], new \DateTime(), new \DateTime(), new Money(0, false)),
         ];
 
         /** @var Hotel[] $models */

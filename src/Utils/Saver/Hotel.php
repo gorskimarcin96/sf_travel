@@ -70,6 +70,7 @@ final readonly class Hotel
                 ->setTo(\DateTimeImmutable::createFromInterface($model->getTo()))
                 ->setRate($model->getRate() ?? 0)
                 ->setPrice($model->getMoney()->getPrice())
+                ->setPriceForOnePerson($model->getMoney()->isPriceForOnePerson())
                 ->setCurrency($model->getMoney()->getCurrency())
                 ->setDescriptions($model->getDescriptions())
                 ->setSource($service->getSource());

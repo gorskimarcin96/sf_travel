@@ -26,21 +26,21 @@ class OptionalTripTest extends ContainerKernelTestCase
                     'Description',
                     '#1',
                     '#',
-                    new Money(29.99, Currency::EUR)
+                    new Money(29.99, true, Currency::EUR)
                 ),
                 new OptionalTripModel(
                     'Second optional trip',
                     'Description',
                     '#2',
                     '#',
-                    new Money(19.99, Currency::EUR)
+                    new Money(19.99, true, Currency::EUR)
                 ),
                 new OptionalTripModel(
                     'Third optional trip',
                     'Description',
                     '#3',
                     '#',
-                    new Money(99.99, Currency::PLN)
+                    new Money(99.99, true, Currency::PLN)
                 ),
             ]);
         $optionalTripService
@@ -64,6 +64,7 @@ class OptionalTripTest extends ContainerKernelTestCase
         $this->assertSame('#', $optionalTripEntities[0]->getImage());
         $this->assertSame('#1', $optionalTripEntities[0]->getUrl());
         $this->assertSame(29.99, $optionalTripEntities[0]->getPrice());
+        $this->assertSame(true, $optionalTripEntities[0]->isPriceForOnePerson());
         $this->assertSame(Currency::EUR, $optionalTripEntities[0]->getCurrency());
         $this->assertSame(__CLASS__, $optionalTripEntities[0]->getSource());
     }

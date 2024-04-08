@@ -34,6 +34,7 @@ Feature: Searcher
     "toStops": 0,
     "url": "https:\/\/example.org",
     "price": 500.0,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "xyz"
   },
@@ -49,6 +50,7 @@ Feature: Searcher
     "toStops": 0,
     "url": "https:\/\/example.org",
     "price": 2999.99,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "abc"
   },
@@ -64,6 +66,7 @@ Feature: Searcher
     "toStops": 1,
     "url": "https:\/\/example.org",
     "price": 2.3,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "abc"
   }
@@ -89,6 +92,7 @@ Feature: Searcher
     "toStops": 0,
     "url": "https:\/\/example.org",
     "price": 2999.99,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "abc"
   },
@@ -104,6 +108,7 @@ Feature: Searcher
     "toStops": 1,
     "url": "https:\/\/example.org",
     "price": 2.3,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "abc"
   }

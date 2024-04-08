@@ -32,6 +32,7 @@ class RainbowTest extends ContainerKernelTestCase
         $this->assertIsString($result[0]->getImage());
         $this->assertInstanceOf(Money::class, $result[0]->getMoney());
         $this->assertSame(209.0, $result[0]->getMoney()->getPrice());
+        $this->assertSame(true, $result[0]->getMoney()->isPriceForOnePerson());
         $this->assertSame(Currency::PLN, $result[0]->getMoney()->getCurrency());
     }
 
@@ -48,6 +49,7 @@ class RainbowTest extends ContainerKernelTestCase
         $this->assertIsString($result[0]->getImage());
         $this->assertInstanceOf(Money::class, $result[0]->getMoney());
         $this->assertSame(279.0, $result[0]->getMoney()->getPrice());
+        $this->assertSame(true, $result[0]->getMoney()->isPriceForOnePerson());
         $this->assertSame(Currency::PLN, $result[0]->getMoney()->getCurrency());
     }
 }

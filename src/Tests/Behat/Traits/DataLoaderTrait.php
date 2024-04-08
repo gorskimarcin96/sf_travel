@@ -84,6 +84,7 @@ trait DataLoaderTrait
                 ->setImage($row['image'])
                 ->setSource($row['source'])
                 ->setPrice($row['price'])
+                ->setPriceForOnePerson(true)
                 ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
                 ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
 
@@ -151,6 +152,7 @@ trait DataLoaderTrait
                 ->setRate($row['rate'])
                 ->setFood(Food::from($row['food']))
                 ->setPrice($row['price'])
+                ->setPriceForOnePerson(false)
                 ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
                 ->setSource($row['source'])
                 ->setFrom(new \DateTimeImmutable($row['from']))
@@ -181,6 +183,7 @@ trait DataLoaderTrait
                 ->setToStops($row['to_stops'])
                 ->setUrl($row['url'])
                 ->setPrice($row['price'])
+                ->setPriceForOnePerson(false)
                 ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
                 ->setSource($row['source'])
                 ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
@@ -227,6 +230,7 @@ trait DataLoaderTrait
                 ->setImage($row['image'])
                 ->setFood(Food::from($row['food']))
                 ->setPrice($row['price'])
+                ->setPriceForOnePerson(false)
                 ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
                 ->setSource($row['source'])
                 ->setFrom(new \DateTimeImmutable($row['from']))

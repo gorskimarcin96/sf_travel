@@ -31,7 +31,7 @@ class TripTest extends ContainerKernelTestCase
                     '#',
                     new \DateTimeImmutable('01-01-2000'),
                     new \DateTimeImmutable('07-01-2000'),
-                    new Money(1999.99)
+                    new Money(1999.99, false)
                 ),
                 new TripModel(
                     'Second trip',
@@ -42,7 +42,7 @@ class TripTest extends ContainerKernelTestCase
                     '#',
                     new \DateTimeImmutable('01-01-2000'),
                     new \DateTimeImmutable('05-01-2000'),
-                    new Money(499.99, Currency::EUR)
+                    new Money(499.99, false, Currency::EUR)
                 ),
                 new TripModel(
                     'Third trip',
@@ -53,7 +53,7 @@ class TripTest extends ContainerKernelTestCase
                     '#',
                     new \DateTimeImmutable('02-01-2000'),
                     new \DateTimeImmutable('07-01-2000'),
-                    new Money(1999.99)
+                    new Money(1999.99, false)
                 ),
             ]);
         $tripService
@@ -89,6 +89,7 @@ class TripTest extends ContainerKernelTestCase
         $this->assertSame(946684800, $tripEntities[0]->getFrom()->getTimestamp());
         $this->assertSame(947203200, $tripEntities[0]->getTo()->getTimestamp());
         $this->assertSame(1999.99, $tripEntities[0]->getPrice());
+        $this->assertSame(false, $tripEntities[0]->isPriceForOnePerson());
         $this->assertSame(Currency::PLN, $tripEntities[0]->getCurrency());
         $this->assertSame(__CLASS__, $tripEntities[0]->getSource());
     }

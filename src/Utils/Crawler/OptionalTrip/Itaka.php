@@ -79,7 +79,7 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
     /** @return OptionalTrip[] */
     private function getByUrl(string $url): array
     {
-        $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
+        $this->downloaderLogger->info('Download data from', [$url]);
         $this->client->request('GET', $url);
         $this->client->waitFor('.app-container');
         $this->client->getKeyboard()
@@ -124,7 +124,7 @@ final readonly class Itaka extends PantherClient implements OptionalTripInterfac
             [],
             self::MAIN_DOMAIN.$node->filter('a')->getAttribute('href'),
             $this->base64->convertFromImage($node->filter('img')->getAttribute('src') ?? throw new NullException()) ?? throw new NullException(),
-            new Money($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()))
+            new Money($this->parsePrice($node->filter('.excursion-price-omnibus__value')->text()), true)
         );
     }
 

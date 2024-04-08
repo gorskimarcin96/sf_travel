@@ -33,7 +33,7 @@ class HotelTest extends ContainerKernelTestCase
                     ['It\'s nice!'],
                     new \DateTimeImmutable('01-01-2020'),
                     new \DateTimeImmutable('07-01-2020'),
-                    new Money(1999.99),
+                    new Money(1999.99, false),
                 ),
                 new HotelModel(
                     'Second hotel',
@@ -46,7 +46,7 @@ class HotelTest extends ContainerKernelTestCase
                     [],
                     new \DateTimeImmutable('03-01-2020'),
                     new \DateTimeImmutable('07-01-2020'),
-                    new Money(999.99),
+                    new Money(999.99, false),
                 ),
             ]);
         $hotelService
@@ -84,6 +84,7 @@ class HotelTest extends ContainerKernelTestCase
         $this->assertSame(1577836800, $hotelEntities[0]->getFrom()->getTimestamp());
         $this->assertSame(1578355200, $hotelEntities[0]->getTo()->getTimestamp());
         $this->assertSame(1999.99, $hotelEntities[0]->getPrice());
+        $this->assertSame(false, $hotelEntities[0]->isPriceForOnePerson());
         $this->assertSame(Currency::PLN, $hotelEntities[0]->getCurrency());
         $this->assertSame(__CLASS__, $hotelEntities[0]->getSource());
     }

@@ -54,7 +54,7 @@ final readonly class Booking extends PantherClient implements FlightInterface
         $params = array_map(static fn ($key, $value): string => $key.'='.$value, array_keys($params), $params);
         $url = sprintf(self::URL, $fromAirport, $toAirport).'?'.implode('&', $params);
 
-        $this->downloaderLogger->info(sprintf('Download data from %s...', $url));
+        $this->downloaderLogger->info('Download data from', [$url]);
         $this->client->request('GET', $url);
         $this->client->waitFor($this->createAttr('searchresults_card'));
         $this->downloaderLogger->notice(sprintf('Got %s flights.', $this->client->getCrawler()->filter($this->createAttr('searchresults_card'))->count()));
@@ -75,7 +75,7 @@ final readonly class Booking extends PantherClient implements FlightInterface
             $this->createDepartureDateTimeImmutable($node, '1'),
             $this->createDestinationDateTimeImmutable($node, '1'),
             (int) $this->parser->stringToFloat($node->filter($this->createAttr('flight_card_segment_stops_1'))->text()),
-            new Money($this->parser->stringToFloat(str_replace(',', '.', $node->filter($this->createAttr('flight_card_price_total_price'))->text()))),
+            new Money($this->parser->stringToFloat(str_replace(',', '.', $node->filter($this->createAttr('flight_card_price_total_price'))->text())), false),
             $this->client->getCurrentURL()
         );
     }

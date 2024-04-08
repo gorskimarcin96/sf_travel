@@ -30,7 +30,7 @@ class FlightTest extends ContainerKernelTestCase
                     new \DateTimeImmutable('00:00 07-01-2020'),
                     new \DateTimeImmutable('02:00 07-01-2020'),
                     0,
-                    new Money(500.00),
+                    new Money(500.00, false),
                     '#'
                 ),
                 new FlightModel(
@@ -42,7 +42,7 @@ class FlightTest extends ContainerKernelTestCase
                     new \DateTimeImmutable('10:00 07-01-2020'),
                     new \DateTimeImmutable('12:00 17-01-2020'),
                     1,
-                    new Money(499.99),
+                    new Money(499.99, false),
                     '#'
                 ),
             ]);
@@ -75,6 +75,7 @@ class FlightTest extends ContainerKernelTestCase
         $this->assertSame(1578362400, $flushEntities[0]->getToEnd()->getTimestamp());
         $this->assertSame(0, $flushEntities[0]->getToStops());
         $this->assertSame(500.00, $flushEntities[0]->getPrice());
+        $this->assertSame(false, $flushEntities[0]->isPriceForOnePerson());
         $this->assertSame(Currency::PLN, $flushEntities[0]->getCurrency());
         $this->assertSame(__CLASS__, $flushEntities[0]->getSource());
     }

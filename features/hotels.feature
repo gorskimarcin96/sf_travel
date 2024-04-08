@@ -38,6 +38,7 @@ Feature: Searcher
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
     "price": 500.0,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "xyz"
   },
@@ -56,6 +57,7 @@ Feature: Searcher
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
     "price": 2999.99,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "abc"
   },
@@ -74,6 +76,7 @@ Feature: Searcher
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
     "price": 2.3,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "abc"
   }
@@ -102,6 +105,7 @@ Feature: Searcher
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
     "price": 2999.99,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "abc"
   },
@@ -120,6 +124,7 @@ Feature: Searcher
     "from": "2000-01-01T00:00:00+00:00",
     "to": "2000-01-07T00:00:00+00:00",
     "price": 2.3,
+    "priceForOnePerson": false,
     "currency": "PLN",
     "source": "abc"
   }

@@ -49,6 +49,7 @@ final readonly class Trip
                 ->setImage($model->getImage())
                 ->setFood($model->getFood())
                 ->setPrice($model->getMoney()->getPrice())
+                ->setPriceForOnePerson($model->getMoney()->isPriceForOnePerson())
                 ->setCurrency($model->getMoney()->getCurrency())
                 ->setUrl($model->getUrl())
                 ->setFrom(\DateTimeImmutable::createFromInterface($model->getFrom()))
