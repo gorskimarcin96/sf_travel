@@ -563,7 +563,7 @@ class Search
 
     public function getServiceTodo(): ?string
     {
-        return array_pop($this->todo);
+        return array_shift($this->todo);
     }
 
     /**
