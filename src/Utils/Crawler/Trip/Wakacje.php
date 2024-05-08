@@ -38,11 +38,11 @@ final readonly class Wakacje implements TripInterface
      */
     #[\Override]
     public function getTrips(
-        string $place,
-        \DateTimeInterface $from,
-        \DateTimeInterface $to,
-        int $rangeFrom,
-        int $rangeTo,
+        ?string $place,
+        ?\DateTimeInterface $from,
+        ?\DateTimeInterface $to,
+        ?int $rangeFrom,
+        ?int $rangeTo,
         array $foods = [],
         ?int $stars = null,
         ?float $rate = null,
@@ -50,7 +50,7 @@ final readonly class Wakacje implements TripInterface
     ): array {
         $data = [];
 
-        foreach (range(1, 2) as $page) {
+        foreach (range(1, 3) as $page) {
             foreach ($this->getTripsFromPage(
                 $place,
                 $from,
@@ -76,30 +76,18 @@ final readonly class Wakacje implements TripInterface
      * @return Trip[]
      */
     private function getTripsFromPage(
-        string $place,
-        \DateTimeInterface $from,
-        \DateTimeInterface $to,
-        int $rangeFrom,
-        int $rangeTo,
+        ?string $place,
+        ?\DateTimeInterface $from,
+        ?\DateTimeInterface $to,
+        ?int $rangeFrom,
+        ?int $rangeTo,
         array $foods,
         ?int $stars,
         ?float $rate,
         int $persons = 2,
         int $page = 1,
     ): array {
-        $query = sprintf(
-            'str-%s,od-%s,do-%s,%s-%s-dni,samolotem,%s,%s-gwiazdkowe,%sdorosle,ocena-%s,tanio,za-osobe&src=fromFilters',
-            $page,
-            $from->format('Y-m-d'),
-            $to->format('Y-m-d'),
-            $rangeFrom,
-            $rangeTo,
-            implode(',', array_map(static fn (Food $food): string => $food->value, $foods)),
-            $stars ?? 1,
-            $persons,
-            $rate ?? 1,
-        );
-        $url = sprintf('%s/%s/?%s', self::URL, $place, $query);
+        $url = $this->buildUrl($place, $from, $to, $rangeFrom, $rangeTo, $foods, $stars, $rate, $persons, $page);
 
         $this->downloaderLogger->info('Download data from', [$url]);
 
@@ -142,5 +130,61 @@ final readonly class Wakacje implements TripInterface
 
             return null;
         }
+    }
+
+    /**
+     * @param Food[] $foods
+     */
+    private function buildUrl(
+        ?string $place,
+        ?\DateTimeInterface $from,
+        ?\DateTimeInterface $to,
+        ?int $rangeFrom,
+        ?int $rangeTo,
+        array $foods,
+        ?int $stars,
+        ?float $rate,
+        int $persons,
+        int $page
+    ): string {
+        $query = 'str-'.$page;
+
+        if ($from instanceof \DateTimeInterface) {
+            $query .= ',od-'.$from->format('Y-m-d');
+        }
+
+        if ($to instanceof \DateTimeInterface) {
+            $query .= ',do-'.$to->format('Y-m-d');
+        }
+
+        if ($rangeFrom && $rangeTo) {
+            $query .= ','.sprintf('%s-%s-dni', $rangeFrom, $rangeTo);
+        } elseif ($rangeFrom || $rangeTo) {
+            $query .= ','.sprintf('%s-dni', $rangeFrom ?? $rangeTo);
+        }
+
+        $query .= ',samolotem';
+
+        if (0 !== $persons) {
+            $query .= ','.$persons.'dorosle';
+        }
+
+        if (null !== $stars && 0 !== $stars) {
+            $query .= ','.$stars.'-gwiazdkowe';
+        }
+
+        if ($rate) {
+            $query .= ',ocena-'.floor($rate);
+        }
+
+        if ([] !== $foods) {
+            $query .= ','.implode(',', array_map(static fn (Food $food): string => $food->value, $foods));
+        }
+
+        $query .= ',tanio,za-osobe&src=fromFilters';
+
+        return null !== $place && '' !== $place && '0' !== $place ?
+            sprintf('%s/%s/?%s', self::URL, $place, $query) :
+            sprintf('%s/?%s', self::URL, $query);
     }
 }

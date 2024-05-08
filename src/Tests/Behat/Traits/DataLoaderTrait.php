@@ -4,12 +4,14 @@ namespace App\Tests\Behat\Traits;
 
 use App\Entity\Flight;
 use App\Entity\Hotel;
+use App\Entity\LastMinute;
 use App\Entity\OptionalTrip;
 use App\Entity\Search;
 use App\Entity\Trip;
 use App\Entity\TripArticle;
 use App\Entity\TripPage;
 use App\Entity\Weather;
+use App\Utils\Enum\Currency;
 use App\Utils\Enum\Food;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Exception as DoctrineException;
@@ -71,6 +73,31 @@ trait DataLoaderTrait
     }
 
     /**
+     * @Given there are last minutes
+     */
+    public function thereAreLastMinutes(TableNode $table): void
+    {
+        array_map(function (array $row): void {
+            $foods = isset($row['food']) ?
+                array_map(fn (string $food): Food => Food::from($food), explode(',', $row['food'])) :
+                [];
+
+            $search = (new LastMinute())
+                ->setId($row['id'])
+                ->setAdults($row['adults'])
+                ->setChildren($row['children'])
+                ->setRangeFrom($row['range_from'] ?? null)
+                ->setRangeTo($row['range_to'] ?? null)
+                ->setHotelFoods($foods)
+                ->setCreatedAt(new \DateTimeImmutable($row['created_at']));
+
+            $this->entityManager->persist($search);
+        }, $table->getHash());
+
+        $this->entityManager->flush();
+    }
+
+    /**
      * @Given there are optional trips
      */
     public function thereAreOptionalTrips(TableNode $table): void
@@ -85,7 +112,7 @@ trait DataLoaderTrait
                 ->setSource($row['source'])
                 ->setPrice($row['price'])
                 ->setPriceForOnePerson(true)
-                ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
+                ->setCurrency($row['currency'] ?? Currency::PLN)
                 ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
 
             $this->entityManager->persist($optionalTrip);
@@ -153,7 +180,7 @@ trait DataLoaderTrait
                 ->setFood(Food::from($row['food']))
                 ->setPrice($row['price'])
                 ->setPriceForOnePerson(false)
-                ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
+                ->setCurrency($row['currency'] ?? Currency::PLN)
                 ->setSource($row['source'])
                 ->setFrom(new \DateTimeImmutable($row['from']))
                 ->setTo(new \DateTimeImmutable($row['to']))
@@ -184,7 +211,7 @@ trait DataLoaderTrait
                 ->setUrl($row['url'])
                 ->setPrice($row['price'])
                 ->setPriceForOnePerson(false)
-                ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
+                ->setCurrency($row['currency'] ?? Currency::PLN)
                 ->setSource($row['source'])
                 ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
 
@@ -231,11 +258,18 @@ trait DataLoaderTrait
                 ->setFood(Food::from($row['food']))
                 ->setPrice($row['price'])
                 ->setPriceForOnePerson(false)
-                ->setCurrency($row['currency'] ?? \App\Utils\Enum\Currency::PLN)
+                ->setCurrency($row['currency'] ?? Currency::PLN)
                 ->setSource($row['source'])
                 ->setFrom(new \DateTimeImmutable($row['from']))
-                ->setTo(new \DateTimeImmutable($row['to']))
-                ->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
+                ->setTo(new \DateTimeImmutable($row['to']));
+
+            if (isset($row['search_id'])) {
+                $trip->setSearch($this->entityManager->getRepository(Search::class)->find($row['search_id']));
+            }
+
+            if (isset($row['last_minute_id'])) {
+                $trip->setLastMinute($this->entityManager->getRepository(LastMinute::class)->find($row['last_minute_id']));
+            }
 
             $this->entityManager->persist($trip);
         }, $table->getHash());

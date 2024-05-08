@@ -3,11 +3,14 @@
 namespace App\Tests;
 
 use App\Entity\City;
+use App\Entity\LastMinute;
 use App\Entity\Search;
 use App\Entity\Weather;
 use App\Factory\SearchServices;
+use App\MessageHandler\LastMinuteHandler;
 use App\MessageHandler\SearchHandler;
 use App\Repository\CityRepositoryInterface;
+use App\Repository\LastMinuteRepositoryInterface;
 use App\Repository\SearchRepositoryInterface;
 use App\Repository\WeatherRepositoryInterface;
 use App\Tests\Mocks\BrowserManager;
@@ -182,7 +185,7 @@ abstract class ContainerKernelTestCase extends KernelTestCase
 
     public function getTripWakacje(): TripWakacje
     {
-        $baseUrl = 'https://www.wakacje.pl/wczasy/zakynthos/?str-%s,od-2000-01-01,do-2000-01-06,5-7-dni,samolotem,,1-gwiazdkowe,2dorosle,ocena-1,tanio,za-osobe&src=fromFilters';
+        $baseUrl = 'https://www.wakacje.pl/wczasy/zakynthos/?str-%s,od-2000-01-01,do-2000-01-06,5-7-dni,samolotem,2dorosle,tanio,za-osobe&src=fromFilters';
         $content = $this->getFileManager()->read('var/test/trip/wakacje/response.html');
         $httpClient = HttpClient::create()
             ->addRequest('GET', sprintf($baseUrl, 1), $content)
@@ -326,6 +329,11 @@ abstract class ContainerKernelTestCase extends KernelTestCase
         return new Mocks\Repository\SearchRepository($this->getManagerRegistry(), Search::class, $this->getEntityManager());
     }
 
+    public function getLastMinuteRepository(): LastMinuteRepositoryInterface
+    {
+        return new Mocks\Repository\LastMinuteRepository($this->getManagerRegistry(), LastMinute::class, $this->getEntityManager());
+    }
+
     public function getCityRepository(): CityRepositoryInterface
     {
         return new Mocks\Repository\CityRepository($this->getManagerRegistry(), City::class);
@@ -343,13 +351,23 @@ abstract class ContainerKernelTestCase extends KernelTestCase
             new Logger(),
             $this->getSearchServices(),
             $this->getSearchRepository(),
-            $this->getEntityManager(),
             $this->getMessageBus(),
             $this->getSaverOptionalTrip($simulatePhpWebDriverException),
             $this->getSaverPageAttraction(),
             $this->getSaverHotel(),
             $this->getSaverFlight($simulatePhpWebDriverException),
             $this->getSaverWeather(),
+            $this->getSaverTrip(),
+        );
+    }
+
+    public function getLastMinuteHandler(bool $simulatePhpWebDriverException = false): LastMinuteHandler
+    {
+        return new LastMinuteHandler(
+            new Logger(),
+            $this->getSearchServices(),
+            $this->getLastMinuteRepository(),
+            $this->getMessageBus(),
             $this->getSaverTrip(),
         );
     }

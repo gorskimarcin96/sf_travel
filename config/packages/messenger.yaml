@@ -5,3 +5,4 @@ framework:
       failed: '%env(MESSENGER_TRANSPORT_DSN)%'
     routing:
       App\Message\Search: async
+      App\Message\LastMinute: async

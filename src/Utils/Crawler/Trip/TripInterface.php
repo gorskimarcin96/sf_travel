@@ -14,11 +14,11 @@ interface TripInterface extends SourceInterface
      * @return Trip[]
      */
     public function getTrips(
-        string $place,
-        \DateTimeInterface $from,
-        \DateTimeInterface $to,
-        int $rangeFrom,
-        int $rangeTo,
+        ?string $place,
+        ?\DateTimeInterface $from,
+        ?\DateTimeInterface $to,
+        ?int $rangeFrom,
+        ?int $rangeTo,
         array $foods = [],
         ?int $stars = null,
         ?float $rate = null,

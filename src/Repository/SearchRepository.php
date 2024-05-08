@@ -80,4 +80,16 @@ final class SearchRepository extends ServiceEntityRepository implements SearchRe
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    #[\Override]
+    public function save(Search $search, bool $flush = false): Search
+    {
+        $this->_em->persist($search);
+
+        if ($flush) {
+            $this->_em->flush();
+        }
+
+        return $search;
+    }
 }

@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(operations: [new GetCollection()], normalizationContext: ['groups' => ['trips']])]
-#[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'source' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['search' => 'exact', 'lastMinute' => 'exact', 'source' => 'exact'])]
 #[ORM\Entity(repositoryClass: TripRepository::class)]
 class Trip implements SourceInterface
 {
@@ -63,6 +63,9 @@ class Trip implements SourceInterface
 
     #[ORM\ManyToOne(inversedBy: 'trips')]
     private ?Search $search = null;
+
+    #[ORM\ManyToOne(inversedBy: 'trips')]
+    private ?LastMinute $lastMinute = null;
 
     public function getId(): ?int
     {
@@ -193,6 +196,18 @@ class Trip implements SourceInterface
     public function setSearch(?Search $search): static
     {
         $this->search = $search;
+
+        return $this;
+    }
+
+    public function getLastMinute(): ?LastMinute
+    {
+        return $this->lastMinute;
+    }
+
+    public function setLastMinute(?LastMinute $lastMinute): static
+    {
+        $this->lastMinute = $lastMinute;
 
         return $this;
     }

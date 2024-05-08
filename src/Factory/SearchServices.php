@@ -39,6 +39,17 @@ final readonly class SearchServices
         return $services;
     }
 
+    /**
+     * @return TripInterface[]
+     */
+    public function createTrips(): array
+    {
+        /** @var TripInterface[] $services */
+        $services = iterator_to_array($this->trips->getIterator());
+
+        return $services;
+    }
+
     public function findByClassName(string $className): TripInterface|HotelInterface|FlightInterface|WeatherInterface|OptionalTripInterface|PageAttractionInterface
     {
         foreach ($this->create() as $object) {

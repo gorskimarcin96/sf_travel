@@ -3,42 +3,37 @@
 namespace App\Controller;
 
 use ApiPlatform\Validator\ValidatorInterface;
-use App\ApiResource\Input\Search as Input;
-use App\Entity\Search;
+use App\ApiResource\Input\LastMinute as Input;
+use App\Entity\LastMinute;
 use App\Exception\NullException;
 use App\Factory\SearchServices;
-use App\Message\Search as Message;
-use App\Repository\SearchRepositoryInterface;
+use App\Message\LastMinute as Message;
+use App\Repository\LastMinuteRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class SearchController extends AbstractController
+final class LastMinuteController extends AbstractController
 {
     /** @var class-string[] */
     private readonly array $todo;
 
     public function __construct(
-        private readonly SearchRepositoryInterface $searchRepository,
+        private readonly LastMinuteRepository $lastMinuteRepository,
         private readonly MessageBusInterface $messageBus,
         private readonly ValidatorInterface $validator,
         SearchServices $tripServices
     ) {
-        $this->todo = array_map(static fn (object $class): string => $class::class, $tripServices->create());
+        $this->todo = array_map(static fn (object $class): string => $class::class, $tripServices->createTrips());
     }
 
-    public function __invoke(Input $input): Search
+    public function __invoke(Input $input): LastMinute
     {
         $this->validator->validate($input);
-        $search = $this->searchRepository->findByInput($input);
+        $lastMinute = $this->lastMinuteRepository->findByInput($input);
 
-        if (!$search instanceof Search || $input->isForce()) {
-            $search = (new Search())
-                ->setNation(strtolower($input->getNation()))
-                ->setPlace(strtolower($input->getPlace()))
-                ->setFrom($input->getFrom())
-                ->setTo($input->getTo())
+        if (!$lastMinute instanceof LastMinute || $input->isForce()) {
+            $lastMinute = (new LastMinute())
                 ->setFromAirport($input->getFromAirport())
-                ->setToAirport($input->getToAirport())
                 ->setAdults($input->getAdults())
                 ->setChildren($input->getChildren())
                 ->setHotelFoods($input->getHotelFoods())
@@ -48,11 +43,11 @@ final class SearchController extends AbstractController
                 ->setRangeTo($input->getRangeTo())
                 ->setTodo($this->todo);
 
-            $search = $this->searchRepository->save($search, true);
+            $lastMinute = $this->lastMinuteRepository->save($lastMinute);
 
-            $this->messageBus->dispatch(new Message($search->getId() ?? throw new NullException()));
+            $this->messageBus->dispatch(new Message($lastMinute->getId() ?? throw new NullException()));
         }
 
-        return $search;
+        return $lastMinute;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\SourceInterface;
 use App\Tests\ContainerKernelTestCase;
 use App\Utils\Crawler\OptionalTrip\Itaka;
 
@@ -9,7 +10,18 @@ class TripServicesTest extends ContainerKernelTestCase
 {
     public function testCreate(): void
     {
-        $this->assertIsArray($this->getSearchServices()->create());
+        $data = $this->getSearchServices()->create();
+
+        $this->assertIsArray($data);
+        $this->assertInstanceOf(SourceInterface::class, $data[0]);
+    }
+
+    public function testCreateTrips(): void
+    {
+        $data = $this->getSearchServices()->createTrips();
+
+        $this->assertIsArray($data);
+        $this->assertInstanceOf(SourceInterface::class, $data[0]);
     }
 
     public function testFindByClassName(): void

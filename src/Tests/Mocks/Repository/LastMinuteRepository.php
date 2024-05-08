@@ -2,17 +2,17 @@
 
 namespace App\Tests\Mocks\Repository;
 
-use App\ApiResource\Input\Search as Input;
-use App\Entity\Search;
-use App\Repository\SearchRepositoryInterface;
+use App\ApiResource\Input\LastMinute as Input;
+use App\Entity\LastMinute;
+use App\Repository\LastMinuteRepositoryInterface;
 use App\Tests\Mocks\EntityManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Search>
+ * @extends ServiceEntityRepository<LastMinute>
  */
-final class SearchRepository extends ServiceEntityRepository implements SearchRepositoryInterface
+final class LastMinuteRepository extends ServiceEntityRepository implements LastMinuteRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry, string $entityClass, private readonly EntityManager $entityManager)
     {
@@ -20,10 +20,10 @@ final class SearchRepository extends ServiceEntityRepository implements SearchRe
     }
 
     #[\Override]
-    public function find($id, $lockMode = null, $lockVersion = null): ?Search
+    public function find($id, $lockMode = null, $lockVersion = null): ?LastMinute
     {
         $entities = $this->entityManager->getFlushEntities();
-        $entities = array_filter($entities, static fn (object $entity): bool => $entity instanceof Search);
+        $entities = array_filter($entities, static fn (object $entity): bool => $entity instanceof LastMinute);
 
         foreach ($entities as $entity) {
             if ($entity->getId() === $id) {
@@ -35,14 +35,14 @@ final class SearchRepository extends ServiceEntityRepository implements SearchRe
     }
 
     #[\Override]
-    public function findByInput(Input $input): ?Search
+    public function findByInput(Input $input): ?LastMinute
     {
         return null;
     }
 
     #[\Override]
-    public function save(Search $search, bool $flush = false): Search
+    public function save(LastMinute $lastMinute, bool $flush = false): LastMinute
     {
-        return $search;
+        return $lastMinute;
     }
 }

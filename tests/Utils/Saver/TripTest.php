@@ -60,7 +60,7 @@ class TripTest extends ContainerKernelTestCase
             ->method('getSource')
             ->willReturn(__CLASS__);
 
-        $this->getSaverTrip()->save(
+        $this->getSaverTrip()->saveBySearch(
             $tripService,
             'Zakynthos',
             new \DateTimeImmutable('01-01-2020'),

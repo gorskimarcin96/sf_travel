@@ -20,7 +20,6 @@ use App\Utils\Saver\OptionalTrip;
 use App\Utils\Saver\PageAttraction;
 use App\Utils\Saver\Trip;
 use App\Utils\Saver\Weather;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Facebook\WebDriver\Exception\PhpWebDriverExceptionInterface;
 use Psr\Log\LoggerInterface;
@@ -37,7 +36,6 @@ final readonly class SearchHandler
         private LoggerInterface $downloaderLogger,
         private SearchServices $tripServices,
         private SearchRepositoryInterface $searchRepository,
-        private EntityManagerInterface $entityManager,
         private MessageBusInterface $messageBus,
         private OptionalTrip $optionalTrip,
         private PageAttraction $pageAttraction,
@@ -87,8 +85,7 @@ final readonly class SearchHandler
             }
         }
 
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
+        $entity = $this->searchRepository->save($entity, true);
 
         if ($entity->isFinished()) {
             return;
@@ -191,7 +188,7 @@ final readonly class SearchHandler
 
     private function saveTrips(Entity $entity, TripInterface $trip): Entity
     {
-        return $this->trip->save(
+        return $this->trip->saveBySearch(
             $trip,
             $entity->getPlace(),
             $entity->getFrom(),
